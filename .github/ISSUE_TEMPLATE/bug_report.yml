@@ -9,8 +9,8 @@ body:
     id: package
     attributes:
       label: Affected Package or App
-      description: Which app or package is affected? (e.g. apps/web, packages/ui)
-      placeholder: apps/web
+      description: Which app or package is affected? (e.g. apps/website-builder-platform, packages/component-library)
+      placeholder: apps/website-builder-platform
     validations:
       required: true
   - type: textarea

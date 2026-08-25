@@ -18,7 +18,7 @@ This monorepo is engineered to be a unified, high-performance workspace for Reac
 
 ```mermaid
 graph TD
-    AppsWeb["apps/web (Next.js / React)"] --> PackagesUI["packages/ui"]
+    AppsWeb["apps/website-builder-platform (React / Vite)"] --> PackagesUI["packages/component-library"]
     AppsWeb --> PackagesUtils["packages/utils"]
     AppsAPI["apps/api (NestJS / Node)"] --> PackagesUtils["packages/utils"]
     AppsAPI --> PackagesTypes["packages/types"]

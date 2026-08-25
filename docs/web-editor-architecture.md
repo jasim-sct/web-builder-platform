@@ -26,11 +26,11 @@ The web platform is composed of three distinct, non-overlapping architectural la
 
 ### Layer Responsibilities
 
-| Layer                                           | Responsibility & Ownership                                                                                                                                                                         | Must NOT Own                                                                                           |
-| :---------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
-| **Section Library** (`@repo/component-library`) | React Sections, Props schemas, Style schemas, Action schemas, Default props/style/actions, Section Registry, Instance Generators, Style Resolvers, SCSS design system, Unit tests                  | Editor UI controls, drag-and-drop state, canvas selection, persistence logic, multi-section page trees |
-| **Storybook**                                   | Isolated component development, visual regression testing, documentation, interaction tests, accessibility validation                                                                              | Website page building, section persistence, page layout composition                                    |
-| **Web Editor** (`apps/web` or `apps/editor`)    | Section selection, page tree composition, drag-and-drop canvas, layer management, section selection, properties panel, responsive breakpoint editing, undo/redo history, serialization/persistence | Component-specific UI implementations, custom props/style definitions, ad-hoc style resolvers          |
+| Layer                                                             | Responsibility & Ownership                                                                                                                                                                         | Must NOT Own                                                                                           |
+| :---------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------- |
+| **Section Library** (`@repo/component-library`)                   | React Sections, Props schemas, Style schemas, Action schemas, Default props/style/actions, Section Registry, Instance Generators, Style Resolvers, SCSS design system, Unit tests                  | Editor UI controls, drag-and-drop state, canvas selection, persistence logic, multi-section page trees |
+| **Storybook**                                                     | Isolated component development, visual regression testing, documentation, interaction tests, accessibility validation                                                                              | Website page building, section persistence, page layout composition                                    |
+| **Web Editor** (`apps/website-builder-platform` or `apps/editor`) | Section selection, page tree composition, drag-and-drop canvas, layer management, section selection, properties panel, responsive breakpoint editing, undo/redo history, serialization/persistence | Component-specific UI implementations, custom props/style definitions, ad-hoc style resolvers          |
 
 ---
 
@@ -381,7 +381,7 @@ Before modifying any file, verify:
 The Web Editor must be developed incrementally in strict accordance with this sequence:
 
 ```
- 1. Editor Architecture & App Setup (Vite / Next.js app scaffolding under apps/web)
+ 1. Editor Architecture & App Setup (Vite / Next.js app scaffolding under apps/website-builder-platform)
  2. Page & Section Data Model (TypeScript contracts & State Management)
  3. Section Registry Integration (Connecting @repo/component-library)
  4. Editor Canvas (Section list rendering & frame layout)

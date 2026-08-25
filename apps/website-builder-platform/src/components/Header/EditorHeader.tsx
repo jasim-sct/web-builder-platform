@@ -29,7 +29,7 @@ export const EditorHeader: React.FC = () => {
           <div className="ws-brand-icon">
             <Sparkles size={16} />
           </div>
-          <span>Web Builder Studio</span>
+          <span>Website Builder Platform</span>
         </div>
 
         <div className="ws-header-divider" />

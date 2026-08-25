@@ -51,7 +51,7 @@ importers:
         specifier: ^8.24.0
         version: 8.68.0(eslint@9.39.5(jiti@2.6.1))(typescript@5.9.3)
 
-  apps/web:
+  apps/website-builder-platform:
     dependencies:
       '@repo/component-library':
         specifier: workspace:*

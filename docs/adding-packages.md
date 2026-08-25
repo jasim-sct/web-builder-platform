@@ -118,7 +118,7 @@ cd packages/ui
 
 ## 3. Consuming Packages in Applications
 
-In any application `package.json` (e.g. `apps/web/package.json`):
+In any application `package.json` (e.g. `apps/website-builder-platform/package.json`):
 
 ```json
 {

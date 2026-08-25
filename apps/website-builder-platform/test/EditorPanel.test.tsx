@@ -8,7 +8,7 @@ describe('EditorPanel Integration', () => {
   it('should render the editor layout with Header, floating ComponentPanel, and Canvas', () => {
     render(<App />);
 
-    expect(screen.getByText('Web Builder Studio')).toBeInTheDocument();
+    expect(screen.getByText('Website Builder Platform')).toBeInTheDocument();
     expect(screen.getByLabelText('Component Library Palette')).toBeInTheDocument();
     expect(screen.getByText('Your Page is Empty')).toBeInTheDocument();
     expect(screen.getByText('Select a Section')).toBeInTheDocument();

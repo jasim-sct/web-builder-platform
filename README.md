@@ -74,10 +74,10 @@ This workspace uses **pnpm** (version `9.15.9`) as its dedicated package manager
 
 ## 5. Naming Conventions
 
-- **Applications**: Created inside `apps/<name>` using `kebab-case` (e.g. `apps/web`, `apps/api`).
+- **Applications**: Created inside `apps/<name>` using `kebab-case` (e.g. `apps/website-builder-platform`, `apps/api`).
 - **Shared Packages**: Created inside `packages/<name>` using `kebab-case` and scoped with `@repo/` (e.g. `@repo/ui`, `@repo/utils`, `@repo/types`).
 - **Tooling Presets**: Located in `tooling/<name>` scoped with `@repo/` (e.g. `@repo/eslint-config`, `@repo/typescript-config`).
-- **Git Commits**: Must follow Conventional Commits (e.g. `feat(web): add login page`, `fix(api): handle token expiration`).
+- **Git Commits**: Must follow Conventional Commits (e.g. `feat(website-builder-platform): add login page`, `fix(api): handle token expiration`).
 
 ---
 
@@ -101,7 +101,7 @@ This workspace uses **pnpm** (version `9.15.9`) as its dedicated package manager
 
 All future applications must be placed in `apps/`. Examples:
 
-- `apps/web`: Next.js frontend application
+- `apps/website-builder-platform`: Website Builder Platform application
 - `apps/portal`: React (Vite) single-page application
 - `apps/api`: NestJS backend microservice
 
