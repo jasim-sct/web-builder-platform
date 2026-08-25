@@ -135,4 +135,51 @@
       max-width: 500px;
     }
   }
+
+  // Floating Quick-Add Trigger when Component Palette is Closed
+  .ws-canvas-floating-trigger {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: $z-floating-palette;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px 8px 10px;
+    background-color: $bg-glass-panel;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid $border-glass;
+    border-radius: $radius-full;
+    color: $text-primary;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: $shadow-floating;
+    cursor: pointer;
+    transition: all $transition-fast;
+
+    .ws-trigger-icon-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, $color-primary, $color-purple);
+      @include flex-center;
+      color: #ffffff;
+      font-size: 16px;
+      line-height: 1;
+
+      .ws-plus-sign {
+        margin-top: -1px;
+      }
+    }
+
+    &:hover {
+      background-color: $bg-surface-3;
+      transform: translateY(-2px);
+      box-shadow:
+        0 20px 30px -5px rgba(0, 0, 0, 0.6),
+        0 0 0 1px $color-primary;
+      color: #ffffff;
+    }
+  }
 }

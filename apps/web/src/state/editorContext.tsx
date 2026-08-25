@@ -35,6 +35,10 @@ interface EditorContextValue {
   setActivePropertyTab: (tab: PropertyTab) => void;
   setSearchQuery: (query: string) => void;
   setSelectedCategory: (category: SectionCategory | 'All') => void;
+  toggleComponentPanel: () => void;
+  setComponentPanelOpen: (isOpen: boolean) => void;
+  toggleComponentPanelMinimize: () => void;
+  setComponentPanelPosition: (position: { x: number; y: number } | null) => void;
   togglePropertyPanel: () => void;
   togglePropertyPanelPosition: () => void;
   togglePropsExpand: () => void;
@@ -125,6 +129,22 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     dispatch({ type: 'SET_SELECTED_CATEGORY', category });
   };
 
+  const toggleComponentPanel = () => {
+    dispatch({ type: 'TOGGLE_COMPONENT_PANEL' });
+  };
+
+  const setComponentPanelOpen = (isOpen: boolean) => {
+    dispatch({ type: 'SET_COMPONENT_PANEL_OPEN', isOpen });
+  };
+
+  const toggleComponentPanelMinimize = () => {
+    dispatch({ type: 'TOGGLE_COMPONENT_PANEL_MINIMIZE' });
+  };
+
+  const setComponentPanelPosition = (position: { x: number; y: number } | null) => {
+    dispatch({ type: 'SET_COMPONENT_PANEL_POSITION', position });
+  };
+
   const togglePropertyPanel = () => {
     dispatch({ type: 'TOGGLE_PROPERTY_PANEL' });
   };
@@ -162,6 +182,10 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       setActivePropertyTab,
       setSearchQuery,
       setSelectedCategory,
+      toggleComponentPanel,
+      setComponentPanelOpen,
+      toggleComponentPanelMinimize,
+      setComponentPanelPosition,
       togglePropertyPanel,
       togglePropertyPanelPosition,
       togglePropsExpand,

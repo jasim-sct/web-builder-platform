@@ -59,16 +59,25 @@ export const CompList: React.FC = () => {
   return (
     <>
       <div className="ws-category-filter-bar">
-        {ALL_CATEGORIES.map((cat) => (
-          <button
-            type="button"
-            key={cat}
-            className={`ws-category-chip ${state.selectedCategory === cat ? 'active' : ''}`}
-            onClick={() => setSelectedCategory(cat)}
-          >
-            {cat}
-          </button>
-        ))}
+        {ALL_CATEGORIES.map((cat) => {
+          const count =
+            cat === 'All'
+              ? allSections.length
+              : allSections.filter((s) => s.category === cat).length;
+          if (cat !== 'All' && count === 0) return null;
+
+          return (
+            <button
+              type="button"
+              key={cat}
+              className={`ws-category-chip ${state.selectedCategory === cat ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(cat)}
+            >
+              <span>{cat}</span>
+              <span className="ws-chip-count">{count}</span>
+            </button>
+          );
+        })}
       </div>
 
       <div className="ws-component-list-scroll">

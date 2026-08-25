@@ -54,7 +54,7 @@ export const EmptyCanvasState: React.FC = () => {
 
       <h2 className="ws-empty-title">Your Page is Empty</h2>
       <p className="ws-empty-desc">
-        Drag sections from the left library panel and drop them here to start building your website
+        Drag components from the tool palette or use quick actions below to start building your page
         layout.
       </p>
 

@@ -1,42 +1,134 @@
 @use '../1-helpers/variables' as *;
 @use '../1-helpers/mixins' as *;
 
-.ws-dnd-component-panel {
-  width: $sidebar-left-width;
-  background-color: $bg-surface-1;
-  border-right: 1px solid $border-subtle;
+.ws-floating-component-palette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: $floating-palette-width;
+  max-height: $floating-palette-max-height;
+  background-color: $bg-glass-panel;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid $border-glass;
+  border-radius: $radius-lg;
+  box-shadow:
+    $shadow-floating,
+    0 0 0 1px rgba(255, 255, 255, 0.05);
   display: flex;
   flex-direction: column;
-  height: 100%;
-  flex-shrink: 0;
-  z-index: 10;
+  z-index: $z-floating-palette;
+  overflow: hidden;
+  will-change: transform;
+  transition:
+    box-shadow $transition-fast,
+    max-height $transition-normal;
 
-  .ws-panel-header {
-    padding: 16px;
+  &.is-moving {
+    box-shadow:
+      0 28px 45px -5px rgba(0, 0, 0, 0.75),
+      0 12px 18px -6px rgba(0, 0, 0, 0.5),
+      0 0 0 1px $color-primary;
+    user-select: none;
+  }
+
+  &.is-minimized {
+    width: 280px;
+    max-height: 48px;
+
+    .ws-palette-header {
+      border-bottom: none;
+    }
+  }
+
+  .ws-palette-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background-color: $bg-glass-header;
     border-bottom: 1px solid $border-subtle;
+    cursor: grab;
+    user-select: none;
 
-    .ws-panel-title-row {
-      @include flex-between;
-      margin-bottom: 12px;
+    &:active {
+      cursor: grabbing;
+    }
 
-      .ws-panel-title {
-        font-size: 14px;
+    .ws-palette-drag-grip {
+      color: $text-muted;
+      display: flex;
+      align-items: center;
+      margin-right: 6px;
+      opacity: 0.7;
+      transition: opacity $transition-fast;
+    }
+
+    &:hover .ws-palette-drag-grip {
+      opacity: 1;
+      color: $text-secondary;
+    }
+
+    .ws-palette-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex: 1;
+
+      .ws-palette-title {
+        font-size: 13px;
         font-weight: 700;
         color: $text-primary;
         display: flex;
         align-items: center;
-        gap: 8px;
+        gap: 6px;
+        letter-spacing: -0.01em;
+
+        svg {
+          color: $color-primary;
+        }
       }
 
-      .ws-panel-count {
-        font-size: 11px;
+      .ws-palette-count-badge {
+        font-size: 10px;
         font-weight: 600;
-        padding: 2px 6px;
+        padding: 2px 7px;
         background-color: $bg-surface-3;
         border-radius: $radius-full;
         color: $text-secondary;
+        border: 1px solid $border-medium;
       }
     }
+
+    .ws-palette-header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+
+      .ws-palette-action-btn {
+        padding: 4px;
+        color: $text-muted;
+        border-radius: $radius-xs;
+
+        &:hover {
+          color: $text-primary;
+          background-color: $bg-surface-3;
+        }
+      }
+    }
+  }
+
+  .ws-palette-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .ws-palette-search-container {
+    padding: 10px 12px;
+    border-bottom: 1px solid $border-subtle;
 
     .ws-dnd-search-wrap {
       position: relative;
@@ -56,8 +148,8 @@
         background-color: $bg-surface-2;
         border: 1px solid $border-medium;
         border-radius: $radius-sm;
-        padding: 8px 12px 8px 34px;
-        font-size: 13px;
+        padding: 7px 30px 7px 32px;
+        font-size: 12px;
         color: $text-primary;
         transition: all $transition-fast;
 
@@ -72,19 +164,41 @@
           box-shadow: 0 0 0 2px $color-primary-light;
         }
       }
+
+      .ws-search-clear-btn {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        padding: 3px;
+        color: $text-muted;
+        border-radius: 50%;
+        background: transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        &:hover {
+          color: $text-primary;
+          background-color: $bg-surface-3;
+        }
+      }
     }
   }
 
   .ws-category-filter-bar {
     display: flex;
-    gap: 6px;
-    padding: 10px 16px;
+    gap: 5px;
+    padding: 8px 12px;
     overflow-x: auto;
     border-bottom: 1px solid $border-subtle;
     @include custom-scrollbar;
 
     .ws-category-chip {
-      padding: 4px 10px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
       font-size: 11px;
       font-weight: 600;
       border-radius: $radius-full;
@@ -93,6 +207,11 @@
       border: 1px solid $border-medium;
       white-space: nowrap;
       transition: all $transition-fast;
+
+      .ws-chip-count {
+        font-size: 9px;
+        opacity: 0.7;
+      }
 
       &:hover {
         background-color: $bg-surface-3;
@@ -103,6 +222,11 @@
         background-color: $color-primary;
         color: #ffffff;
         border-color: $color-primary;
+        box-shadow: 0 2px 6px rgba(59, 130, 246, 0.35);
+
+        .ws-chip-count {
+          opacity: 0.9;
+        }
       }
     }
   }
@@ -110,19 +234,19 @@
   .ws-component-list-scroll {
     flex: 1;
     overflow-y: auto;
-    padding: 14px 16px;
+    padding: 12px;
     display: flex;
     flex-direction: column;
-    gap: 18px;
+    gap: 14px;
     @include custom-scrollbar;
 
     .ws-category-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
 
       .ws-category-group-header {
-        font-size: 11px;
+        font-size: 10px;
         font-weight: 700;
         text-transform: uppercase;
         letter-spacing: 0.08em;
@@ -130,20 +254,21 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
+        padding: 0 4px;
       }
     }
 
     .ws-dnd-drag-card-group {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 6px;
 
       .ws-dnd-d-c-item {
         display: flex;
         align-items: center;
-        gap: 12px;
-        padding: 10px 12px;
-        background-color: $bg-surface-2;
+        gap: 10px;
+        padding: 8px 10px;
+        background-color: rgba(33, 38, 52, 0.7);
         border: 1px solid $border-medium;
         border-radius: $radius-md;
         cursor: grab;
@@ -161,6 +286,11 @@
           .ws-card-drag-handle {
             color: $color-primary;
           }
+
+          .ws-card-icon-wrap {
+            border-color: $color-primary;
+            background-color: $color-primary-light;
+          }
         }
 
         &:active {
@@ -168,20 +298,21 @@
         }
 
         &.is-dragging {
-          opacity: 0.5;
+          opacity: 0.4;
           border-style: dashed;
           border-color: $color-primary;
         }
 
         .ws-card-icon-wrap {
-          width: 36px;
-          height: 36px;
+          width: 32px;
+          height: 32px;
           border-radius: $radius-sm;
           background-color: $bg-surface-1;
           border: 1px solid $border-medium;
           @include flex-center;
           color: $color-primary;
           flex-shrink: 0;
+          transition: all $transition-fast;
         }
 
         .ws-card-content {
@@ -189,16 +320,16 @@
           min-width: 0;
 
           .ws-card-title {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 600;
             color: $text-primary;
             @include text-truncate;
           }
 
           .ws-card-desc {
-            font-size: 11px;
+            font-size: 10.5px;
             color: $text-muted;
-            margin-top: 2px;
+            margin-top: 1px;
             @include text-truncate;
           }
         }
@@ -207,19 +338,20 @@
           color: $text-muted;
           transition: color $transition-fast;
           flex-shrink: 0;
+          opacity: 0.7;
         }
       }
     }
 
     .ws-empty-search {
-      padding: 32px 16px;
+      padding: 24px 12px;
       text-align: center;
       color: $text-muted;
-      font-size: 13px;
+      font-size: 12px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
   }
 }

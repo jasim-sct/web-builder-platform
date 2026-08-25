@@ -9,8 +9,9 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  z-index: 20;
+  z-index: $z-header;
   flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
 
   .ws-header-left {
     display: flex;
@@ -22,7 +23,7 @@
       align-items: center;
       gap: 8px;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14.5px;
       color: $text-primary;
       letter-spacing: -0.02em;
 
@@ -33,6 +34,7 @@
         background: linear-gradient(135deg, $color-primary, $color-purple);
         @include flex-center;
         color: #ffffff;
+        box-shadow: 0 2px 8px rgba(59, 130, 246, 0.4);
       }
     }
 
@@ -52,7 +54,7 @@
         border: 1px solid transparent;
         color: $text-primary;
         font-weight: 600;
-        font-size: 14px;
+        font-size: 13.5px;
         padding: 4px 8px;
         border-radius: $radius-xs;
         transition: all $transition-fast;
@@ -66,7 +68,7 @@
       }
 
       .ws-section-count-badge {
-        font-size: 11px;
+        font-size: 10.5px;
         font-weight: 600;
         text-transform: uppercase;
         letter-spacing: 0.05em;
@@ -88,7 +90,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      padding: 4px 10px;
+      padding: 4px 12px;
       background-color: $bg-surface-2;
       border: 1px solid $border-medium;
       border-radius: $radius-full;
@@ -100,6 +102,7 @@
         height: 6px;
         border-radius: 50%;
         background-color: $color-success;
+        box-shadow: 0 0 6px rgba(16, 185, 129, 0.6);
       }
 
       strong {
@@ -112,5 +115,16 @@
     display: flex;
     align-items: center;
     gap: 8px;
+
+    .ws-header-divider {
+      width: 1px;
+      height: 18px;
+      background-color: $border-medium;
+      margin: 0 2px;
+    }
+
+    .ws-btn-components-toggle {
+      font-weight: 600;
+    }
   }
 }

@@ -22,6 +22,9 @@ export interface EditorState {
   activePropertyTab: PropertyTab;
   searchQuery: string;
   selectedCategory: SectionCategory | 'All';
+  isComponentPanelOpen: boolean;
+  isComponentPanelMinimized: boolean;
+  componentPanelPosition: { x: number; y: number } | null;
   isPropertyPanelOpen: boolean;
   propertyPanelPosition: 'right' | 'left';
   isPropsExpanded: boolean;
@@ -42,6 +45,10 @@ export type EditorAction =
   | { type: 'SET_ACTIVE_PROPERTY_TAB'; tab: PropertyTab }
   | { type: 'SET_SEARCH_QUERY'; query: string }
   | { type: 'SET_SELECTED_CATEGORY'; category: SectionCategory | 'All' }
+  | { type: 'TOGGLE_COMPONENT_PANEL' }
+  | { type: 'SET_COMPONENT_PANEL_OPEN'; isOpen: boolean }
+  | { type: 'TOGGLE_COMPONENT_PANEL_MINIMIZE' }
+  | { type: 'SET_COMPONENT_PANEL_POSITION'; position: { x: number; y: number } | null }
   | { type: 'TOGGLE_PROPERTY_PANEL' }
   | { type: 'TOGGLE_PROPERTY_PANEL_POSITION' }
   | { type: 'TOGGLE_PROPS_EXPAND' }

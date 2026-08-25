@@ -9,6 +9,7 @@ export const EditorHeader: React.FC = () => {
     selectedSection,
     selectedSectionItem,
     selectSection,
+    toggleComponentPanel,
     togglePropertyPanel,
     resetPage,
     addSection,
@@ -71,16 +72,31 @@ export const EditorHeader: React.FC = () => {
       </div>
 
       <div className="ws-header-right">
+        <button
+          type="button"
+          className={`ws-btn-base ws-btn-components-toggle ${
+            state.isComponentPanelOpen ? 'ws-btn-primary' : 'ws-btn-secondary'
+          }`}
+          onClick={toggleComponentPanel}
+          title="Toggle Components Palette"
+        >
+          <Plus size={14} />
+          <span>Components</span>
+        </button>
+
         {state.page.sections.length === 0 && (
           <button
             type="button"
-            className="ws-btn-base ws-btn-primary"
+            className="ws-btn-base ws-btn-secondary"
             onClick={() => addSection('hero')}
+            title="Quick add Hero section"
           >
-            <Plus size={14} />
-            Add Hero Section
+            <Sparkles size={13} />
+            <span>Add Hero</span>
           </button>
         )}
+
+        <div className="ws-header-divider" />
 
         <button
           type="button"
@@ -101,7 +117,7 @@ export const EditorHeader: React.FC = () => {
           title="Toggle Properties Panel"
         >
           <SlidersHorizontal size={14} />
-          Properties
+          <span>Inspector</span>
         </button>
       </div>
     </header>

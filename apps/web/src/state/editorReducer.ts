@@ -16,6 +16,9 @@ export const initialEditorState: EditorState = {
   activePropertyTab: 'props',
   searchQuery: '',
   selectedCategory: 'All',
+  isComponentPanelOpen: true,
+  isComponentPanelMinimized: false,
+  componentPanelPosition: null,
   isPropertyPanelOpen: true,
   propertyPanelPosition: 'right',
   isPropsExpanded: false,
@@ -254,6 +257,34 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       return {
         ...state,
         selectedCategory: action.category,
+      };
+    }
+
+    case 'TOGGLE_COMPONENT_PANEL': {
+      return {
+        ...state,
+        isComponentPanelOpen: !state.isComponentPanelOpen,
+      };
+    }
+
+    case 'SET_COMPONENT_PANEL_OPEN': {
+      return {
+        ...state,
+        isComponentPanelOpen: action.isOpen,
+      };
+    }
+
+    case 'TOGGLE_COMPONENT_PANEL_MINIMIZE': {
+      return {
+        ...state,
+        isComponentPanelMinimized: !state.isComponentPanelMinimized,
+      };
+    }
+
+    case 'SET_COMPONENT_PANEL_POSITION': {
+      return {
+        ...state,
+        componentPanelPosition: action.position,
       };
     }
 

@@ -115,4 +115,21 @@ describe('editorReducer', () => {
     });
     expect(state.page.sections[0]?.actions?.primaryCta?.target).toBe('/pricing');
   });
+
+  it('should handle component panel toggle, minimize, and position updates', () => {
+    let state = editorReducer(initialEditorState, { type: 'TOGGLE_COMPONENT_PANEL' });
+    expect(state.isComponentPanelOpen).toBe(false);
+
+    state = editorReducer(state, { type: 'SET_COMPONENT_PANEL_OPEN', isOpen: true });
+    expect(state.isComponentPanelOpen).toBe(true);
+
+    state = editorReducer(state, { type: 'TOGGLE_COMPONENT_PANEL_MINIMIZE' });
+    expect(state.isComponentPanelMinimized).toBe(true);
+
+    state = editorReducer(state, {
+      type: 'SET_COMPONENT_PANEL_POSITION',
+      position: { x: 120, y: 80 },
+    });
+    expect(state.componentPanelPosition).toEqual({ x: 120, y: 80 });
+  });
 });

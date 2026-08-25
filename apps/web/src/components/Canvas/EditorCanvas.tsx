@@ -7,7 +7,14 @@ import { EditorSectionWrapper } from './EditorSectionWrapper';
 import { EmptyCanvasState } from './EmptyCanvasState';
 
 export const EditorCanvas: React.FC = () => {
-  const { state, selectSection, addSection, reorderSections, setActiveDropIndex } = useEditor();
+  const {
+    state,
+    selectSection,
+    addSection,
+    reorderSections,
+    setActiveDropIndex,
+    toggleComponentPanel,
+  } = useEditor();
   const { sections } = state.page;
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +111,23 @@ export const EditorCanvas: React.FC = () => {
           </>
         )}
       </div>
+
+      {!state.isComponentPanelOpen && (
+        <button
+          type="button"
+          className="ws-canvas-floating-trigger"
+          onClick={(e) => {
+            e.stopPropagation();
+            toggleComponentPanel();
+          }}
+          title="Open Components Palette"
+        >
+          <div className="ws-trigger-icon-circle">
+            <span className="ws-plus-sign">+</span>
+          </div>
+          <span>Components</span>
+        </button>
+      )}
     </main>
   );
 };
