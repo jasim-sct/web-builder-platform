@@ -1,0 +1,29 @@
+# Dependencies & Stores
+node_modules/
+.pnpm-store/
+
+# Build & Dist Outputs
+dist/
+build/
+out/
+.next/
+!.next/cache/
+
+# Turborepo
+.turbo/
+
+# Coverage
+coverage/
+.nyc_output/
+
+# Git & Husky
+.git/
+.husky/_/
+
+# Lock files
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Cache
+*.tsbuildinfo
