@@ -1,5 +1,10 @@
 # Web Editor Architecture, Development Workflow & Standards
 
+> **Purpose:** System topology, absolute architectural rules, data contracts, and implementation standards for the Web Editor.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Related:** [Architecture & Principles](architecture.md), [Component Architecture](packages/component-architecture.md)
+
 This document defines the architectural rules, system boundaries, data contracts, and implementation standards for the **Web Editor**. All contributors and agents must adhere strictly to these principles before and during development.
 
 ---

@@ -1,23 +1,41 @@
 # AI Agent Guidelines
 
-This document defines the authoritative constraints, boundaries, and workflows that all AI agents must follow when working in this monorepo workspace.
+> **Purpose:** Authoritative constraints, boundaries, and workflows for AI agents working in this monorepo.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Source of Truth:** This document + source code inspection
 
 ---
 
 ## 1. Project Context
 
-This is a **website builder platform** where users compose professional websites by selecting, stacking, and customizing pre-built sections through a visual drag-and-drop editor. The system has two primary codebases:
+This is a **website builder platform** where users compose professional websites by selecting, stacking, and customizing pre-built sections through a visual drag-and-drop editor.
 
 | Codebase            | Path                            | Purpose                                          |
 | :------------------ | :------------------------------ | :----------------------------------------------- |
 | **Section Library** | `packages/component-library`    | React sections, schemas, registry, styles, tests |
 | **Web Editor**      | `apps/website-builder-platform` | Visual editor that consumes the Section Library  |
+| **Tooling**         | `tooling/`                      | Shared ESLint, TypeScript, Prettier configs      |
 
 > See [Architecture & Principles](../architecture.md) for the full monorepo topology.
+> See [Component Architecture](../packages/component-architecture.md) for component boundary rules.
 
 ---
 
-## 2. Folder Boundaries
+## 2. Entry Point for AI Agents
+
+When entering this repository, follow this sequence:
+
+1. Read this document (`docs/ai/AGENT_GUIDELINES.md`)
+2. Read [Architecture & Principles](../architecture.md) for system topology
+3. Read [Component Architecture](../packages/component-architecture.md) for component rules
+4. Read [Data Models](../data/index.md) for type contracts
+5. Read [Serialization Rules](../business-rules/serialization-rules.md) for data constraints
+6. Inspect the actual source code before making any changes
+
+---
+
+## 3. Folder Boundaries
 
 ### Safe Modification Zones
 
@@ -40,7 +58,7 @@ You are permitted to modify files within these directories:
 
 ---
 
-## 3. Absolute Architectural Rules
+## 4. Absolute Architectural Rules
 
 ### Rule 1: The Web Editor Consumes the Section Library
 
@@ -104,9 +122,17 @@ Only persistent state participates in undo/redo history.
 - `eval()`, `new Function()`, inline script strings, and arbitrary JavaScript execution are **strictly forbidden**
 - All user-provided URLs must be sanitized to prevent `javascript:` URI attacks and XSS
 
+### Rule 6: Component Independence
+
+Components must be independently usable without the Builder. See [Component Architecture](../packages/component-architecture.md) for full boundary rules.
+
+### Rule 7: Design System Integration
+
+Components must use shared design tokens from the SCSS design system. Do not introduce arbitrary values when tokens exist.
+
 ---
 
-## 4. Code Conventions
+## 5. Code Conventions
 
 ### Naming
 
@@ -142,7 +168,7 @@ Follow the enforced Prettier import sort order (see [Conventions](../conventions
 
 ---
 
-## 5. Section Library Adding a New Section
+## 6. Adding a New Section
 
 When adding a new section to `@repo/component-library`:
 
@@ -162,7 +188,26 @@ See [Component Library](../packages/component-library.md) for detailed specifica
 
 ---
 
-## 6. Common Pitfalls
+## 7. Source of Truth Locations
+
+| Concept              | Authoritative Source                                      |
+| :------------------- | :-------------------------------------------------------- |
+| Section components   | `packages/component-library/lib/components/`              |
+| Section schemas      | `packages/component-library/lib/schema/`                  |
+| Section registry     | `packages/component-library/lib/registry/`                |
+| Core types           | `packages/component-library/lib/types.ts`                 |
+| Style resolver       | `packages/component-library/lib/helpers/styleResolver.ts` |
+| Editor state         | `apps/website-builder-platform/src/state/`                |
+| Editor types         | `apps/website-builder-platform/src/types/editor.ts`       |
+| Design tokens (SCSS) | `packages/component-library/lib/assets/scss/`             |
+| Design tokens (TS)   | `apps/website-builder-platform/src/design-system/tokens/` |
+| Business rules       | `docs/business-rules/serialization-rules.md`              |
+| Component rules      | `docs/packages/component-architecture.md`                 |
+| Data models          | `docs/data/index.md`                                      |
+
+---
+
+## 8. Common Pitfalls
 
 | Pitfall                                      | How to Avoid                                                         |
 | :------------------------------------------- | :------------------------------------------------------------------- |
@@ -173,10 +218,13 @@ See [Component Library](../packages/component-library.md) for detailed specifica
 | Creating replacement editor components       | The editor wraps, never replaces, section library components         |
 | Ignoring responsive breakpoints              | Always consider Desktop/Tablet/Mobile when modifying styles          |
 | Forgetting to register new sections          | A new section won't appear in the editor without `registerSection()` |
+| Exposing internal CSS as Builder config      | Only expose meaningful customization properties                      |
+| Hard-coding colors in components             | Use CSS custom properties / design tokens                            |
+| Adding component-specific Builder CSS hacks  | Communicate through the schema contract only                         |
 
 ---
 
-## 7. Validation Workflow
+## 9. Validation Workflow
 
 Before submitting any changes, run:
 
@@ -201,7 +249,7 @@ See [Workflow & Testing](../development/workflow-and-testing.md) for detailed co
 
 ---
 
-## 8. Pre-Change Checklist
+## 10. Pre-Change Checklist
 
 Before modifying any file, verify:
 
@@ -213,3 +261,35 @@ Before modifying any file, verify:
 - [ ] Will this change keep Storybook and existing section consumers operational?
 - [ ] Am I following the import ordering standard?
 - [ ] Am I using `import type` for type-only imports?
+- [ ] Am I using design tokens instead of hardcoded values?
+- [ ] Does the component remain independently usable?
+- [ ] Are internal spacing rules maintained?
+- [ ] Is the configuration schema properly defined?
+
+---
+
+## 11. Documentation Requirements
+
+When making changes:
+
+- Update relevant documentation if behavior changes
+- Keep cross-references accurate
+- Document new business rules in `docs/business-rules/`
+- Add ADRs for significant architectural decisions in `docs/decisions/`
+- Update the glossary if new terms are introduced
+
+---
+
+## 12. Forbidden Assumptions
+
+Do not assume:
+
+- A component's internal DOM structure
+- That the Builder is always the consumer
+- That styles are always applied via CSS classes
+- That all properties are configurable
+- That responsive behavior is optional
+- That accessibility is handled elsewhere
+- That the current implementation is the only valid approach
+
+Always inspect the source code and documentation before making changes.

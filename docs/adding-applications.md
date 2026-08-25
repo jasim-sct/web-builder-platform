@@ -1,5 +1,10 @@
 # Guide: Adding Applications
 
+> **Purpose:** How to scaffold new applications in the monorepo (Next.js, React SPA, NestJS).
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Related:** [Architecture & Principles](architecture.md), [Conventions](conventions.md)
+
 This guide outlines how to create future applications inside `apps/` without breaking workspace conventions.
 
 ---

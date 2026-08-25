@@ -1,5 +1,10 @@
 # Turborepo Guide
 
+> **Purpose:** Pipeline tasks, caching strategy, filtering commands, and build orchestration.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Source of Truth:** Root `turbo.json`
+
 This workspace uses [Turborepo](https://turbo.build/) to orchestrate builds, test suites, linter runs, and development servers with high caching efficiency.
 
 ---

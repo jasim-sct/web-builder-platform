@@ -1,6 +1,10 @@
 # Monorepo Documentation Hub
 
-Welcome to the central documentation for the **monorepo-workspace**. This hub provides a navigable map to all architecture, conventions, specifications, and operational guides — designed for both human developers and AI agents.
+> **Purpose:** Primary entry point for all project documentation. Designed for both human developers and AI agents.
+> **Last Reviewed:** 2026-08-25
+> **Status:** Active
+
+Welcome to the centralized documentation for the **monorepo-workspace** — a website builder platform built with a shared component library architecture.
 
 ---
 
@@ -20,24 +24,34 @@ Welcome to the central documentation for the **monorepo-workspace**. This hub pr
 
 ---
 
-## Project Overview
+## What This Project Is
 
-This monorepo is a **website builder platform** built with a shared component library architecture. Users compose professional websites by selecting, stacking, and customizing pre-built sections through a visual drag-and-drop editor.
+This monorepo is a **website builder platform** where users compose professional websites by selecting, stacking, and customizing pre-built sections through a visual drag-and-drop editor. The system is composed of:
 
-### Technology Stack
+| Application / Package        | Path                            | Purpose                                              |
+| :--------------------------- | :------------------------------ | :--------------------------------------------------- |
+| **Website Builder Platform** | `apps/website-builder-platform` | Visual drag-and-drop editor (React 19 + Vite)        |
+| **Component Library**        | `packages/component-library`    | Shared section components, schemas, registry, styles |
+| **ESLint Config**            | `tooling/eslint`                | Shared ESLint presets (base, react, next, nest)      |
+| **TypeScript Config**        | `tooling/typescript`            | Shared TypeScript configurations                     |
+| **Prettier Config**          | `tooling/prettier`              | Shared Prettier configuration                        |
 
-| Layer              | Technology                     |
-| :----------------- | :----------------------------- |
-| Package Manager    | pnpm (workspace protocol)      |
-| Build Orchestrator | Turborepo                      |
-| UI Framework       | React 19                       |
-| Editor App         | Vite + TypeScript              |
-| Component Library  | SCSS + TypeScript              |
-| Component Docs     | Storybook 8                    |
-| Testing            | Vitest + React Testing Library |
-| Linting            | ESLint 9 (flat config)         |
-| Formatting         | Prettier                       |
-| Git Hooks          | Husky + Commitlint             |
+---
+
+## Technology Stack
+
+| Layer              | Technology                                |
+| :----------------- | :---------------------------------------- |
+| Package Manager    | pnpm (workspace protocol)                 |
+| Build Orchestrator | Turborepo                                 |
+| UI Framework       | React 19                                  |
+| Editor App         | Vite + TypeScript                         |
+| Component Library  | SCSS + TypeScript                         |
+| Component Docs     | Storybook 8                               |
+| Testing            | Vitest + React Testing Library            |
+| Linting            | ESLint 9 (flat config)                    |
+| Formatting         | Prettier (with import sorting)            |
+| Git Hooks          | Husky + Commitlint (Conventional Commits) |
 
 ---
 
@@ -66,47 +80,132 @@ monorepo-workspace/
 
 ### Architecture & Conventions
 
-- [Architecture & Principles](architecture.md) — Monorepo topology, core principles, dependency management
-- [Workspace Conventions](conventions.md) — Naming, commits, branching, import ordering
-- [Turborepo Guide](turborepo-guide.md) — Pipeline tasks, caching, filtering commands
-
-### Guides
-
-- [Adding Applications](adding-applications.md) — How to scaffold new apps (Next.js, React SPA, NestJS)
-- [Adding Shared Packages](adding-packages.md) — How to create shared libraries and UI packages
+| Document                                                     | Description                                                                 |
+| :----------------------------------------------------------- | :-------------------------------------------------------------------------- |
+| [Architecture & Principles](architecture.md)                 | Monorepo topology, core principles, dependency management                   |
+| [Workspace Conventions](conventions.md)                      | Naming, commits, branching, import ordering                                 |
+| [Turborepo Guide](turborepo-guide.md)                        | Pipeline tasks, caching, filtering commands                                 |
+| [Component Architecture](packages/component-architecture.md) | Component boundaries, spacing rules, override principles, responsive design |
 
 ### Application Specifications
 
-- [Website Builder Platform](applications/website-builder-platform.md) — In-depth editor architecture, state management, component layout
+| Document                                                             | Description                                                      |
+| :------------------------------------------------------------------- | :--------------------------------------------------------------- |
+| [Website Builder Platform](applications/website-builder-platform.md) | Editor architecture, state management, components, design system |
 
 ### Package Specifications
 
-- [Component Library](packages/component-library.md) — Section Library internals, Storybook config, section components
+| Document                                           | Description                                                       |
+| :------------------------------------------------- | :---------------------------------------------------------------- |
+| [Component Library](packages/component-library.md) | Section Library internals, Storybook config, 9 section components |
 
 ### APIs & Schemas
 
-- [Registry & Schemas](apis/registry-and-schemas.md) — Schema-driven property rendering, type mappings, responsive rules
+| Document                                           | Description                                                       |
+| :------------------------------------------------- | :---------------------------------------------------------------- |
+| [Registry & Schemas](apis/registry-and-schemas.md) | Schema-driven property rendering, type mappings, responsive rules |
+
+### Data & Models
+
+| Document                     | Description                                                           |
+| :--------------------------- | :-------------------------------------------------------------------- |
+| [Data Models](data/index.md) | All shared types, domain models, state structures, schema definitions |
 
 ### Business Rules
 
-- [Serialization Rules](business-rules/serialization-rules.md) — PageModel contract, state transitions, undo/redo, action security
+| Document                                                     | Description                                                       |
+| :----------------------------------------------------------- | :---------------------------------------------------------------- |
+| [Serialization Rules](business-rules/serialization-rules.md) | PageModel contract, state transitions, undo/redo, action security |
+
+### Workflows
+
+| Document                                   | Description                                                                  |
+| :----------------------------------------- | :--------------------------------------------------------------------------- |
+| [End-to-End Workflows](workflows/index.md) | Section addition, configuration, reordering, duplication, responsive editing |
+
+### Integrations
+
+| Document                                                | Description                                                                |
+| :------------------------------------------------------ | :------------------------------------------------------------------------- |
+| [Cross-Application Integrations](integrations/index.md) | Editor ↔ Library integration, tooling, build pipeline, shared dependencies |
+
+### Design System
+
+| Document                                | Description                                                              |
+| :-------------------------------------- | :----------------------------------------------------------------------- |
+| [Design System](design-system/index.md) | Shared SCSS tokens, editor design tokens, CSS conventions, accessibility |
+
+### Configuration
+
+| Document                                              | Description                                                         |
+| :---------------------------------------------------- | :------------------------------------------------------------------ |
+| [Configuration & Environment](configuration/index.md) | All config files, environment variables, build settings, git config |
 
 ### Development & Operations
 
-- [Workflow & Testing](development/workflow-and-testing.md) — Dev commands, test suites, troubleshooting
+| Document                                                  | Description                                                       |
+| :-------------------------------------------------------- | :---------------------------------------------------------------- |
+| [Workflow & Testing](development/workflow-and-testing.md) | Dev commands, test suites, CI/CD, troubleshooting                 |
+| [Testing Strategy](testing/index.md)                      | Test levels, conventions, mocking strategy, coverage expectations |
 
 ### Reference
 
-- [Glossary](glossary.md) — Technical and business vocabulary
-- [Web Editor Architecture](web-editor-architecture.md) — System topology, absolute rules, 16-stage roadmap
+| Document                                              | Description                                       |
+| :---------------------------------------------------- | :------------------------------------------------ |
+| [Glossary](glossary.md)                               | Technical, business, and internal terminology     |
+| [Web Editor Architecture](web-editor-architecture.md) | System topology, absolute rules, 16-stage roadmap |
 
 ### Decisions
 
-- [ADR-0001: Schema-Driven Properties Panel](decisions/0001-schema-driven-properties-panel.md) — Why properties are schema-driven, not hardcoded
+| Document                                                                                     | Description                                     |
+| :------------------------------------------------------------------------------------------- | :---------------------------------------------- |
+| [ADR-0001: Schema-Driven Properties Panel](decisions/0001-schema-driven-properties-panel.md) | Why properties are schema-driven, not hardcoded |
+
+### Guides
+
+| Document                                      | Description                                           |
+| :-------------------------------------------- | :---------------------------------------------------- |
+| [Adding Applications](adding-applications.md) | How to scaffold new apps (Next.js, React SPA, NestJS) |
+| [Adding Shared Packages](adding-packages.md)  | How to create shared libraries and UI packages        |
+
+### Troubleshooting
+
+| Document                                    | Description                            |
+| :------------------------------------------ | :------------------------------------- |
+| [Troubleshooting](troubleshooting/index.md) | Common issues, causes, and resolutions |
 
 ### AI Agent Resources
 
-- [Agent Guidelines](ai/AGENT_GUIDELINES.md) — Boundaries, conventions, forbidden patterns, validation workflows
+| Document                                   | Description                                                       |
+| :----------------------------------------- | :---------------------------------------------------------------- |
+| [Agent Guidelines](ai/AGENT_GUIDELINES.md) | Boundaries, conventions, forbidden patterns, validation workflows |
+
+---
+
+## Where to Start
+
+### For New Developers
+
+1. Read [Architecture & Principles](architecture.md) for the big picture
+2. Read [Workspace Conventions](conventions.md) for coding standards
+3. Read [Workflow & Testing](development/workflow-and-testing.md) for dev setup
+4. Read [Component Library](packages/component-library.md) to understand the section system
+5. Read [Website Builder Platform](applications/website-builder-platform.md) for the editor
+
+### For AI Agents
+
+1. Read [Agent Guidelines](ai/AGENT_GUIDELINES.md) first — this is your authoritative constraint document
+2. Read [Architecture & Principles](architecture.md) for system topology
+3. Read [Component Architecture](packages/component-architecture.md) for component rules
+4. Read [Data Models](data/index.md) for type contracts
+5. Read [Serialization Rules](business-rules/serialization-rules.md) for data constraints
+
+### For Adding New Sections
+
+1. Read [Component Library](packages/component-library.md) — Section 5 (module pattern)
+2. Read [Component Architecture](packages/component-architecture.md) — Development Checklist
+3. Read [Registry & Schemas](apis/registry-and-schemas.md) — Schema system
+4. Read [Adding Shared Packages](adding-packages.md) — Package creation guide
 
 ---
 
@@ -117,3 +216,20 @@ monorepo-workspace/
 3. **Avoid circular references** — each document links outward but does not create infinite loops.
 4. **Check the glossary** if you encounter an unfamiliar term.
 5. **Consult Agent Guidelines** before making any code changes if you are an AI agent.
+6. **Verify against source** — documentation must match the current implementation.
+
+---
+
+## Authoritative Sources
+
+| Concept                | Authoritative Source                                          |
+| :--------------------- | :------------------------------------------------------------ |
+| API behavior           | Implementation, schemas, API contracts                        |
+| Business rules         | `docs/business-rules/serialization-rules.md` + implementation |
+| Design system          | `packages/component-library/lib/assets/scss/`                 |
+| Component schemas      | `packages/component-library/lib/schema/`                      |
+| Section registry       | `packages/component-library/lib/registry/`                    |
+| Editor state           | `apps/website-builder-platform/src/state/`                    |
+| Type definitions       | `packages/component-library/lib/types.ts`                     |
+| Architecture decisions | `docs/decisions/`                                             |
+| Environment config     | Root `package.json`, `turbo.json`, `tsconfig.base.json`       |

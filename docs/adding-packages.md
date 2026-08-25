@@ -1,5 +1,10 @@
 # Guide: Adding Shared Packages
 
+> **Purpose:** How to create shared libraries and UI packages in the monorepo.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Related:** [Architecture & Principles](architecture.md), [Conventions](conventions.md)
+
 This guide describes how to create shared packages and libraries inside `packages/`.
 
 ---

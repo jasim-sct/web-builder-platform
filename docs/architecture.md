@@ -1,5 +1,10 @@
 # Workspace Architecture & Principles
 
+> **Purpose:** Monorepo topology, core principles, dependency management, and system architecture.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Source of Truth:** Root `pnpm-workspace.yaml`, `turbo.json`, `tsconfig.base.json`
+
 This monorepo is engineered to be a unified, high-performance workspace for React, Next.js, and NestJS applications while maintaining strict boundaries, framework-agnostic foundation standards, and zero leakage between projects.
 
 ---
@@ -61,4 +66,14 @@ graph TD
 The Web Platform follows a strict three-tier architecture where the **Section Library** (`@repo/component-library`) is the single source of truth consumed by both **Storybook** (for component testing/docs) and the **Web Editor** (for visual site composition and schema-driven configuration).
 
 For the complete architectural rules, boundaries, serialization model, and 16-stage implementation workflow, refer to:
-👉 [Web Editor Architecture & Workflow](file:///home/sct/dnd/docs/web-editor-architecture.md)
+👉 [Web Editor Architecture & Workflow](web-editor-architecture.md)
+
+---
+
+See also:
+
+- [Workspace Conventions](conventions.md) — Naming, commits, branching standards
+- [Turborepo Guide](turborepo-guide.md) — Build pipeline details
+- [Integrations](integrations/index.md) — Cross-application dependencies
+- [Configuration](configuration/index.md) — All config files
+- [Glossary](glossary.md) — Term definitions

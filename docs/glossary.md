@@ -1,6 +1,9 @@
 # Repository Glossary
 
-This glossary defines technical, business, and internal terminology used across the website builder platform ecosystem. Use these terms consistently in code, comments, commits, and documentation.
+> **Purpose:** Centralized terminology reference for the entire monorepo.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Usage:** Use these terms consistently in code, comments, commits, and documentation.
 
 ---
 
@@ -8,27 +11,47 @@ This glossary defines technical, business, and internal terminology used across 
 
 ### Section
 
-A complete, professionally designed visual region of a page (e.g. Header, Hero, Features, Pricing). In the repository, it is the fundamental building block of a website page. Represented by React components in the component library and rendered dynamically on the editor canvas.
+A complete, professionally designed visual region of a page (e.g., Header, Hero, Features, Pricing). The fundamental building block of a website page. Represented as React components in the Component Library and rendered dynamically on the Editor canvas.
 
-### Page Model
+### Page Model / PageData
 
-A serialized JSON data structure (`PageModel`) that represents a composed page. It contains page metadata (title, description, slug) and an ordered array of `SectionInstance` configurations.
+A serialized JSON data structure representing a composed page. Contains page metadata (name, slug) and an ordered array of SectionInstance configurations. Must remain 100% JSON-serializable at all times.
 
 ### Section Instance
 
-A specific instance of a section on a page (represented by a unique UUID). It contains the configuration overrides for that section: `props` (content), `style` (per-breakpoint design overrides), and `actions` (declarative click behaviors).
+A specific instance of a section on a page, identified by a unique ID (e.g., `hero-1708862400-abc12`). Contains configuration overrides: `props` (content), `style` (per-breakpoint design), and `actions` (declarative behaviors).
 
 ### Props (Properties)
 
-The content and options configuration for a section instance (e.g., text headlines, icon names, list items, boolean flags to show/hide sub-elements).
+Content and options configuration for a section instance (e.g., text headlines, icon names, list items, boolean flags). Controlled by the section's `schema.props`.
 
 ### Style
 
-The design configuration of a section instance (e.g., padding values, margin overrides, font alignments, border styles).
+Design configuration of a section instance (e.g., padding, colors, borders, shadows, typography). Controlled by the section's `schema.style`. Supports per-breakpoint overrides (Desktop, Tablet, Mobile).
 
 ### Actions
 
-Declarative bindings that map user interactions (like clicking a CTA button or card) to interactive behaviors (e.g. navigation, external URLs, popup toggles, scroll-to-section).
+Declarative bindings mapping user interactions (clicking a CTA button) to behaviors (navigation, external URLs, popups, scroll). Controlled by the section's `schema.actions`. Must use `ActionConfig` objects — never inline functions.
+
+### Section Category
+
+The organizational grouping for sections: Navigation, Hero, Content, Media, Business, Conversion, Utility. Used for filtering in the Component Panel.
+
+### Builder / Web Editor / Editor
+
+The visual drag-and-drop application (`apps/website-builder-platform`) where users compose pages by selecting, arranging, and customizing sections. It is a composition and configuration engine — never a component implementation engine.
+
+### Component Panel
+
+The section library browser in the Editor where users find and select sections to add to their page. Displays sections as draggable cards organized by category.
+
+### Properties Panel / Property Panel
+
+The schema-driven interface in the Editor for editing the selected section's content (Props), design (Style), and interactions (Actions).
+
+### Canvas
+
+The main editing area in the Editor where sections are rendered and arranged. Sections are wrapped in `EditorSectionWrapper` for selection, hover, and drag interactions.
 
 ---
 
@@ -36,48 +59,155 @@ Declarative bindings that map user interactions (like clicking a CTA button or c
 
 ### Section Registry
 
-A centralized registry store (`SectionRegistryStore`) inside `@repo/component-library`. It is the single source of truth that tracks registered section metadata, schemas, and default states, and provides the `render()` helper to dynamically instantiate section React components.
+A centralized singleton store (`SectionRegistryStore`) in `@repo/component-library`. The single source of truth for registered section metadata, schemas, defaults, and components. Provides `getSection()`, `getSectionSchema()`, `renderSectionInstance()`.
 
 ### Schema-Driven Properties
 
-A visual composition pattern where the sidebar Properties Panel dynamically maps configuration inputs based on a component's property schemas (e.g., `textProp`, `selectProp`, `colorProp`, `arrayProp`) rather than hardcoding custom form controls for each component.
+A pattern where the Properties Panel dynamically renders form controls based on a section's property schema (`SectionSchema`) rather than hardcoding component-specific forms.
 
-### Serializable State
+### SectionSchema
 
-A pure JavaScript state domain containing only data structures that can be safely serialized into JSON strings (no functions, class instances, DOM references, or React JSX nodes). It includes only Page Model data.
+The complete configuration contract for a section, defining `props`, `style`, and `actions` schemas. Determines what the Properties Panel renders.
 
-### Ephemeral State
+### PropertySchema
 
-Temporary UI states (e.g., active section selection, hover outlines, dragging coordinates, sidebar panel toggles) that are kept in a separate React Context state. They do not persist when a page is saved and do not participate in the undo/redo history stack.
+Schema definition for a single configurable property. Includes `key`, `label`, `type`, `defaultValue`, `options`, `validation`, `responsive`, etc.
 
-### Time-Travel History
+### PropertyType
 
-A centralized undo/redo state manager that maintains a stack of past and future Page Model states to let creators revert or re-apply change actions.
+The type of a schema property: `text`, `textarea`, `number`, `boolean`, `select`, `color`, `image`, `icon`, `link`, `action`, `spacing`, `typography`, `border`, `shadow`, `object`, `array`.
+
+### Standard Style Schema
+
+A shared schema object (`standardStyleSchema`) used by all sections for common style properties (alignment, spacing, typography, background, border, effects). Sections extend or override as needed.
+
+### Serializable State / Persistent State
+
+Pure JavaScript state containing only JSON-serializable data (no functions, DOM refs, JSX). Includes page metadata, section instances, props, styles, and actions. Participates in undo/redo history.
+
+### Ephemeral State / UI State
+
+Temporary UI states (selection, hover, drag coordinates, panel visibility, search queries) kept separate from page state. Does not persist and does not participate in undo/redo.
+
+### Time-Travel History / Undo/Redo
+
+A centralized undo/redo mechanism maintaining past and future Page Model states. Only persistent state mutations participate.
 
 ### Responsive Breakpoint Overrides
 
-Inheritable property style overrides matching specific viewport ranges: Desktop (base), Tablet (optional override), and Mobile (optional override).
+Per-viewport style overrides: Desktop (base), Tablet (768px), Mobile (375px). Inheritance chain: Desktop → Tablet (if set) → Mobile (if set).
 
 ### Action Runner
 
-A runtime helper in the application that parses declarative `ActionConfig` payloads and executes the associated behavior (e.g. invoking `history.pushState` or calling external API endpoints).
+A runtime helper that parses declarative `ActionConfig` payloads and executes the associated behavior (navigation, scroll, popup, etc.). No arbitrary code execution.
+
+### ActionConfig
+
+Declarative action binding: `{ type: 'navigate', url: '/pricing', openInNewTab: false }`. Must never contain functions or event handlers.
+
+### Section Generator
+
+A factory function (`generateXxxInstance()`) that creates a `SectionInstance` with default values and a unique ID. Called when a user adds a section to the canvas.
+
+### Style Resolver
+
+A helper function (`resolveSectionStyles()`) that converts `ResponsiveSectionStyle` objects into React inline `CSSProperties`. Maps style properties to CSS and sets CSS custom properties.
+
+### CSS Custom Properties
+
+CSS variables used for dynamic theming: `--sec-heading-color`, `--sec-body-color`, `--sec-accent-color`. Set by the style resolver, consumed by section components.
+
+### EditorSectionWrapper
+
+The editor overlay component wrapping each section on the canvas. Provides selection borders, hover outlines, floating toolbar, drag handles, and drop zones. The actual section component renders inside.
+
+### PlatformShell
+
+The application shell component providing the overall Editor layout (header, panels, canvas area).
 
 ---
 
-## Acronyms & Internal Terminology
+## Package & Tooling Terminology
 
-### ADR
+### Monorepo
 
-**Architecture Decision Record**. A short document describing a technical decision, its context, alternatives considered, selected approach, and trade-offs.
+A single repository containing multiple packages and applications managed by pnpm workspaces and Turborepo.
 
-### RTL
+### Workspace Protocol
 
-**React Testing Library**. The library used for component and integration testing.
+pnpm's `workspace:*` dependency protocol for referencing local packages within the monorepo.
 
-### SPA
+### Turborepo
 
-**Single-Page Application**. The type of application format used by the visual web builder platform (`apps/website-builder-platform`).
+The build orchestration tool managing task execution, caching, and dependency ordering across the monorepo.
 
-### CSS Variables (Custom Properties)
+### ^build
 
-Custom properties defined at the root theme level or dynamically computed inside components to map schema colors (e.g., `--sec-heading-color`, `--sec-accent-color`) to visual elements.
+Turborepo's topological dependency notation meaning "build all workspace dependencies first."
+
+### Section Library
+
+The shared package (`packages/component-library`) containing all section components, schemas, registry, helpers, styles, and Storybook stories.
+
+### Component Library
+
+Synonymous with Section Library. Package name: `@repo/component-library`.
+
+### Design System (SCSS)
+
+The shared SCSS stylesheet system in `packages/component-library/lib/assets/scss/` providing CSS custom properties, typography, spacing, and container classes.
+
+### Design System (Editor)
+
+The editor-specific design system in `apps/website-builder-platform/src/design-system/` with tokens, primitives, patterns, and shell components.
+
+---
+
+## Acronyms
+
+| Acronym | Full Form                    |
+| :------ | :--------------------------- |
+| ADR     | Architecture Decision Record |
+| RTL     | React Testing Library        |
+| SPA     | Single-Page Application      |
+| SCSS    | Sassy CSS (CSS preprocessor) |
+| HMR     | Hot Module Replacement       |
+| DnD     | Drag and Drop                |
+| CTA     | Call to Action               |
+| JSX     | JavaScript XML               |
+| CSS     | Cascading Style Sheets       |
+| CI      | Continuous Integration       |
+| CD      | Continuous Deployment        |
+| PR      | Pull Request                 |
+| DoD     | Definition of Done           |
+
+---
+
+## Important Statuses
+
+| Status       | Meaning                                   |
+| :----------- | :---------------------------------------- |
+| Accepted     | ADR has been approved and is in effect    |
+| Superseded   | ADR has been replaced by a newer decision |
+| Deprecated   | Feature or API is no longer recommended   |
+| Experimental | Feature is in development and may change  |
+
+---
+
+## Important Identifiers
+
+| Identifier          | Format                                  | Example                     |
+| :------------------ | :-------------------------------------- | :-------------------------- |
+| Section Instance ID | `${componentId}-${timestamp}-${random}` | `hero-1708862400-abc12`     |
+| Component ID        | `kebab-case`                            | `hero`, `header`, `pricing` |
+| Page ID             | Descriptive string                      | `page-default-01`           |
+| Package Name        | `@repo/kebab-case`                      | `@repo/component-library`   |
+
+---
+
+See also:
+
+- [Architecture & Principles](architecture.md) — System topology
+- [Component Architecture](packages/component-architecture.md) — Component boundary rules
+- [Data Models](data/index.md) — Type definitions
+- [Registry & Schemas](apis/registry-and-schemas.md) — Schema system

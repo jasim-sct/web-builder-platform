@@ -1,5 +1,10 @@
 # Workspace Conventions & Standards
 
+> **Purpose:** Naming, Git, coding, and structural conventions enforced across this workspace.
+> **Status:** Active
+> **Last Reviewed:** 2026-08-25
+> **Source of Truth:** Root `prettier.config.mjs`, `commitlint.config.mjs`, `.lintstagedrc.json`
+
 This document specifies the naming, Git, coding, and structural conventions enforced across this workspace.
 
 ---
