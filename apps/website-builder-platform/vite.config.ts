@@ -11,6 +11,10 @@ export default defineConfig({
         __dirname,
         '../../packages/component-library/lib/assets/scss/main.scss',
       ),
+      '@repo/component-library': path.resolve(
+        __dirname,
+        '../../packages/component-library/lib/main.ts',
+      ),
     },
   },
   server: {

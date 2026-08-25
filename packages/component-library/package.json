@@ -9,7 +9,9 @@
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "development": "./lib/main.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
     },
     "./styles": "./dist/main.css",
     "./scss/*": "./lib/assets/scss/*"
