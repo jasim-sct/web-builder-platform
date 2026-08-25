@@ -93,13 +93,13 @@ export const ToastItem: React.FC<{ toast: ToastMessage; onDismiss: (id: string) 
   const getIcon = () => {
     switch (toast.type) {
       case 'success':
-        return <CheckCircle size={18} />;
+        return <CheckCircle size={16} />;
       case 'warning':
-        return <AlertTriangle size={18} />;
+        return <AlertTriangle size={16} />;
       case 'danger':
-        return <XCircle size={18} />;
+        return <XCircle size={16} />;
       default:
-        return <Info size={18} />;
+        return <Info size={16} />;
     }
   };
 
@@ -107,6 +107,7 @@ export const ToastItem: React.FC<{ toast: ToastMessage; onDismiss: (id: string) 
     <div
       className={clsx('ds-toast', `ds-toast--${toast.type || 'info'}`)}
       onClick={() => onDismiss(toast.id)}
+      role="alert"
     >
       <div className="ds-toast-icon">{getIcon()}</div>
       <div className="ds-toast-content">

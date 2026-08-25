@@ -28,7 +28,7 @@ export const StyleTab: React.FC<StyleTabProps> = ({ section }) => {
   };
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
       {/* Visual Box-Model Spacer (Margin & Padding) */}
       <WSDndSpacerControl style={currentDesktopStyle} onChange={handleStyleChange} />
 
@@ -51,6 +51,6 @@ export const StyleTab: React.FC<StyleTabProps> = ({ section }) => {
 
       {/* Borders & Shadows */}
       <BorderShadowControl style={currentDesktopStyle} onChange={handleStyleChange} />
-    </>
+    </div>
   );
 };

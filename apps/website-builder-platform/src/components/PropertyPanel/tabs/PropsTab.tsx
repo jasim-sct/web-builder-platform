@@ -46,7 +46,7 @@ export const PropsTab: React.FC<PropsTabProps> = ({ section, schema }) => {
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {schemaEntries.map(([propKey, propSchema]) => {
         const value = currentProps[propKey];
 

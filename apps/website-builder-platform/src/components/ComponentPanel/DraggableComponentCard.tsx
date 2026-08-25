@@ -97,7 +97,7 @@ export const DraggableComponentCard: React.FC<DraggableComponentCardProps> = ({ 
       </div>
 
       <div className="ws-card-drag-handle" title="Drag to Canvas">
-        <GripVertical size={16} />
+        <GripVertical size={14} />
       </div>
     </button>
   );

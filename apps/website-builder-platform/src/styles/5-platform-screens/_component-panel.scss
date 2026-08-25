@@ -3,32 +3,32 @@
 .ws-component-list-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: tokens.$space-3;
+  padding: tokens.$space-2-5;
   display: flex;
   flex-direction: column;
-  gap: tokens.$space-4;
+  gap: tokens.$space-3;
 }
 
 .ws-category-group {
   display: flex;
   flex-direction: column;
-  gap: tokens.$space-2;
+  gap: tokens.$space-1-5;
 }
 
 .ws-category-group-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-size: tokens.$font-size-xs;
+  font-size: 10px;
   font-weight: tokens.$font-weight-semibold;
   color: tokens.$text-muted;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.06em;
   padding: 0 tokens.$space-1;
 }
 
 .ws-dnd-drag-card-group {
   display: flex;
   flex-direction: column;
-  gap: tokens.$space-2;
+  gap: tokens.$space-1;
 }

@@ -62,13 +62,37 @@ export const EditorHeader: React.FC = () => {
         <div className="ws-header-left">
           <div className="ws-brand">
             <div className="ws-brand-icon">
-              <Sparkles size={16} />
+              <Sparkles size={14} />
             </div>
-            <span>Website Builder Platform</span>
+            <span>Builder</span>
           </div>
 
           <Divider vertical />
 
+          <Button
+            variant={state.isComponentPanelOpen ? 'primary' : 'secondary'}
+            size="sm"
+            icon={<Plus size={13} />}
+            onClick={toggleComponentPanel}
+            title="Toggle Components Palette"
+          >
+            Add Component
+          </Button>
+
+          {state.page.sections.length === 0 && (
+            <Button
+              variant="ghost"
+              size="sm"
+              icon={<Sparkles size={12} />}
+              onClick={handleQuickAddHero}
+              title="Quick add Hero section"
+            >
+              Add Hero
+            </Button>
+          )}
+        </div>
+
+        <div className="ws-header-center">
           <div className="ws-page-info">
             <input
               type="text"
@@ -80,20 +104,20 @@ export const EditorHeader: React.FC = () => {
               style={{ cursor: 'pointer' }}
             />
             <Badge variant="default" className="ws-section-count-badge">
-              {state.page.sections.length}{' '}
-              {state.page.sections.length === 1 ? 'Section' : 'Sections'}
+              {state.page.sections.length} Sections
             </Badge>
 
             <IconButton
               icon={<Settings size={13} />}
               title="Page Settings"
               size="xs"
+              variant="ghost"
               onClick={() => setIsSettingsOpen(true)}
             />
           </div>
-        </div>
 
-        <div className="ws-header-center">
+          <Divider vertical />
+
           {selectedSection ? (
             <ContextPill
               label="Editing:"
@@ -101,62 +125,36 @@ export const EditorHeader: React.FC = () => {
               onDeselect={() => selectSection(null)}
             />
           ) : (
-            <ContextPill
-              icon={<Layers size={13} />}
-              label="Page Overview (Select a section to edit)"
-            />
+            <ContextPill icon={<Layers size={12} />} label="No selection" />
           )}
         </div>
 
         <div className="ws-header-right">
           <Button
-            variant={state.isComponentPanelOpen ? 'primary' : 'secondary'}
-            size="sm"
-            icon={<Plus size={14} />}
-            onClick={toggleComponentPanel}
-            title="Toggle Components Palette"
-            className="ws-btn-components-toggle"
-          >
-            Components
-          </Button>
-
-          {state.page.sections.length === 0 && (
-            <Button
-              variant="secondary"
-              size="sm"
-              icon={<Sparkles size={13} />}
-              onClick={handleQuickAddHero}
-              title="Quick add Hero section"
-            >
-              Add Hero
-            </Button>
-          )}
-
-          <Button
             variant="ghost"
             size="sm"
-            icon={<Code size={14} />}
+            icon={<Code size={13} />}
             onClick={() => setIsExportOpen(true)}
             title="Export page JSON schema or code"
           >
             Export
           </Button>
 
-          <Divider vertical />
-
           <IconButton
-            icon={<RotateCcw size={14} />}
+            icon={<RotateCcw size={13} />}
             title="Clear Canvas"
-            variant="secondary"
+            variant="ghost"
             size="sm"
             disabled={state.page.sections.length === 0}
             onClick={handleReset}
           />
 
+          <Divider vertical />
+
           <Button
             variant={state.isPropertyPanelOpen ? 'primary' : 'secondary'}
             size="sm"
-            icon={<SlidersHorizontal size={14} />}
+            icon={<SlidersHorizontal size={13} />}
             onClick={togglePropertyPanel}
             title="Toggle Properties Panel"
           >

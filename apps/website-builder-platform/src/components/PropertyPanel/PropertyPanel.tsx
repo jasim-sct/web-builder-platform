@@ -42,36 +42,36 @@ export const PropertyPanel: React.FC = () => {
             <div className="ws-property-title">
               {selectedSection
                 ? selectedSectionItem?.displayName || selectedSection.componentId
-                : 'Page Inspector'}
+                : 'Inspector'}
             </div>
-            <div className="ws-property-subtitle">
-              {selectedSection
-                ? `Category: ${selectedSectionItem?.category || 'Custom'}`
-                : 'No section selected'}
-            </div>
+            {selectedSection && (
+              <div className="ws-property-subtitle">
+                {selectedSectionItem?.category || 'Custom'}
+              </div>
+            )}
           </div>
 
           <div className="ws-header-actions">
             <IconButton
-              icon={state.isPropsExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
+              icon={state.isPropsExpanded ? <Minimize2 size={13} /> : <Maximize2 size={13} />}
               title={state.isPropsExpanded ? 'Collapse Width' : 'Expand Width'}
               onClick={togglePropsExpand}
-              size="sm"
+              size="xs"
             />
 
             <IconButton
-              icon={<ArrowLeftRight size={14} />}
+              icon={<ArrowLeftRight size={13} />}
               title={`Move panel to ${state.propertyPanelPosition === 'right' ? 'left' : 'right'}`}
               onClick={togglePropertyPanelPosition}
-              size="sm"
+              size="xs"
             />
 
             {selectedSection && (
               <IconButton
-                icon={<X size={14} />}
+                icon={<X size={13} />}
                 title="Close Inspector"
                 onClick={() => selectSection(null)}
-                size="sm"
+                size="xs"
               />
             )}
           </div>
@@ -82,9 +82,9 @@ export const PropertyPanel: React.FC = () => {
             activeTab={state.activePropertyTab}
             onChange={(tab) => setActivePropertyTab(tab as 'props' | 'style' | 'actions')}
             tabs={[
-              { id: 'props', label: 'Props', icon: <FileText size={13} /> },
-              { id: 'style', label: 'Style', icon: <Sliders size={13} /> },
-              { id: 'actions', label: 'Actions', icon: <MousePointerClick size={13} /> },
+              { id: 'props', label: 'Props', icon: <FileText size={12} /> },
+              { id: 'style', label: 'Style', icon: <Sliders size={12} /> },
+              { id: 'actions', label: 'Actions', icon: <MousePointerClick size={12} /> },
             ]}
           />
         )}

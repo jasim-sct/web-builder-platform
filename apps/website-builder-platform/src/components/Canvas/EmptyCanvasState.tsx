@@ -66,19 +66,19 @@ export const EmptyCanvasState: React.FC = () => {
       onDrop={handleDrop}
     >
       <div className="ws-empty-icon-bubble">
-        <LayoutGrid size={32} />
+        <LayoutGrid size={28} />
       </div>
 
       <h2 className="ws-empty-title">Your Page is Empty</h2>
       <p className="ws-empty-desc">
-        Drag components from the tool palette or use quick actions below to start building your page
-        layout.
+        Drag components from the palette or use quick actions below to start building your page.
       </p>
 
       <div className="ws-quick-add-grid">
         <Button
           variant="secondary"
-          icon={<Compass size={14} />}
+          size="sm"
+          icon={<Compass size={13} />}
           onClick={() => handleQuickAdd('header', 'Header Section')}
         >
           Add Header
@@ -86,15 +86,17 @@ export const EmptyCanvasState: React.FC = () => {
 
         <Button
           variant="primary"
-          icon={<Sparkles size={14} />}
+          size="sm"
+          icon={<Sparkles size={13} />}
           onClick={() => handleQuickAdd('hero', 'Hero Section')}
         >
-          Add Hero Section
+          Add Hero
         </Button>
 
         <Button
           variant="secondary"
-          icon={<Plus size={14} />}
+          size="sm"
+          icon={<Plus size={13} />}
           onClick={() => handleQuickAdd('features', 'Features Section')}
         >
           Add Features
@@ -102,7 +104,8 @@ export const EmptyCanvasState: React.FC = () => {
 
         <Button
           variant="secondary"
-          icon={<CreditCard size={14} />}
+          size="sm"
+          icon={<CreditCard size={13} />}
           onClick={() => handleQuickAdd('pricing', 'Pricing Table')}
         >
           Add Pricing

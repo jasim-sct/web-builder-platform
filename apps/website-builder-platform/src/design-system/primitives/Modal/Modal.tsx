@@ -89,7 +89,7 @@ export const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       onClose={onCancel}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          {variant === 'danger' && <AlertTriangle size={18} color="#ef4444" />}
+          {variant === 'danger' && <AlertTriangle size={16} color="#ef4444" />}
           <span>{title}</span>
         </div>
       }

@@ -28,9 +28,9 @@ export const ContextPill: React.FC<ContextPillProps> = ({
           className="ws-btn-base ws-btn-ghost ws-btn-icon-only"
           onClick={onDeselect}
           title="Deselect Section"
-          style={{ width: 20, height: 20 }}
+          style={{ width: 18, height: 18 }}
         >
-          <X size={12} />
+          <X size={11} />
         </button>
       )}
     </div>

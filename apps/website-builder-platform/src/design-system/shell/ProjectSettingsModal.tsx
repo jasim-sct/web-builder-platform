@@ -37,8 +37,8 @@ export const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
       onClose={onClose}
       title={
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-          <Settings size={18} color="#3b82f6" />
-          <span>Page & Project Settings</span>
+          <Settings size={16} color="#3b82f6" />
+          <span>Page Settings</span>
         </div>
       }
       footer={
@@ -47,12 +47,15 @@ export const ProjectSettingsModal: React.FC<ProjectSettingsModalProps> = ({
             Cancel
           </Button>
           <Button variant="primary" onClick={handleSubmit}>
-            Save Changes
+            Save
           </Button>
         </>
       }
     >
-      <form onSubmit={handleSubmit}>
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}
+      >
         <FormField
           label="Page Title"
           required

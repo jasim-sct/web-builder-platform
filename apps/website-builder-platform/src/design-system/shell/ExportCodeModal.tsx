@@ -99,16 +99,17 @@ export const Page = () => {
 
       <pre
         style={{
-          background: '#181b24',
-          border: '1px solid #272d3d',
-          borderRadius: '8px',
-          padding: '16px',
+          background: '#0c0e14',
+          border: '1px solid #1e2536',
+          borderRadius: '6px',
+          padding: '14px',
           fontFamily: "'JetBrains Mono', monospace",
           fontSize: '12px',
-          color: '#38bdf8',
-          maxHeight: '360px',
+          color: '#94a3b8',
+          maxHeight: '340px',
           overflow: 'auto',
-          lineHeight: 1.5,
+          lineHeight: 1.6,
+          margin: 0,
         }}
       >
         <code>{currentCode}</code>

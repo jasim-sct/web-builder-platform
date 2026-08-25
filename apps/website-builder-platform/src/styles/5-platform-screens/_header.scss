@@ -16,6 +16,8 @@
     display: flex;
     align-items: center;
     gap: tokens.$space-3;
+    min-width: 0;
+    flex-shrink: 0;
   }
 
   .ws-brand {
@@ -23,41 +25,45 @@
     align-items: center;
     gap: tokens.$space-2;
     font-family: tokens.$font-display;
-    font-weight: tokens.$font-weight-bold;
-    font-size: tokens.$font-size-md;
+    font-weight: tokens.$font-weight-semibold;
+    font-size: tokens.$font-size-sm;
     color: tokens.$text-primary;
+    white-space: nowrap;
 
     .ws-brand-icon {
-      width: 28px;
-      height: 28px;
+      width: 26px;
+      height: 26px;
       background: tokens.$color-primary-light;
       color: tokens.$color-primary;
-      border-radius: tokens.$radius-sm;
+      border-radius: tokens.$radius-xs;
       display: flex;
       align-items: center;
       justify-content: center;
-      border: 1px solid rgba(59, 130, 246, 0.3);
+      border: 1px solid rgba(59, 130, 246, 0.25);
     }
   }
 
   .ws-header-divider {
     width: 1px;
-    height: 20px;
+    height: 18px;
     background: tokens.$border-subtle;
+    flex-shrink: 0;
   }
 
   .ws-page-info {
     display: flex;
     align-items: center;
     gap: tokens.$space-2;
+    min-width: 0;
 
     .ws-page-title-input {
-      width: 180px;
-      height: 28px;
-      font-size: tokens.$font-size-sm;
+      width: 160px;
+      height: 26px;
+      font-size: tokens.$font-size-xs;
       font-weight: tokens.$font-weight-medium;
       background: transparent;
       border: 1px solid transparent;
+      border-radius: tokens.$radius-xs;
 
       &:hover {
         border-color: tokens.$border-subtle;
@@ -70,11 +76,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    flex: 1;
+    min-width: 0;
   }
 
   .ws-header-right {
     display: flex;
     align-items: center;
-    gap: tokens.$space-2;
+    gap: tokens.$space-1-5;
+    flex-shrink: 0;
   }
 }

@@ -26,17 +26,17 @@ export const ActionsTab: React.FC<ActionsTabProps> = ({ section, schema }) => {
 
   if (schemaEntries.length === 0) {
     return (
-      <div className="ws-property-empty" style={{ minHeight: '180px' }}>
-        <p className="ws-empty-title">No Actions Configured</p>
+      <div className="ws-property-empty" style={{ minHeight: '160px' }}>
+        <p className="ws-empty-title">No Actions</p>
         <p className="ws-empty-desc">
-          This section does not define interactive button or link actions in its schema.
+          This section does not define interactive actions in its schema.
         </p>
       </div>
     );
   }
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {schemaEntries.map(([actionName, actionSchema]) => (
         <ActionConfigControl
           key={actionName}
