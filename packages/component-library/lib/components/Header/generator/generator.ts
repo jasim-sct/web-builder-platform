@@ -1,5 +1,5 @@
 import { HEADER_COMPONENT_ID } from '../constants';
-import { defaultHeaderActions, defaultHeaderProps, defaultHeaderStyle } from '../defaultProps';
+import { defaultHeaderActions, defaultHeaderProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { HeaderProps } from '../types';
@@ -14,7 +14,6 @@ export const generateHeaderInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultHeaderStyle,
     ...overrides?.style,
   },
   actions: {

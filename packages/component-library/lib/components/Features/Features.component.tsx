@@ -80,12 +80,12 @@ export const Features: React.FC<FeaturesComponentProps> = ({
                   }
                 }}
               >
-                <div className="sec-features__icon-wrapper">
+                <div className="sec-features__card-icon">
                   <IconComponent size={24} className="sec-features__icon" />
                 </div>
 
                 <h3 className="sec-heading-3 sec-features__card-title">{item.title}</h3>
-                <p className="sec-body-md sec-features__card-desc">{item.description}</p>
+                <p className="sec-body-md sec-features__card-description">{item.description}</p>
 
                 {item.linkText && (
                   <div className="sec-features__card-link">

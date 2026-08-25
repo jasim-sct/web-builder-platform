@@ -1,5 +1,14 @@
 import React, { useState } from 'react';
-import { Code, Layers, Plus, RotateCcw, Settings, SlidersHorizontal, Sparkles } from 'lucide-react';
+import {
+  Code,
+  Eye,
+  Layers,
+  Plus,
+  RotateCcw,
+  Settings,
+  SlidersHorizontal,
+  Sparkles,
+} from 'lucide-react';
 
 import {
   Badge,
@@ -54,6 +63,20 @@ export const EditorHeader: React.FC = () => {
       message: 'Added Hero Section to canvas.',
       type: 'success',
     });
+  };
+
+  const handlePreview = () => {
+    try {
+      localStorage.setItem('builder_preview_state', JSON.stringify(state.page.sections));
+      window.open('?preview=true', '_blank');
+    } catch (err) {
+      console.error('Failed to save preview state:', err);
+      addToast({
+        title: 'Preview Failed',
+        message: 'Could not generate preview state.',
+        type: 'error',
+      });
+    }
   };
 
   return (
@@ -130,6 +153,17 @@ export const EditorHeader: React.FC = () => {
         </div>
 
         <div className="ws-header-right">
+          <Button
+            variant="primary"
+            size="sm"
+            icon={<Eye size={13} />}
+            onClick={handlePreview}
+            title="Preview current page in a new tab"
+            disabled={state.page.sections.length === 0}
+          >
+            Preview
+          </Button>
+
           <Button
             variant="ghost"
             size="sm"

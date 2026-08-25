@@ -1,5 +1,5 @@
 import { CONTACT_COMPONENT_ID } from '../constants';
-import { defaultContactActions, defaultContactProps, defaultContactStyle } from '../defaultProps';
+import { defaultContactActions, defaultContactProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { ContactProps } from '../types';
@@ -14,7 +14,6 @@ export const generateContactInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultContactStyle,
     ...overrides?.style,
   },
   actions: {

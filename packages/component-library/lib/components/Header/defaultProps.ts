@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { HeaderProps } from './types';
 
 export const defaultHeaderProps: HeaderProps = {
@@ -13,19 +13,6 @@ export const defaultHeaderProps: HeaderProps = {
   ctaLabel: 'Get Started',
   showCta: true,
   sticky: true,
-};
-
-export const defaultHeaderStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#ffffff',
-    paddingTop: '16px',
-    paddingBottom: '16px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    borderWidth: '1px',
-    borderColor: '#f1f5f9',
-    contentWidth: 'contained',
-  },
 };
 
 export const defaultHeaderActions: Record<string, ActionConfig> = {

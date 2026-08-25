@@ -4,7 +4,6 @@ import type {
   ActionConfig,
   BaseSectionProps,
   PartialSectionInstance,
-  ResponsiveSectionStyle,
   SectionCategory,
   SectionInstance,
 } from '../types';
@@ -25,7 +24,7 @@ export interface SectionRegistryItem<P = Record<string, unknown>> extends Sectio
   component: React.ComponentType<BaseSectionProps<P>>;
   schema: SectionSchema;
   defaultProps: P;
-  defaultStyle: ResponsiveSectionStyle;
+
   defaultActions: Record<string, ActionConfig>;
   generator: (overrides?: PartialSectionInstance<P>) => SectionInstance<P>;
 }

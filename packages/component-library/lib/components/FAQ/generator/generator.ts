@@ -1,5 +1,5 @@
 import { FAQ_COMPONENT_ID } from '../constants';
-import { defaultFAQActions, defaultFAQProps, defaultFAQStyle } from '../defaultProps';
+import { defaultFAQActions, defaultFAQProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { FAQProps } from '../types';
@@ -14,7 +14,6 @@ export const generateFAQInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultFAQStyle,
     ...overrides?.style,
   },
   actions: {

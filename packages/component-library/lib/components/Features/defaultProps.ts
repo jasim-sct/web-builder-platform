@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { FeaturesProps } from './types';
 
 export const defaultFeaturesProps: FeaturesProps = {
@@ -60,18 +60,6 @@ export const defaultFeaturesProps: FeaturesProps = {
       linkUrl: '#api',
     },
   ],
-};
-
-export const defaultFeaturesStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#f8fafc',
-    paddingTop: '80px',
-    paddingBottom: '80px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    textAlign: 'center',
-  },
 };
 
 export const defaultFeaturesActions: Record<string, ActionConfig> = {

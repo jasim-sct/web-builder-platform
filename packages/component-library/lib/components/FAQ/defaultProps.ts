@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { FAQProps } from './types';
 
 export const defaultFAQProps: FAQProps = {
@@ -44,18 +44,6 @@ export const defaultFAQProps: FAQProps = {
       category: 'Pricing',
     },
   ],
-};
-
-export const defaultFAQStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#ffffff',
-    paddingTop: '88px',
-    paddingBottom: '88px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'narrow',
-    textAlign: 'center',
-  },
 };
 
 export const defaultFAQActions: Record<string, ActionConfig> = {

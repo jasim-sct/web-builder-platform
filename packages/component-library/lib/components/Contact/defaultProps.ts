@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { ContactProps } from './types';
 
 export const defaultContactProps: ContactProps = {
@@ -14,18 +14,6 @@ export const defaultContactProps: ContactProps = {
     phone: '+1 (800) 555-0199',
     address: '548 Market St, Suite 300, San Francisco, CA 94104',
     businessHours: 'Mon - Fri: 9:00 AM - 6:00 PM PST',
-  },
-};
-
-export const defaultContactStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#ffffff',
-    paddingTop: '88px',
-    paddingBottom: '88px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    textAlign: 'left',
   },
 };
 

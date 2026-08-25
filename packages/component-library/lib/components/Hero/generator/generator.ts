@@ -1,5 +1,5 @@
 import { HERO_COMPONENT_ID } from '../constants';
-import { defaultHeroActions, defaultHeroProps, defaultHeroStyle } from '../defaultProps';
+import { defaultHeroActions, defaultHeroProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { HeroProps } from '../types';
@@ -14,7 +14,6 @@ export const generateHeroInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultHeroStyle,
     ...overrides?.style,
   },
   actions: {

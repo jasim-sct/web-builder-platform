@@ -1,5 +1,5 @@
 import { PRICING_COMPONENT_ID } from '../constants';
-import { defaultPricingActions, defaultPricingProps, defaultPricingStyle } from '../defaultProps';
+import { defaultPricingActions, defaultPricingProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { PricingProps } from '../types';
@@ -14,7 +14,6 @@ export const generatePricingInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultPricingStyle,
     ...overrides?.style,
   },
   actions: {

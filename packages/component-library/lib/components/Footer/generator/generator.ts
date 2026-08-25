@@ -1,5 +1,5 @@
 import { FOOTER_COMPONENT_ID } from '../constants';
-import { defaultFooterActions, defaultFooterProps, defaultFooterStyle } from '../defaultProps';
+import { defaultFooterActions, defaultFooterProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { FooterProps } from '../types';
@@ -14,7 +14,6 @@ export const generateFooterInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultFooterStyle,
     ...overrides?.style,
   },
   actions: {

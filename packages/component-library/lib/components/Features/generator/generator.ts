@@ -1,9 +1,5 @@
 import { FEATURES_COMPONENT_ID } from '../constants';
-import {
-  defaultFeaturesActions,
-  defaultFeaturesProps,
-  defaultFeaturesStyle,
-} from '../defaultProps';
+import { defaultFeaturesActions, defaultFeaturesProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { FeaturesProps } from '../types';
@@ -18,7 +14,6 @@ export const generateFeaturesInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultFeaturesStyle,
     ...overrides?.style,
   },
   actions: {

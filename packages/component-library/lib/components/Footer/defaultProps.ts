@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { FooterProps } from './types';
 
 export const defaultFooterProps: FooterProps = {
@@ -58,19 +58,6 @@ export const defaultFooterProps: FooterProps = {
   showNewsletter: true,
   newsletterTitle: 'Stay up to date with product releases',
   newsletterButtonText: 'Subscribe',
-};
-
-export const defaultFooterStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#090d16',
-    paddingTop: '80px',
-    paddingBottom: '48px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    headingColor: '#ffffff',
-    bodyColor: '#94a3b8',
-  },
 };
 
 export const defaultFooterActions: Record<string, ActionConfig> = {

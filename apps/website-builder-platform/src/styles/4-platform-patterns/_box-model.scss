@@ -6,10 +6,13 @@
 .ds-box-model-control {
   position: relative;
   width: 100%;
-  max-width: 320px;
+  max-width: 340px;
   margin: 0 auto;
   user-select: none;
   font-family: inherit;
+  background: tokens.$bg-surface-1;
+  border-radius: tokens.$radius-md;
+  padding: tokens.$space-2;
 
   .ds-box-model-label--margin,
   .ws-spacer-label-margin {
@@ -19,8 +22,8 @@
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #f59e0b;
+    letter-spacing: 0.1em;
+    color: rgba(245, 158, 11, 0.8);
     pointer-events: none;
     z-index: 5;
   }
@@ -33,72 +36,81 @@
     font-size: 9px;
     font-weight: 700;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: #10b981;
+    letter-spacing: 0.1em;
+    color: rgba(16, 185, 129, 0.8);
     pointer-events: none;
     z-index: 5;
   }
 
   .ds-box-model-margin,
   .ws-spacer-margin-box {
-    background: rgba(245, 158, 11, 0.08);
-    border: 1px dashed rgba(245, 158, 11, 0.45);
+    background: transparent;
+    border: 1px dashed rgba(245, 158, 11, 0.35);
     border-radius: tokens.$radius-sm;
-    padding: 24px 10px 10px;
+    padding: 24px 20px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     position: relative;
     width: 100%;
     box-sizing: border-box;
-    transition:
-      border-color tokens.$transition-fast,
-      background-color tokens.$transition-fast;
+    transition: all tokens.$transition-fast;
 
     &:hover {
-      border-color: rgba(245, 158, 11, 0.7);
-      background: rgba(245, 158, 11, 0.11);
+      border-color: rgba(245, 158, 11, 0.6);
+      background: rgba(245, 158, 11, 0.04);
+      .ds-box-model-label--margin {
+        color: rgba(245, 158, 11, 1);
+      }
     }
   }
 
   .ds-box-model-padding,
   .ws-spacer-padding-box {
-    background: rgba(16, 185, 129, 0.08);
-    border: 1px dashed rgba(16, 185, 129, 0.45);
-    border-radius: tokens.$radius-xs;
-    padding: 24px 8px 8px;
+    background: transparent;
+    border: 1px dashed rgba(16, 185, 129, 0.35);
+    border-radius: tokens.$radius-sm;
+    padding: 24px 12px 16px;
     display: flex;
     flex-direction: column;
     align-items: center;
     width: 100%;
     position: relative;
     box-sizing: border-box;
-    transition:
-      border-color tokens.$transition-fast,
-      background-color tokens.$transition-fast;
+    transition: all tokens.$transition-fast;
+    margin: tokens.$space-2 0;
 
     &:hover {
-      border-color: rgba(16, 185, 129, 0.7);
-      background: rgba(16, 185, 129, 0.11);
+      border-color: rgba(16, 185, 129, 0.6);
+      background: rgba(16, 185, 129, 0.04);
+      .ds-box-model-label--padding {
+        color: rgba(16, 185, 129, 1);
+      }
     }
   }
 
   .ds-box-model-content,
   .ws-spacer-center-content {
-    background: tokens.$bg-surface-3;
+    background: tokens.$bg-surface-2;
     border: 1px solid tokens.$border-medium;
     border-radius: tokens.$radius-xs;
-    padding: 8px 12px;
-    min-width: 64px;
+    padding: 10px 16px;
+    min-width: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
     font-weight: 700;
-    color: tokens.$text-secondary;
-    letter-spacing: 0.06em;
+    color: tokens.$text-primary;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
-    box-shadow: tokens.$shadow-xs;
+    box-shadow: tokens.$shadow-sm;
+    transition: all tokens.$transition-fast;
+
+    &:hover {
+      background: tokens.$bg-surface-3;
+      border-color: tokens.$border-strong;
+    }
   }
 
   .ds-box-model-row,
@@ -107,8 +119,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: tokens.$space-2;
-    margin: 4px 0;
+    gap: tokens.$space-3;
   }
 
   .ds-box-model-input-wrap,
@@ -117,34 +128,37 @@
     align-items: center;
     justify-content: center;
     position: relative;
+    z-index: 10;
 
     input,
     .ds-box-model-input,
     .ws-spacer-input {
-      width: 48px;
-      height: 26px;
-      background-color: tokens.$bg-surface-1;
-      border: 1px solid tokens.$border-medium;
+      width: 44px;
+      height: 24px;
+      background-color: transparent;
+      border: 1px solid transparent;
       border-radius: tokens.$radius-xs;
-      color: tokens.$text-primary;
+      color: tokens.$text-secondary;
       font-size: 11px;
       font-weight: 600;
       text-align: center;
-      padding: 0 4px;
+      padding: 0;
       transition: all tokens.$transition-fast;
-      box-shadow: tokens.$shadow-xs;
       font-family: inherit;
+      cursor: text;
 
       &:hover:not(:disabled) {
-        border-color: tokens.$border-strong;
+        border-color: tokens.$border-subtle;
         background-color: tokens.$bg-surface-2;
+        color: tokens.$text-primary;
       }
 
       &:focus {
         outline: none;
         border-color: tokens.$color-primary;
-        background-color: tokens.$bg-surface-2;
+        background-color: tokens.$bg-surface-1;
         box-shadow: 0 0 0 2px tokens.$color-primary-light;
+        color: tokens.$text-primary;
       }
 
       &::placeholder {

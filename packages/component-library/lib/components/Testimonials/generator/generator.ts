@@ -1,9 +1,5 @@
 import { TESTIMONIALS_COMPONENT_ID } from '../constants';
-import {
-  defaultTestimonialsActions,
-  defaultTestimonialsProps,
-  defaultTestimonialsStyle,
-} from '../defaultProps';
+import { defaultTestimonialsActions, defaultTestimonialsProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { TestimonialsProps } from '../types';
@@ -18,7 +14,6 @@ export const generateTestimonialsInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultTestimonialsStyle,
     ...overrides?.style,
   },
   actions: {

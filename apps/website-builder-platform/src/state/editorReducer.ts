@@ -1,5 +1,7 @@
 import { getSection } from '@repo/component-library';
 
+import { FALLBACK_DEFAULT_STYLE, PLATFORM_DEFAULT_STYLES } from '../config/defaultStyles';
+
 import type { SectionInstance } from '@repo/component-library';
 import type { EditorAction, EditorState } from '../types/editor';
 
@@ -34,8 +36,11 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       }
 
       const instanceId = `${action.componentId}-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`;
+      const platformStyle = PLATFORM_DEFAULT_STYLES[action.componentId] || FALLBACK_DEFAULT_STYLE;
+
       const newInstance: SectionInstance = sectionItem.generator({
         id: instanceId,
+        style: platformStyle,
       });
 
       const updatedSections = [...state.page.sections];

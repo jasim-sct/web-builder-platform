@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { TestimonialsProps } from './types';
 
 export const defaultTestimonialsProps: TestimonialsProps = {
@@ -38,18 +38,6 @@ export const defaultTestimonialsProps: TestimonialsProps = {
       rating: 5,
     },
   ],
-};
-
-export const defaultTestimonialsStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#f8fafc',
-    paddingTop: '88px',
-    paddingBottom: '88px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    textAlign: 'center',
-  },
 };
 
 export const defaultTestimonialsActions: Record<string, ActionConfig> = {

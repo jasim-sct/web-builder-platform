@@ -1,5 +1,14 @@
 @use '../1-tokens' as tokens;
 
+.ws-preview-container {
+  width: 100%;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: #ffffff;
+  color: #1e293b;
+}
+
 .ds-canvas-area,
 .ws-dnd-canvas-area {
   flex: 1;

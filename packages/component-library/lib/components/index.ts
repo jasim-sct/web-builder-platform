@@ -9,7 +9,6 @@ import {
   carouselSchema,
   defaultCarouselActions,
   defaultCarouselProps,
-  defaultCarouselStyle,
   generateCarouselInstance,
 } from './Carousel';
 import {
@@ -21,13 +20,11 @@ import {
   contactSchema,
   defaultContactActions,
   defaultContactProps,
-  defaultContactStyle,
   generateContactInstance,
 } from './Contact';
 import {
   defaultFAQActions,
   defaultFAQProps,
-  defaultFAQStyle,
   FAQ,
   FAQ_CATEGORY,
   FAQ_COMPONENT_ID,
@@ -39,7 +36,6 @@ import {
 import {
   defaultFeaturesActions,
   defaultFeaturesProps,
-  defaultFeaturesStyle,
   Features,
   FEATURES_CATEGORY,
   FEATURES_COMPONENT_ID,
@@ -51,7 +47,6 @@ import {
 import {
   defaultFooterActions,
   defaultFooterProps,
-  defaultFooterStyle,
   Footer,
   FOOTER_CATEGORY,
   FOOTER_COMPONENT_ID,
@@ -63,7 +58,6 @@ import {
 import {
   defaultHeaderActions,
   defaultHeaderProps,
-  defaultHeaderStyle,
   generateHeaderInstance,
   Header,
   HEADER_CATEGORY,
@@ -75,7 +69,6 @@ import {
 import {
   defaultHeroActions,
   defaultHeroProps,
-  defaultHeroStyle,
   generateHeroInstance,
   Hero,
   HERO_CATEGORY,
@@ -87,7 +80,6 @@ import {
 import {
   defaultPricingActions,
   defaultPricingProps,
-  defaultPricingStyle,
   generatePricingInstance,
   Pricing,
   PRICING_CATEGORY,
@@ -99,7 +91,6 @@ import {
 import {
   defaultTestimonialsActions,
   defaultTestimonialsProps,
-  defaultTestimonialsStyle,
   generateTestimonialsInstance,
   Testimonials,
   TESTIMONIALS_CATEGORY,
@@ -133,7 +124,6 @@ export function initializeSectionRegistry(): void {
     component: Header,
     schema: headerSchema,
     defaultProps: defaultHeaderProps,
-    defaultStyle: defaultHeaderStyle,
     defaultActions: defaultHeaderActions,
     generator: generateHeaderInstance,
   });
@@ -150,7 +140,6 @@ export function initializeSectionRegistry(): void {
     component: Hero,
     schema: heroSchema,
     defaultProps: defaultHeroProps,
-    defaultStyle: defaultHeroStyle,
     defaultActions: defaultHeroActions,
     generator: generateHeroInstance,
   });
@@ -167,7 +156,6 @@ export function initializeSectionRegistry(): void {
     component: Features,
     schema: featuresSchema,
     defaultProps: defaultFeaturesProps,
-    defaultStyle: defaultFeaturesStyle,
     defaultActions: defaultFeaturesActions,
     generator: generateFeaturesInstance,
   });
@@ -184,7 +172,6 @@ export function initializeSectionRegistry(): void {
     component: Carousel,
     schema: carouselSchema,
     defaultProps: defaultCarouselProps,
-    defaultStyle: defaultCarouselStyle,
     defaultActions: defaultCarouselActions,
     generator: generateCarouselInstance,
   });
@@ -201,7 +188,6 @@ export function initializeSectionRegistry(): void {
     component: Pricing,
     schema: pricingSchema,
     defaultProps: defaultPricingProps,
-    defaultStyle: defaultPricingStyle,
     defaultActions: defaultPricingActions,
     generator: generatePricingInstance,
   });
@@ -218,7 +204,6 @@ export function initializeSectionRegistry(): void {
     component: Testimonials,
     schema: testimonialsSchema,
     defaultProps: defaultTestimonialsProps,
-    defaultStyle: defaultTestimonialsStyle,
     defaultActions: defaultTestimonialsActions,
     generator: generateTestimonialsInstance,
   });
@@ -235,7 +220,6 @@ export function initializeSectionRegistry(): void {
     component: FAQ,
     schema: faqSchema,
     defaultProps: defaultFAQProps,
-    defaultStyle: defaultFAQStyle,
     defaultActions: defaultFAQActions,
     generator: generateFAQInstance,
   });
@@ -252,7 +236,6 @@ export function initializeSectionRegistry(): void {
     component: Contact,
     schema: contactSchema,
     defaultProps: defaultContactProps,
-    defaultStyle: defaultContactStyle,
     defaultActions: defaultContactActions,
     generator: generateContactInstance,
   });
@@ -269,7 +252,6 @@ export function initializeSectionRegistry(): void {
     component: Footer,
     schema: footerSchema,
     defaultProps: defaultFooterProps,
-    defaultStyle: defaultFooterStyle,
     defaultActions: defaultFooterActions,
     generator: generateFooterInstance,
   });

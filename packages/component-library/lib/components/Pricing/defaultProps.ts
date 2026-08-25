@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { PricingProps } from './types';
 
 export const defaultPricingProps: PricingProps = {
@@ -68,18 +68,6 @@ export const defaultPricingProps: PricingProps = {
       ctaUrl: '#enterprise',
     },
   ],
-};
-
-export const defaultPricingStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#ffffff',
-    paddingTop: '96px',
-    paddingBottom: '96px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    textAlign: 'center',
-  },
 };
 
 export const defaultPricingActions: Record<string, ActionConfig> = {

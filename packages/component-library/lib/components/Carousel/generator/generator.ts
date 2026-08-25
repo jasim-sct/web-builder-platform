@@ -1,9 +1,5 @@
 import { CAROUSEL_COMPONENT_ID } from '../constants';
-import {
-  defaultCarouselActions,
-  defaultCarouselProps,
-  defaultCarouselStyle,
-} from '../defaultProps';
+import { defaultCarouselActions, defaultCarouselProps } from '../defaultProps';
 
 import type { PartialSectionInstance, SectionInstance } from '../../../types';
 import type { CarouselProps } from '../types';
@@ -18,7 +14,6 @@ export const generateCarouselInstance = (
     ...overrides?.props,
   },
   style: {
-    ...defaultCarouselStyle,
     ...overrides?.style,
   },
   actions: {

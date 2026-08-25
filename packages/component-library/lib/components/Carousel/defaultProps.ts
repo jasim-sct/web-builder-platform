@@ -1,4 +1,4 @@
-import type { ActionConfig, ResponsiveSectionStyle } from '../../types';
+import type { ActionConfig } from '../../types';
 import type { CarouselProps } from './types';
 
 export const defaultCarouselProps: CarouselProps = {
@@ -40,18 +40,6 @@ export const defaultCarouselProps: CarouselProps = {
       ctaUrl: '#analytics',
     },
   ],
-};
-
-export const defaultCarouselStyle: ResponsiveSectionStyle = {
-  desktop: {
-    backgroundColor: '#ffffff',
-    paddingTop: '80px',
-    paddingBottom: '80px',
-    paddingLeft: '24px',
-    paddingRight: '24px',
-    contentWidth: 'contained',
-    textAlign: 'center',
-  },
 };
 
 export const defaultCarouselActions: Record<string, ActionConfig> = {

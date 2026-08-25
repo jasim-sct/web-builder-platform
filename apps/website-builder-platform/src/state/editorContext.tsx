@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useReducer } from 'react';
+import React, { createContext, useContext, useEffect, useMemo, useReducer } from 'react';
 
 import { getSection, getSectionSchema } from '@repo/component-library';
 
@@ -199,6 +199,15 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     }),
     [state, selectedSection, selectedSectionItem, selectedSectionSchema],
   );
+
+  // Sync builder state to local storage for Hot Reload Preview
+  useEffect(() => {
+    try {
+      localStorage.setItem('builder_preview_state', JSON.stringify(state.page.sections));
+    } catch (err) {
+      console.error('Failed to sync preview state to localStorage:', err);
+    }
+  }, [state.page.sections]);
 
   return <EditorContext.Provider value={value}>{children}</EditorContext.Provider>;
 };
