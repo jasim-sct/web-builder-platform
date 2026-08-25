@@ -1,7 +1,6 @@
 import { Testimonials } from '../../lib/components/Testimonials';
 import {
   defaultTestimonialsProps,
-  defaultTestimonialsStyle,
 } from '../../lib/components/Testimonials/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -18,6 +17,6 @@ type Story = StoryObj<typeof Testimonials>;
 export const Default: Story = {
   args: {
     props: defaultTestimonialsProps,
-    style: defaultTestimonialsStyle,
+    
   },
 };

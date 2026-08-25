@@ -1,0 +1,43 @@
+
+.sec-invitation-cover-wrapper {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  padding: clamp(var(--spacing-3xl), 15vh, 200px) 0;
+  text-align: center;
+  border-bottom: 1px solid var(--color-border);
+
+  .sec-invitation-cover__container {
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .sec-invitation-cover__kicker {
+    font-size: var(--font-size-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    margin-bottom: var(--spacing-xl);
+    color: var(--color-text-muted);
+  }
+
+  .sec-invitation-cover__names {
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    line-height: 1;
+    font-weight: 200;
+    margin-bottom: var(--spacing-2xl);
+    letter-spacing: -0.03em;
+  }
+
+  .sec-invitation-cover__message {
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+    max-width: 500px;
+    color: var(--color-text-muted);
+    font-weight: 300;
+  }
+}

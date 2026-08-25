@@ -1,7 +1,6 @@
 import { Carousel } from '../../lib/components/Carousel';
 import {
   defaultCarouselProps,
-  defaultCarouselStyle,
 } from '../../lib/components/Carousel/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -18,6 +17,6 @@ type Story = StoryObj<typeof Carousel>;
 export const Default: Story = {
   args: {
     props: defaultCarouselProps,
-    style: defaultCarouselStyle,
+    
   },
 };

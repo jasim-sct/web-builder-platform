@@ -1,22 +1,22 @@
 import React from 'react';
+import { Section } from '../common/Section';
 import { ArrowRight } from 'lucide-react';
 
 import { defaultHeroActions, defaultHeroProps } from './defaultProps';
-import { getHeroStyles } from './helpers/styleHelper';
 
 import type { HeroComponentProps } from './types';
 
 export const Hero: React.FC<HeroComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultHeroProps, ...userProps };
   const actions = { ...defaultHeroActions, ...userActions };
-  const { className: heroStyleClass, style: inlineStyle } = getHeroStyles(style, props.variant);
+  
 
   const handlePrimaryClick = (e: React.MouseEvent) => {
     if (actions.primaryButtonAction) {
@@ -41,14 +41,14 @@ export const Hero: React.FC<HeroComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-hero-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="Hero Section"
     >
-      <div className={`sec-container ${heroStyleClass}`}>
+      <div className="sec-hero">
         <div className="sec-hero__grid">
           {/* Content Column */}
           <div className="sec-hero__content">
@@ -94,7 +94,7 @@ export const Hero: React.FC<HeroComponentProps> = ({
           )}
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 

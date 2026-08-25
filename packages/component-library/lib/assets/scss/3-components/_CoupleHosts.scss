@@ -1,0 +1,51 @@
+
+.sec-couple-hosts-wrapper {
+  padding: var(--spacing-3xl) 0;
+  
+  .sec-couple-hosts__container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+  
+  .sec-couple-hosts__title {
+    text-align: center;
+    font-size: var(--font-size-2xl);
+    font-weight: 300;
+    margin-bottom: var(--spacing-2xl);
+  }
+  
+  .sec-couple-hosts__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--spacing-2xl);
+    
+    @media (min-width: 640px) {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  
+  .sec-couple-hosts__profile {
+    text-align: center;
+  }
+  
+  .sec-couple-hosts__img {
+    width: 240px;
+    height: 320px;
+    object-fit: cover;
+    margin: 0 auto var(--spacing-xl);
+    display: block;
+    border-radius: var(--radius-sm);
+  }
+  
+  .sec-couple-hosts__name {
+    font-size: var(--font-size-xl);
+    font-weight: 400;
+    margin-bottom: var(--spacing-sm);
+  }
+  
+  .sec-couple-hosts__bio {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-base);
+    line-height: 1.6;
+  }
+}

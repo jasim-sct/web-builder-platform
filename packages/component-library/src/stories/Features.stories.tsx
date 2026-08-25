@@ -1,7 +1,6 @@
 import { Features } from '../../lib/components/Features';
 import {
   defaultFeaturesProps,
-  defaultFeaturesStyle,
 } from '../../lib/components/Features/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -21,7 +20,7 @@ export const ThreeColumns: Story = {
       ...defaultFeaturesProps,
       columns: 3,
     },
-    style: defaultFeaturesStyle,
+    
   },
 };
 
@@ -32,6 +31,6 @@ export const TwoColumns: Story = {
       columns: 2,
       items: defaultFeaturesProps.items.slice(0, 4),
     },
-    style: defaultFeaturesStyle,
+    
   },
 };

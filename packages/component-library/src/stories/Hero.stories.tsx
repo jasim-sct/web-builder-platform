@@ -1,5 +1,5 @@
 import { Hero } from '../../lib/components/Hero';
-import { defaultHeroProps, defaultHeroStyle } from '../../lib/components/Hero/defaultProps';
+import { defaultHeroProps } from '../../lib/components/Hero/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -18,7 +18,7 @@ export const Split: Story = {
       ...defaultHeroProps,
       variant: 'split',
     },
-    style: defaultHeroStyle,
+    
   },
 };
 
@@ -31,7 +31,7 @@ export const Centered: Story = {
     },
     style: {
       desktop: {
-        ...defaultHeroStyle.desktop,
+        
         alignment: 'center',
       },
     },
@@ -47,7 +47,7 @@ export const BackgroundImage: Story = {
     },
     style: {
       desktop: {
-        ...defaultHeroStyle.desktop,
+        
         backgroundImage:
           'https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&w=1600&q=80',
         backgroundColor: '#0f172a',

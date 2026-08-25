@@ -1,22 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useEffect, useState } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { defaultCarouselActions, defaultCarouselProps } from './defaultProps';
-import { getCarouselStyles } from './helpers/styleHelper';
 
 import type { CarouselComponentProps } from './types';
 
 export const Carousel: React.FC<CarouselComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultCarouselProps, ...userProps };
   const actions = { ...defaultCarouselActions, ...userActions };
-  const { className: carouselStyleClass, style: inlineStyle } = getCarouselStyles(style);
+  
 
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
@@ -86,17 +87,17 @@ export const Carousel: React.FC<CarouselComponentProps> = ({
   const currentSlide = slides[currentIndex];
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-carousel-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-roledescription="carousel"
       aria-label={props.title || 'Carousel Showcase'}
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      <div className={`sec-container ${carouselStyleClass}`}>
+      <div className="sec-carousel">
         {/* Section Header */}
         {(props.badge || props.title || props.description) && (
           <div className="sec-carousel__header">
@@ -182,7 +183,7 @@ export const Carousel: React.FC<CarouselComponentProps> = ({
           </div>
         )}
       </div>
-    </section>
+    </Section>
   );
 };
 

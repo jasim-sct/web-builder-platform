@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useState } from 'react';
 import { ArrowRight, Disc as Discord, Github, Linkedin, Twitter, Youtube } from 'lucide-react';
 
 import { defaultFooterActions, defaultFooterProps } from './defaultProps';
-import { getFooterStyles } from './helpers/styleHelper';
 
 import type { FooterComponentProps, FooterSocialLink } from './types';
 
@@ -26,14 +27,13 @@ const renderSocialIcon = (platform: FooterSocialLink['platform']) => {
 export const Footer: React.FC<FooterComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultFooterProps, ...userProps };
   const actions = { ...defaultFooterActions, ...userActions };
-  const { className: footerStyleClass, style: inlineStyle } = getFooterStyles(style);
 
   const [newsletterEmail, setNewsletterEmail] = useState('');
   const [newsletterSubscribed, setNewsletterSubscribed] = useState(false);
@@ -69,13 +69,12 @@ export const Footer: React.FC<FooterComponentProps> = ({
   };
 
   return (
-    <footer
+    <Section as="footer"
       id={id}
       className={`sec-footer-wrapper ${className}`}
-      style={inlineStyle}
-      role="contentinfo"
+      style={userStyle}
     >
-      <div className={`sec-container ${footerStyleClass}`}>
+      <div className="sec-footer">
         {/* Newsletter Row (if enabled) */}
         {props.showNewsletter && (
           <div className="sec-footer__newsletter-block">
@@ -175,7 +174,7 @@ export const Footer: React.FC<FooterComponentProps> = ({
           <p className="sec-body-xs sec-footer__copyright">{props.copyrightText}</p>
         </div>
       </div>
-    </footer>
+    </Section>
   );
 };
 

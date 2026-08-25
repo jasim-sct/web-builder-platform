@@ -1,22 +1,22 @@
 import React from 'react';
+import { Section } from '../common/Section';
 import { Quote, Star } from 'lucide-react';
 
 import { defaultTestimonialsActions, defaultTestimonialsProps } from './defaultProps';
-import { getTestimonialsStyles } from './helpers/styleHelper';
 
 import type { TestimonialItem, TestimonialsComponentProps } from './types';
 
 export const Testimonials: React.FC<TestimonialsComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultTestimonialsProps, ...userProps };
   const actions = { ...defaultTestimonialsActions, ...userActions };
-  const { className: testimonialsStyleClass, style: inlineStyle } = getTestimonialsStyles(style);
+  
 
   const handleCardClick = (item: TestimonialItem, e: React.MouseEvent) => {
     if (actions.testimonialClickAction) {
@@ -31,14 +31,14 @@ export const Testimonials: React.FC<TestimonialsComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-testimonials-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="Testimonials Section"
     >
-      <div className={`sec-container ${testimonialsStyleClass}`}>
+      <div className="sec-testimonials">
         {/* Section Header */}
         <div className="sec-testimonials__header">
           {props.badge && <div className="sec-badge">{props.badge}</div>}
@@ -103,7 +103,7 @@ export const Testimonials: React.FC<TestimonialsComponentProps> = ({
           })}
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 

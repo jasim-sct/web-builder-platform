@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useState } from 'react';
 import { CheckCircle2, Clock, Mail, MapPin, Phone, Send } from 'lucide-react';
 
 import { defaultContactActions, defaultContactProps } from './defaultProps';
-import { getContactStyles } from './helpers/styleHelper';
 
 import type { ContactComponentProps } from './types';
 
 export const Contact: React.FC<ContactComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultContactProps, ...userProps };
   const actions = { ...defaultContactActions, ...userActions };
-  const { className: contactStyleClass, style: inlineStyle } = getContactStyles(style);
+  
 
   const [formData, setFormData] = useState({
     name: '',
@@ -50,14 +51,14 @@ export const Contact: React.FC<ContactComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-contact-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="Contact Section"
     >
-      <div className={`sec-container ${contactStyleClass}`}>
+      <div className="sec-contact">
         <div className="sec-contact__grid">
           {/* Left Column: Information */}
           <div className="sec-contact__info">
@@ -227,7 +228,7 @@ export const Contact: React.FC<ContactComponentProps> = ({
           </div>
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 

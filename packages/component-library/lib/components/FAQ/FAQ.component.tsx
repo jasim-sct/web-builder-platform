@@ -1,22 +1,23 @@
-import React, { useMemo, useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useMemo, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 import { defaultFAQActions, defaultFAQProps } from './defaultProps';
-import { getFAQStyles } from './helpers/styleHelper';
 
 import type { FAQComponentProps, FAQItem } from './types';
 
 export const FAQ: React.FC<FAQComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultFAQProps, ...userProps };
   const actions = { ...defaultFAQActions, ...userActions };
-  const { className: faqStyleClass, style: inlineStyle } = getFAQStyles(style);
+  
 
   const [openIds, setOpenIds] = useState<Record<string, boolean>>({
     '1': true, // First item open by default
@@ -58,14 +59,14 @@ export const FAQ: React.FC<FAQComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-faq-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="FAQ Section"
     >
-      <div className={`sec-container ${faqStyleClass}`}>
+      <div className="sec-faq">
         {/* Section Header */}
         <div className="sec-faq__header">
           {props.badge && <div className="sec-badge">{props.badge}</div>}
@@ -132,7 +133,7 @@ export const FAQ: React.FC<FAQComponentProps> = ({
           })}
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 

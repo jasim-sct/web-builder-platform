@@ -1,0 +1,107 @@
+
+@use '../1-helpers/variables' as *;
+
+.sec-invitation-hero-wrapper {
+  position: relative;
+  width: 100%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+
+  &--bg {
+    min-height: 80vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: #ffffff; // Forced white on bg
+
+    .sec-invitation-hero__overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .sec-invitation-hero__content-bg {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      padding: var(--spacing-xl) var(--spacing-md);
+    }
+  }
+
+  &--split {
+    .sec-invitation-hero__split-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      @media (min-width: 768px) {
+        grid-template-columns: 1fr 1fr;
+        min-height: 80vh;
+      }
+    }
+    .sec-invitation-hero__content-split {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--spacing-2xl) var(--spacing-xl);
+    }
+    .sec-invitation-hero__content-inner {
+      max-width: 480px;
+    }
+    .sec-invitation-hero__media {
+      height: 400px;
+      @media (min-width: 768px) {
+        height: auto;
+      }
+    }
+    .sec-invitation-hero__image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+  }
+
+  .sec-invitation-hero__subtitle {
+    font-size: var(--font-size-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: var(--spacing-md);
+    opacity: 0.8;
+  }
+
+  .sec-invitation-hero__title {
+    font-size: clamp(3rem, 5vw, 4.5rem);
+    line-height: 1.1;
+    font-weight: 300;
+    margin-bottom: var(--spacing-lg);
+    letter-spacing: -0.02em;
+  }
+
+  .sec-invitation-hero__meta {
+    font-size: var(--font-size-base);
+    opacity: 0.9;
+    margin-bottom: var(--spacing-xl);
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-xs);
+    
+    .sec-invitation-hero__dot {
+      display: none;
+    }
+  }
+  
+  &--bg .sec-invitation-hero__meta {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    .sec-invitation-hero__dot {
+      display: inline-block;
+      margin: 0 var(--spacing-sm);
+    }
+  }
+
+  .sec-invitation-hero__btn {
+    margin-top: var(--spacing-md);
+  }
+}

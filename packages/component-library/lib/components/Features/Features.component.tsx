@@ -1,8 +1,8 @@
 import React from 'react';
+import { Section } from '../common/Section';
 import { ArrowRight, CheckCircle2, Cpu, Globe, Layers, Lock, Sparkles, Zap } from 'lucide-react';
 
 import { defaultFeaturesActions, defaultFeaturesProps } from './defaultProps';
-import { getFeaturesStyles } from './helpers/styleHelper';
 
 import type { FeaturesComponentProps } from './types';
 
@@ -18,14 +18,14 @@ const iconMap: Record<string, React.ComponentType<{ size?: number; className?: s
 export const Features: React.FC<FeaturesComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultFeaturesProps, ...userProps };
   const actions = { ...defaultFeaturesActions, ...userActions };
-  const { className: featureStyleClass, style: inlineStyle } = getFeaturesStyles(style);
+  
 
   const columnClass = `sec-features__grid--cols-${props.columns || 3}`;
 
@@ -45,14 +45,14 @@ export const Features: React.FC<FeaturesComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-features-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="Features Section"
     >
-      <div className={`sec-container ${featureStyleClass}`}>
+      <div className="sec-features">
         {/* Section Header */}
         <div className="sec-features__header">
           {props.badge && <div className="sec-badge">{props.badge}</div>}
@@ -98,7 +98,7 @@ export const Features: React.FC<FeaturesComponentProps> = ({
           })}
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 

@@ -1,15 +1,16 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 
 import { defaultHeaderActions, defaultHeaderProps } from './defaultProps';
-import { getHeaderStyles } from './helpers/styleHelper';
 
 import type { HeaderComponentProps } from './types';
 
 export const Header: React.FC<HeaderComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
@@ -18,7 +19,6 @@ export const Header: React.FC<HeaderComponentProps> = ({
 
   const props = { ...defaultHeaderProps, ...userProps };
   const actions = { ...defaultHeaderActions, ...userActions };
-  const { className: headerStyleClass, style: inlineStyle } = getHeaderStyles(style);
 
   const handleCtaClick = (e: React.MouseEvent) => {
     if (actions.ctaAction) {
@@ -33,13 +33,12 @@ export const Header: React.FC<HeaderComponentProps> = ({
   };
 
   return (
-    <header
+    <Section as="header"
       id={id}
       className={`sec-header-wrapper ${props.sticky ? 'sec-header--sticky' : ''} ${className}`}
-      style={inlineStyle}
-      role="banner"
+      style={userStyle}
     >
-      <div className={`sec-container ${headerStyleClass}`}>
+      <div className="sec-header">
         <div className="sec-header__inner">
           {/* Logo */}
           <div className="sec-header__logo">
@@ -124,7 +123,7 @@ export const Header: React.FC<HeaderComponentProps> = ({
           </div>
         )}
       </div>
-    </header>
+    </Section>
   );
 };
 

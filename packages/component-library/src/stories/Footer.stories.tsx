@@ -1,5 +1,5 @@
 import { Footer } from '../../lib/components/Footer';
-import { defaultFooterProps, defaultFooterStyle } from '../../lib/components/Footer/defaultProps';
+import { defaultFooterProps } from '../../lib/components/Footer/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -15,6 +15,6 @@ type Story = StoryObj<typeof Footer>;
 export const Default: Story = {
   args: {
     props: defaultFooterProps,
-    style: defaultFooterStyle,
+    
   },
 };

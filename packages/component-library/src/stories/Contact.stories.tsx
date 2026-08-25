@@ -1,7 +1,6 @@
 import { Contact } from '../../lib/components/Contact';
 import {
   defaultContactProps,
-  defaultContactStyle,
 } from '../../lib/components/Contact/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -18,6 +17,6 @@ type Story = StoryObj<typeof Contact>;
 export const Default: Story = {
   args: {
     props: defaultContactProps,
-    style: defaultContactStyle,
+    
   },
 };

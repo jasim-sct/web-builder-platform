@@ -1,7 +1,6 @@
 import { Pricing } from '../../lib/components/Pricing';
 import {
   defaultPricingProps,
-  defaultPricingStyle,
 } from '../../lib/components/Pricing/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
@@ -18,6 +17,6 @@ type Story = StoryObj<typeof Pricing>;
 export const Default: Story = {
   args: {
     props: defaultPricingProps,
-    style: defaultPricingStyle,
+    
   },
 };

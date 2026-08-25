@@ -34,6 +34,18 @@ export function resolveSectionStyles(style?: ResponsiveSectionStyle): React.CSSP
   if (desktop.marginBottom !== undefined) {
     inlineStyles.marginBottom = desktop.marginBottom;
   }
+  if (desktop.minHeight !== undefined) {
+    inlineStyles.minHeight = desktop.minHeight;
+  }
+  if (desktop.maxHeight !== undefined) {
+    inlineStyles.maxHeight = desktop.maxHeight;
+  }
+  if (desktop.width !== undefined) {
+    inlineStyles.width = desktop.width;
+  }
+  if (desktop.maxWidth !== undefined) {
+    inlineStyles.maxWidth = desktop.maxWidth;
+  }
   if (desktop.headingColor) {
     // Custom CSS variable for children to inherit
     inlineStyles['--sec-heading-color'] = desktop.headingColor;

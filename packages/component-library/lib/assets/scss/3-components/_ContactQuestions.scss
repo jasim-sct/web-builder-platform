@@ -1,0 +1,22 @@
+
+.sec-contact-questions-wrapper {
+  padding: var(--spacing-2xl) 0;
+  
+  .sec-generic-card {
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+  }
+  
+  .sec-generic-card__title {
+    font-size: var(--font-size-2xl);
+    font-weight: 300;
+    margin-bottom: var(--spacing-md);
+  }
+  
+  .sec-generic-card__text {
+    color: var(--color-text-muted);
+    font-size: var(--font-size-lg);
+    line-height: 1.6;
+  }
+}

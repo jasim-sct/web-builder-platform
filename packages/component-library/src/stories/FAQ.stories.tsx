@@ -1,5 +1,5 @@
 import { FAQ } from '../../lib/components/FAQ';
-import { defaultFAQProps, defaultFAQStyle } from '../../lib/components/FAQ/defaultProps';
+import { defaultFAQProps } from '../../lib/components/FAQ/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -15,6 +15,6 @@ type Story = StoryObj<typeof FAQ>;
 export const Default: Story = {
   args: {
     props: defaultFAQProps,
-    style: defaultFAQStyle,
+    
   },
 };

@@ -1,5 +1,5 @@
 import { Header } from '../../lib/components/Header';
-import { defaultHeaderProps, defaultHeaderStyle } from '../../lib/components/Header/defaultProps';
+import { defaultHeaderProps } from '../../lib/components/Header/defaultProps';
 
 import type { Meta, StoryObj } from '@storybook/react';
 
@@ -15,7 +15,7 @@ type Story = StoryObj<typeof Header>;
 export const Default: Story = {
   args: {
     props: defaultHeaderProps,
-    style: defaultHeaderStyle,
+    
   },
 };
 

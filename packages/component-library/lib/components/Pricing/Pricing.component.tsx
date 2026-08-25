@@ -1,22 +1,23 @@
-import React, { useState } from 'react';
+import React from 'react';
+import { Section } from '../common/Section';
+import { useState } from 'react';
 import { Check } from 'lucide-react';
 
 import { defaultPricingActions, defaultPricingProps } from './defaultProps';
-import { getPricingStyles } from './helpers/styleHelper';
 
 import type { PricingComponentProps, PricingPlan } from './types';
 
 export const Pricing: React.FC<PricingComponentProps> = ({
   id,
   props: userProps,
-  style,
+  style: userStyle,
   actions: userActions,
   className = '',
   onAction,
 }) => {
   const props = { ...defaultPricingProps, ...userProps };
   const actions = { ...defaultPricingActions, ...userActions };
-  const { className: pricingStyleClass, style: inlineStyle } = getPricingStyles(style);
+  
 
   const [isAnnual, setIsAnnual] = useState(false);
 
@@ -41,14 +42,14 @@ export const Pricing: React.FC<PricingComponentProps> = ({
   };
 
   return (
-    <section
+    <Section
       id={id}
       className={`sec-pricing-wrapper ${className}`}
-      style={inlineStyle}
+      style={userStyle}
       role="region"
       aria-label="Pricing Section"
     >
-      <div className={`sec-container ${pricingStyleClass}`}>
+      <div className="sec-pricing">
         {/* Section Header */}
         <div className="sec-pricing__header">
           {props.badge && <div className="sec-badge">{props.badge}</div>}
@@ -138,7 +139,7 @@ export const Pricing: React.FC<PricingComponentProps> = ({
           })}
         </div>
       </div>
-    </section>
+    </Section>
   );
 };
 
