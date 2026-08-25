@@ -74,12 +74,14 @@ export function calculateSectionInsertionIndex(
 ): number {
   const rect = sectionElement.getBoundingClientRect();
   const midY = rect.top + rect.height / 2;
-  return clientY < midY ? sectionIndex : sectionIndex + 1;
+  const safeClientY = typeof clientY === 'number' && !isNaN(clientY) ? clientY : rect.top;
+  return safeClientY < midY ? sectionIndex : sectionIndex + 1;
 }
 
 /**
- * Calculates nearest insertion index across the entire canvas container.
- * Resolves insertion index between 0 and totalSections.
+ * Calculates nearest insertion index anywhere across the canvas.
+ * Seamlessly resolves the closest insertion boundary (0 to totalSections)
+ * based on the pointer's vertical distance to section midpoints.
  */
 export function calculateCanvasInsertionIndex(
   clientY: number,
@@ -93,39 +95,26 @@ export function calculateCanvasInsertionIndex(
     return 0;
   }
 
-  const firstRect = sectionWrappers[0]!.getBoundingClientRect();
-  const firstMidY = firstRect.top + firstRect.height / 2;
-  if (clientY < firstMidY) {
+  const safeClientY = typeof clientY === 'number' && !isNaN(clientY) ? clientY : 0;
+
+  const midpoints = sectionWrappers.map((wrapper) => {
+    const rect = wrapper.getBoundingClientRect();
+    return rect.top + rect.height / 2;
+  });
+
+  // If above the first section midpoint
+  if (safeClientY < midpoints[0]!) {
     return 0;
   }
 
-  const lastRect = sectionWrappers[sectionWrappers.length - 1]!.getBoundingClientRect();
-  const lastMidY = lastRect.top + lastRect.height / 2;
-  if (clientY >= lastMidY) {
-    return sectionWrappers.length;
-  }
-
-  for (let i = 0; i < sectionWrappers.length; i++) {
-    const wrapper = sectionWrappers[i]!;
-    const rect = wrapper.getBoundingClientRect();
-    const midY = rect.top + rect.height / 2;
-
-    if (clientY < midY) {
-      return i;
-    }
-
-    const nextWrapper = sectionWrappers[i + 1];
-    if (nextWrapper) {
-      const nextRect = nextWrapper.getBoundingClientRect();
-      const nextMidY = nextRect.top + nextRect.height / 2;
-      if (clientY < nextMidY) {
-        return i + 1;
-      }
-    } else {
+  // Check between each adjacent pair of midpoints
+  for (let i = 0; i < midpoints.length - 1; i++) {
+    if (safeClientY >= midpoints[i]! && safeClientY < midpoints[i + 1]!) {
       return i + 1;
     }
   }
 
+  // If at or below the last section midpoint
   return sectionWrappers.length;
 }
 

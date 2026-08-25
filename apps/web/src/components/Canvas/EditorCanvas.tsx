@@ -31,9 +31,17 @@ export const EditorCanvas: React.FC = () => {
   };
 
   const handleCanvasDragLeave = (e: React.DragEvent<HTMLDivElement>) => {
-    const related = e.relatedTarget as Node | null;
-    if (related && e.currentTarget.contains(related)) return;
-    setActiveDropIndex(null);
+    const rect = e.currentTarget.getBoundingClientRect();
+    const { clientX, clientY } = e;
+    // Only reset activeDropIndex if pointer has left the canvas area bounds
+    if (
+      clientX <= rect.left ||
+      clientX >= rect.right ||
+      clientY <= rect.top ||
+      clientY >= rect.bottom
+    ) {
+      setActiveDropIndex(null);
+    }
   };
 
   const handleCanvasDrop = (e: React.DragEvent<HTMLDivElement>) => {
