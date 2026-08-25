@@ -1,0 +1,129 @@
+@use '../1-helpers/variables' as *;
+@use '../1-helpers/mixins' as *;
+
+.ws-dnd-section-wrapper {
+  position: relative;
+  width: 100%;
+  transition: all $transition-fast;
+  user-select: auto;
+
+  // Hover outline
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px dashed transparent;
+    pointer-events: none;
+    z-index: 8;
+    transition: all $transition-fast;
+  }
+
+  &:hover:not(.is-selected) {
+    &::before {
+      border-color: rgba(59, 130, 246, 0.4);
+      background-color: rgba(59, 130, 246, 0.015);
+    }
+
+    .ws-section-hover-badge {
+      opacity: 1;
+    }
+  }
+
+  // Selected State
+  &.is-selected {
+    &::before {
+      border: 2px solid $color-primary;
+      box-shadow: 0 0 0 1px $color-primary-glow;
+      pointer-events: none;
+      background-color: transparent;
+    }
+
+    .ws-section-floating-toolbar {
+      display: flex;
+    }
+
+    .ws-section-hover-badge {
+      opacity: 1;
+      background-color: $color-primary;
+      color: #ffffff;
+    }
+  }
+
+  // Section Header Badge
+  .ws-section-hover-badge {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    background-color: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: $radius-xs;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    opacity: 0;
+    transition: opacity $transition-fast;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.02em;
+    box-shadow: $shadow-xs;
+  }
+
+  // Floating Contextual Toolbar (ComponentClickAction group)
+  .ws-section-floating-toolbar {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    display: none;
+    align-items: center;
+    background-color: $bg-surface-1;
+    border: 1px solid $border-medium;
+    border-radius: $radius-sm;
+    box-shadow: $shadow-floating;
+    padding: 2px;
+    gap: 2px;
+    z-index: 12;
+
+    .ws-toolbar-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: $radius-xs;
+      @include flex-center;
+      color: $text-secondary;
+      background: transparent;
+      transition: all $transition-fast;
+
+      &:hover:not(:disabled) {
+        background-color: $bg-surface-3;
+        color: $text-primary;
+      }
+
+      &.btn-delete:hover:not(:disabled) {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+
+    .ws-toolbar-divider {
+      width: 1px;
+      height: 16px;
+      background-color: $border-medium;
+      margin: 0 2px;
+    }
+  }
+
+  // Actual rendered library component container
+  .ws-section-content {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+}

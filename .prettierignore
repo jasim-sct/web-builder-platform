@@ -8,6 +8,7 @@ build/
 out/
 .next/
 !.next/cache/
+storybook-static/
 
 # Turborepo
 .turbo/

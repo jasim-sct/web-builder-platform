@@ -1,0 +1,83 @@
+@use '../1-helpers/variables' as *;
+@use '../1-helpers/mixins' as *;
+
+.ws-editor-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: $bg-app;
+}
+
+.ws-editor-main-body {
+  display: flex;
+  flex: 1;
+  height: calc(100vh - #{$header-height});
+  overflow: hidden;
+  position: relative;
+}
+
+.ws-btn-base {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: $radius-sm;
+  transition: all $transition-fast;
+  user-select: none;
+  white-space: nowrap;
+
+  @include focus-ring;
+
+  &.ws-btn-primary {
+    background-color: $color-primary;
+    color: #ffffff;
+    box-shadow: $shadow-xs;
+
+    &:hover {
+      background-color: $color-primary-hover;
+    }
+  }
+
+  &.ws-btn-secondary {
+    background-color: $bg-surface-2;
+    color: $text-primary;
+    border: 1px solid $border-medium;
+
+    &:hover {
+      background-color: $bg-surface-3;
+      border-color: $border-strong;
+    }
+  }
+
+  &.ws-btn-ghost {
+    color: $text-secondary;
+    background: transparent;
+
+    &:hover {
+      background-color: $bg-surface-2;
+      color: $text-primary;
+    }
+  }
+
+  &.ws-btn-danger {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: #f87171;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+
+    &:hover {
+      background-color: rgba(239, 68, 68, 0.25);
+      color: #ef4444;
+    }
+  }
+
+  &.ws-btn-icon-only {
+    padding: 6px;
+    border-radius: $radius-sm;
+    aspect-ratio: 1 / 1;
+  }
+}

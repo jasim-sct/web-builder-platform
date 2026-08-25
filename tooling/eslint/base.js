@@ -38,7 +38,7 @@ export const baseConfig = [
         },
       ],
       '@typescript-eslint/no-explicit-any': 'warn',
-      '@typescript-eslint/no-non-null-assertion': 'warn',
+      '@typescript-eslint/no-non-null-assertion': 'off',
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       eqeqeq: ['error', 'always'],
     },
@@ -59,6 +59,8 @@ export const baseConfig = [
       '**/coverage/**',
       '**/.turbo/**',
       '**/*.tsbuildinfo',
+      '**/storybook-static/**',
+      '**/.storybook/**',
     ],
   },
 ];

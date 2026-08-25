@@ -1,0 +1,109 @@
+@use '../1-helpers/variables' as *;
+@use '../1-helpers/mixins' as *;
+
+.ws-dnd-spacer-control {
+  position: relative;
+  width: 100%;
+  max-width: 320px;
+  margin: 0 auto;
+  user-select: none;
+  font-family: inherit;
+
+  .ws-spacer-label-margin {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #f59e0b;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .ws-spacer-label-padding {
+    position: absolute;
+    top: 6px;
+    left: 8px;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #10b981;
+    pointer-events: none;
+    z-index: 5;
+  }
+
+  .ws-spacer-margin-box {
+    background: rgba(245, 158, 11, 0.08);
+    border: 1px dashed rgba(245, 158, 11, 0.4);
+    border-radius: $radius-sm;
+    padding: 24px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+  }
+
+  .ws-spacer-padding-box {
+    background: rgba(16, 185, 129, 0.08);
+    border: 1px dashed rgba(16, 185, 129, 0.4);
+    border-radius: $radius-sm;
+    padding: 24px 12px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    position: relative;
+  }
+
+  .ws-spacer-center-content {
+    background: $bg-surface-3;
+    border: 1px solid $border-medium;
+    border-radius: $radius-xs;
+    padding: 10px 14px;
+    width: 100%;
+    @include flex-center;
+    font-size: 11px;
+    font-weight: 600;
+    color: $text-secondary;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ws-spacer-row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 4px 0;
+  }
+
+  .ws-spacer-input-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    input {
+      width: 44px;
+      height: 24px;
+      background-color: $bg-surface-1;
+      border: 1px solid $border-medium;
+      border-radius: $radius-xs;
+      color: $text-primary;
+      font-size: 11px;
+      font-weight: 600;
+      text-align: center;
+      padding: 0 2px;
+      transition: all $transition-fast;
+
+      &:focus {
+        outline: none;
+        border-color: $color-primary;
+        box-shadow: 0 0 0 2px $color-primary-light;
+      }
+    }
+  }
+}

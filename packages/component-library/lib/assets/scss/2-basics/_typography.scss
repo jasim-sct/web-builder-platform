@@ -1,0 +1,52 @@
+@use '../1-helpers/variables' as *;
+@use '../1-helpers/breakpoints' as *;
+
+.sec-heading-1 {
+  font-family: $font-family-heading;
+  font-size: $font-size-4xl;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+
+  @include desktop {
+    font-size: $font-size-5xl;
+  }
+}
+
+.sec-heading-2 {
+  font-family: $font-family-heading;
+  font-size: $font-size-3xl;
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+
+  @include desktop {
+    font-size: $font-size-4xl;
+  }
+}
+
+.sec-heading-3 {
+  font-family: $font-family-heading;
+  font-size: $font-size-xl;
+  font-weight: 600;
+  line-height: 1.35;
+
+  @include desktop {
+    font-size: $font-size-2xl;
+  }
+}
+
+.sec-body-lg {
+  font-size: $font-size-lg;
+  line-height: 1.6;
+}
+
+.sec-body-md {
+  font-size: $font-size-base;
+  line-height: 1.6;
+}
+
+.sec-body-sm {
+  font-size: $font-size-sm;
+  line-height: 1.5;
+}

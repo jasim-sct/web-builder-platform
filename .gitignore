@@ -9,6 +9,7 @@ out/
 .next/
 !.next/cache/
 *.tsbuildinfo
+storybook-static/
 
 # Turborepo Cache
 .turbo/

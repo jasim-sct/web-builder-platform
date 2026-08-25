@@ -53,3 +53,12 @@ graph TD
 - **Hoisting**: Dependencies are isolated in workspace packages; shared toolchains are declared at root or inside `tooling/`.
 - **Node Engine**: Pinned using `.nvmrc` and `.npmrc` (`engine-strict=true`).
 - **Peer Dependencies**: Automatically resolved by pnpm (`auto-install-peers=true`).
+
+---
+
+## 5. Web Platform & Editor Architecture
+
+The Web Platform follows a strict three-tier architecture where the **Section Library** (`@repo/component-library`) is the single source of truth consumed by both **Storybook** (for component testing/docs) and the **Web Editor** (for visual site composition and schema-driven configuration).
+
+For the complete architectural rules, boundaries, serialization model, and 16-stage implementation workflow, refer to:
+👉 [Web Editor Architecture & Workflow](file:///home/sct/dnd/docs/web-editor-architecture.md)

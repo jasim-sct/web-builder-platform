@@ -1,0 +1,15 @@
+// Import Component Library compiled styles
+@use '@repo/component-library/styles';
+
+// Editor Architecture Styles
+@use '1-helpers/variables';
+@use '1-helpers/mixins';
+@use '2-basics/reset';
+@use '2-basics/global';
+@use '3-components/header';
+@use '3-components/component-panel';
+@use '3-components/canvas';
+@use '3-components/section-wrapper';
+@use '3-components/property-panel';
+@use '3-components/spacer-control';
+@use '3-components/form-controls';

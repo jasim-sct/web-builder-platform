@@ -4,7 +4,7 @@ import process from 'node:process';
 
 const rootDir = process.cwd();
 
-console.log('🔍 Validating workspace foundation constraints...\n');
+console.log('🔍 Validating workspace and section library integrity...\n');
 
 let hasErrors = false;
 
@@ -56,6 +56,13 @@ const requiredDirs = [
   '.github/workflows',
   '.husky',
   '.vscode',
+  'packages/component-library',
+  'packages/component-library/lib',
+  'packages/component-library/lib/components',
+  'packages/component-library/lib/schema',
+  'packages/component-library/lib/registry',
+  'packages/component-library/lib/assets/scss',
+  'packages/component-library/test',
 ];
 
 for (const dir of requiredDirs) {
@@ -63,7 +70,30 @@ for (const dir of requiredDirs) {
   assert(fs.existsSync(dirPath) && fs.statSync(dirPath).isDirectory(), `Directory '${dir}' exists`);
 }
 
-// 3. Confirm NO applications or business packages exist yet
+// 3. Confirm 9 concrete sections exist
+const sections = [
+  'Header',
+  'Hero',
+  'Features',
+  'Carousel',
+  'Pricing',
+  'Testimonials',
+  'FAQ',
+  'Contact',
+  'Footer',
+];
+
+for (const sec of sections) {
+  const componentPath = path.join(
+    rootDir,
+    'packages/component-library/lib/components',
+    sec,
+    `${sec}.component.tsx`,
+  );
+  assert(fs.existsSync(componentPath), `Section component '${sec}' exists and implemented`);
+}
+
+// 4. Confirm NO Web Editor apps created yet in apps/
 function getSubdirectories(dirName) {
   const targetDir = path.join(rootDir, dirName);
   if (!fs.existsSync(targetDir)) return [];
@@ -74,16 +104,9 @@ function getSubdirectories(dirName) {
 }
 
 const appsDirs = getSubdirectories('apps');
-const packagesDirs = getSubdirectories('packages');
-
 assert(
   appsDirs.length === 0,
-  `apps/ contains NO scaffolded applications (Found: ${appsDirs.join(', ') || '0 apps'})`,
-);
-
-assert(
-  packagesDirs.length === 0,
-  `packages/ contains NO scaffolded packages (Found: ${packagesDirs.join(', ') || '0 packages'})`,
+  `apps/ contains NO scaffolded applications (Scope boundary maintained: ${appsDirs.join(', ') || '0 apps'})`,
 );
 
 console.log('\n--- Result ---');
@@ -91,6 +114,6 @@ if (hasErrors) {
   console.error('Workspace verification failed.');
   process.exit(1);
 } else {
-  console.log('Workspace foundation verified successfully! 🎉\n');
+  console.log('Workspace and Section Library verified successfully! 🎉\n');
   process.exit(0);
 }

@@ -1,0 +1,225 @@
+@use '../1-helpers/variables' as *;
+@use '../1-helpers/mixins' as *;
+
+.ws-dnd-component-panel {
+  width: $sidebar-left-width;
+  background-color: $bg-surface-1;
+  border-right: 1px solid $border-subtle;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  flex-shrink: 0;
+  z-index: 10;
+
+  .ws-panel-header {
+    padding: 16px;
+    border-bottom: 1px solid $border-subtle;
+
+    .ws-panel-title-row {
+      @include flex-between;
+      margin-bottom: 12px;
+
+      .ws-panel-title {
+        font-size: 14px;
+        font-weight: 700;
+        color: $text-primary;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+
+      .ws-panel-count {
+        font-size: 11px;
+        font-weight: 600;
+        padding: 2px 6px;
+        background-color: $bg-surface-3;
+        border-radius: $radius-full;
+        color: $text-secondary;
+      }
+    }
+
+    .ws-dnd-search-wrap {
+      position: relative;
+      width: 100%;
+
+      .ws-search-icon {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-muted;
+        pointer-events: none;
+      }
+
+      .ws-dnd-search-input {
+        width: 100%;
+        background-color: $bg-surface-2;
+        border: 1px solid $border-medium;
+        border-radius: $radius-sm;
+        padding: 8px 12px 8px 34px;
+        font-size: 13px;
+        color: $text-primary;
+        transition: all $transition-fast;
+
+        &::placeholder {
+          color: $text-muted;
+        }
+
+        &:focus {
+          outline: none;
+          border-color: $color-primary;
+          background-color: $bg-surface-3;
+          box-shadow: 0 0 0 2px $color-primary-light;
+        }
+      }
+    }
+  }
+
+  .ws-category-filter-bar {
+    display: flex;
+    gap: 6px;
+    padding: 10px 16px;
+    overflow-x: auto;
+    border-bottom: 1px solid $border-subtle;
+    @include custom-scrollbar;
+
+    .ws-category-chip {
+      padding: 4px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: $radius-full;
+      background-color: $bg-surface-2;
+      color: $text-secondary;
+      border: 1px solid $border-medium;
+      white-space: nowrap;
+      transition: all $transition-fast;
+
+      &:hover {
+        background-color: $bg-surface-3;
+        color: $text-primary;
+      }
+
+      &.active {
+        background-color: $color-primary;
+        color: #ffffff;
+        border-color: $color-primary;
+      }
+    }
+  }
+
+  .ws-component-list-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    @include custom-scrollbar;
+
+    .ws-category-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .ws-category-group-header {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: $text-muted;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+    }
+
+    .ws-dnd-drag-card-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+
+      .ws-dnd-d-c-item {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 10px 12px;
+        background-color: $bg-surface-2;
+        border: 1px solid $border-medium;
+        border-radius: $radius-md;
+        cursor: grab;
+        transition: all $transition-fast;
+        text-align: left;
+        width: 100%;
+        user-select: none;
+
+        &:hover {
+          background-color: $bg-surface-3;
+          border-color: $color-primary;
+          transform: translateY(-1px);
+          box-shadow: $shadow-sm;
+
+          .ws-card-drag-handle {
+            color: $color-primary;
+          }
+        }
+
+        &:active {
+          cursor: grabbing;
+        }
+
+        &.is-dragging {
+          opacity: 0.5;
+          border-style: dashed;
+          border-color: $color-primary;
+        }
+
+        .ws-card-icon-wrap {
+          width: 36px;
+          height: 36px;
+          border-radius: $radius-sm;
+          background-color: $bg-surface-1;
+          border: 1px solid $border-medium;
+          @include flex-center;
+          color: $color-primary;
+          flex-shrink: 0;
+        }
+
+        .ws-card-content {
+          flex: 1;
+          min-width: 0;
+
+          .ws-card-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: $text-primary;
+            @include text-truncate;
+          }
+
+          .ws-card-desc {
+            font-size: 11px;
+            color: $text-muted;
+            margin-top: 2px;
+            @include text-truncate;
+          }
+        }
+
+        .ws-card-drag-handle {
+          color: $text-muted;
+          transition: color $transition-fast;
+          flex-shrink: 0;
+        }
+      }
+    }
+
+    .ws-empty-search {
+      padding: 32px 16px;
+      text-align: center;
+      color: $text-muted;
+      font-size: 13px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}
