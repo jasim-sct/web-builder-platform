@@ -7,6 +7,10 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
+      '@repo/component-library/styles': path.resolve(
+        __dirname,
+        '../../packages/component-library/lib/assets/scss/main.scss',
+      ),
     },
   },
   server: {
