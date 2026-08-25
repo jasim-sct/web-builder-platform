@@ -1,19 +1,22 @@
-// Design System Shadows & Elevation Tokens
+// Design System Shadows & Elevation Tokens (Precise & Sharp)
 
 $shadow-none: none;
-$shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.25);
-$shadow-sm: 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+// Crisp 1px separations mimicking shadow
+$shadow-xs: 0 1px 1px 0 rgba(0, 0, 0, 0.4);
+$shadow-sm: 0 2px 2px -1px rgba(0, 0, 0, 0.5);
 $shadow-md:
   0 4px 6px -1px rgba(0, 0, 0, 0.4),
-  0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  0 2px 4px -2px rgba(0, 0, 0, 0.5);
 $shadow-lg:
-  0 10px 15px -3px rgba(0, 0, 0, 0.5),
-  0 4px 6px -4px rgba(0, 0, 0, 0.3);
+  0 10px 15px -3px rgba(0, 0, 0, 0.6),
+  0 4px 6px -4px rgba(0, 0, 0, 0.5);
 $shadow-xl:
-  0 20px 25px -5px rgba(0, 0, 0, 0.6),
-  0 8px 10px -6px rgba(0, 0, 0, 0.4);
+  0 20px 25px -5px rgba(0, 0, 0, 0.7),
+  0 8px 10px -6px rgba(0, 0, 0, 0.6);
 $shadow-floating:
-  0 20px 30px -6px rgba(0, 0, 0, 0.7),
-  0 10px 14px -5px rgba(0, 0, 0, 0.5);
-$shadow-glow: 0 0 20px rgba(59, 130, 246, 0.4);
-$shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.3);
+  0 0 0 1px rgba(255, 255, 255, 0.1),
+  0 16px 24px -4px rgba(0, 0, 0, 0.8),
+  0 8px 12px -4px rgba(0, 0, 0, 0.6);
+// Replaced glow with a sharp focus ring style for reuse if needed
+$shadow-glow: 0 0 0 2px rgba(53, 120, 229, 0.6);
+$shadow-inner: inset 0 2px 4px 0 rgba(0, 0, 0, 0.4);

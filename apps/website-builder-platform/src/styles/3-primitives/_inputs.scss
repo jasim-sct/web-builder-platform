@@ -205,7 +205,7 @@ input[type='range'],
 
     &:hover {
       transform: scale(1.15);
-      box-shadow: 0 0 8px tokens.$color-primary-glow;
+      box-shadow: 0 0 0 2px tokens.$color-primary-subtle;
     }
   }
 
@@ -223,7 +223,7 @@ input[type='range'],
 
     &:hover {
       transform: scale(1.15);
-      box-shadow: 0 0 8px tokens.$color-primary-glow;
+      box-shadow: 0 0 0 2px tokens.$color-primary-subtle;
     }
   }
 

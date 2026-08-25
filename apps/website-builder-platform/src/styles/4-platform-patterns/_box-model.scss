@@ -45,7 +45,7 @@
   .ds-box-model-margin,
   .ws-spacer-margin-box {
     background: transparent;
-    border: 1px dashed rgba(245, 158, 11, 0.35);
+    border: 1px solid rgba(245, 158, 11, 0.5);
     border-radius: tokens.$radius-sm;
     padding: 24px 20px 16px;
     display: flex;
@@ -68,7 +68,7 @@
   .ds-box-model-padding,
   .ws-spacer-padding-box {
     background: transparent;
-    border: 1px dashed rgba(16, 185, 129, 0.35);
+    border: 1px solid rgba(16, 185, 129, 0.5);
     border-radius: tokens.$radius-sm;
     padding: 24px 12px 16px;
     display: flex;

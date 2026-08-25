@@ -16,7 +16,7 @@
 
   &:focus-visible {
     outline: 2px solid tokens.$color-primary;
-    outline-offset: 2px;
+    outline-offset: -1px;
   }
 
   // Sizes
@@ -54,7 +54,6 @@
     &:hover:not(:disabled) {
       background: tokens.$color-primary-hover;
       border-color: tokens.$color-primary-hover;
-      box-shadow: 0 0 12px tokens.$color-primary-glow;
     }
 
     &:active:not(:disabled) {

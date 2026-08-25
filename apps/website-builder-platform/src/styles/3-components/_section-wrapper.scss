@@ -12,7 +12,7 @@
     content: '';
     position: absolute;
     inset: 0;
-    border: 1px dashed transparent;
+    border: 1px solid transparent;
     pointer-events: none;
     z-index: 8;
     transition: all $transition-fast;
@@ -20,8 +20,8 @@
 
   &:hover:not(.is-selected) {
     &::before {
-      border-color: rgba(59, 130, 246, 0.4);
-      background-color: rgba(59, 130, 246, 0.015);
+      border-color: rgba(53, 120, 229, 0.4);
+      background-color: transparent;
     }
 
     .ws-section-hover-badge {
@@ -33,7 +33,6 @@
   &.is-selected {
     &::before {
       border: 2px solid $color-primary;
-      box-shadow: 0 0 0 1px $color-primary-glow;
       pointer-events: none;
       background-color: transparent;
     }
