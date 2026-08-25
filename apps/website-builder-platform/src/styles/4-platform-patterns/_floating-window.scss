@@ -1,0 +1,126 @@
+@use '../1-tokens' as tokens;
+
+.ds-floating-window,
+.ws-floating-component-palette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: tokens.$floating-palette-width;
+  max-height: tokens.$floating-palette-max-height;
+  background: tokens.$bg-glass-panel;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid tokens.$border-glass;
+  border-radius: tokens.$radius-lg;
+  box-shadow: tokens.$shadow-floating;
+  z-index: tokens.$z-floating-palette;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition:
+    box-shadow tokens.$transition-fast,
+    max-height tokens.$transition-normal,
+    opacity tokens.$transition-fast;
+
+  &.is-moving {
+    cursor: grabbing;
+    box-shadow: 0 25px 35px -5px rgba(0, 0, 0, 0.8);
+    opacity: 0.95;
+    user-select: none;
+  }
+
+  &.is-minimized {
+    max-height: 48px;
+    overflow: hidden;
+  }
+}
+
+.ds-floating-header,
+.ws-palette-header {
+  height: 48px;
+  min-height: 48px;
+  background: tokens.$bg-glass-header;
+  border-bottom: 1px solid tokens.$border-subtle;
+  padding: 0 tokens.$space-3;
+  display: flex;
+  align-items: center;
+  gap: tokens.$space-2;
+  cursor: grab;
+  user-select: none;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  .ws-palette-drag-grip {
+    color: tokens.$text-muted;
+    display: flex;
+    align-items: center;
+  }
+
+  .ws-palette-title-wrap {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-2;
+
+    .ws-palette-title {
+      display: flex;
+      align-items: center;
+      gap: tokens.$space-1-5;
+      font-size: tokens.$font-size-sm;
+      font-weight: tokens.$font-weight-semibold;
+      color: tokens.$text-primary;
+    }
+  }
+
+  .ws-palette-header-actions {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-1;
+  }
+}
+
+.ds-floating-body,
+.ws-palette-body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ws-palette-search-container {
+  padding: tokens.$space-3;
+  border-bottom: 1px solid tokens.$border-subtle;
+}
+
+.ws-dnd-search-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  .ws-search-icon {
+    position: absolute;
+    left: tokens.$space-2-5;
+    color: tokens.$text-muted;
+    pointer-events: none;
+  }
+
+  .ws-dnd-search-input {
+    padding-left: tokens.$space-8;
+    padding-right: tokens.$space-8;
+  }
+
+  .ws-search-clear-btn {
+    position: absolute;
+    right: tokens.$space-2-5;
+    color: tokens.$text-muted;
+    display: flex;
+    align-items: center;
+
+    &:hover {
+      color: tokens.$text-primary;
+    }
+  }
+}

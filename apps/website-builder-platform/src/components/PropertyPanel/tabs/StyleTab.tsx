@@ -32,22 +32,22 @@ export const StyleTab: React.FC<StyleTabProps> = ({ section }) => {
       {/* Visual Box-Model Spacer (Margin & Padding) */}
       <WSDndSpacerControl style={currentDesktopStyle} onChange={handleStyleChange} />
 
-      <div style={{ height: '1px', backgroundColor: '#272d3d', margin: '4px 0' }} />
+      <div className="ws-prop-divider" />
 
       {/* Layout & Alignment */}
       <LayoutAlignmentControl style={currentDesktopStyle} onChange={handleStyleChange} />
 
-      <div style={{ height: '1px', backgroundColor: '#272d3d', margin: '4px 0' }} />
+      <div className="ws-prop-divider" />
 
       {/* Typography & Colors */}
       <TypographyControl style={currentDesktopStyle} onChange={handleStyleChange} />
 
-      <div style={{ height: '1px', backgroundColor: '#272d3d', margin: '4px 0' }} />
+      <div className="ws-prop-divider" />
 
       {/* Background & Effects */}
       <BackgroundControl style={currentDesktopStyle} onChange={handleStyleChange} />
 
-      <div style={{ height: '1px', backgroundColor: '#272d3d', margin: '4px 0' }} />
+      <div className="ws-prop-divider" />
 
       {/* Borders & Shadows */}
       <BorderShadowControl style={currentDesktopStyle} onChange={handleStyleChange} />

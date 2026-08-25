@@ -1,5 +1,6 @@
 import React from 'react';
 
+import { FormField, TextInput } from '../../../design-system';
 import { useEditor } from '../../../state/editorContext';
 import { ArrayListControl } from '../controls/ArrayListControl';
 import { ColorPickerControl } from '../controls/ColorPickerControl';
@@ -33,17 +34,12 @@ export const PropsTab: React.FC<PropsTabProps> = ({ section, schema }) => {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         {Object.entries(currentProps).map(([key, val]) => (
-          <div key={key} className="ws-form-group">
-            <div className="ws-label-row">
-              <label className="ws-form-label">{key}</label>
-            </div>
-            <input
-              type="text"
-              className="ws-text-input"
+          <FormField key={key} label={key}>
+            <TextInput
               value={String(val ?? '')}
               onChange={(e) => handlePropChange(key, e.target.value)}
             />
-          </div>
+          </FormField>
         ))}
       </div>
     );

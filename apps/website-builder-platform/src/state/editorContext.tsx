@@ -42,6 +42,7 @@ interface EditorContextValue {
   togglePropertyPanel: () => void;
   togglePropertyPanelPosition: () => void;
   togglePropsExpand: () => void;
+  setPageName: (name: string) => void;
   resetPage: () => void;
 }
 
@@ -157,6 +158,10 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
     dispatch({ type: 'TOGGLE_PROPS_EXPAND' });
   };
 
+  const setPageName = (name: string) => {
+    dispatch({ type: 'SET_PAGE_NAME', name });
+  };
+
   const resetPage = () => {
     dispatch({ type: 'RESET_PAGE' });
   };
@@ -189,6 +194,7 @@ export const EditorProvider: React.FC<{ children: ReactNode }> = ({ children }) 
       togglePropertyPanel,
       togglePropertyPanelPosition,
       togglePropsExpand,
+      setPageName,
       resetPage,
     }),
     [state, selectedSection, selectedSectionItem, selectedSectionSchema],

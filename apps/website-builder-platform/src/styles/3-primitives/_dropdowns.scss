@@ -1,0 +1,63 @@
+@use '../1-tokens' as tokens;
+
+.ds-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  right: 0;
+  min-width: 180px;
+  background: tokens.$bg-surface-2;
+  border: 1px solid tokens.$border-medium;
+  border-radius: tokens.$radius-md;
+  box-shadow: tokens.$shadow-lg;
+  padding: tokens.$space-1;
+  z-index: tokens.$z-dropdown;
+  animation: dsDropdownFadeIn tokens.$transition-fast ease-out;
+
+  &--left {
+    right: auto;
+    left: 0;
+  }
+}
+
+.ds-dropdown-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: tokens.$space-2-5;
+  padding: tokens.$space-2 tokens.$space-3;
+  font-size: tokens.$font-size-sm;
+  color: tokens.$text-secondary;
+  border-radius: tokens.$radius-xs;
+  text-align: left;
+  transition: all tokens.$transition-fast;
+
+  &:hover {
+    background: tokens.$bg-surface-3;
+    color: tokens.$text-primary;
+  }
+
+  &.is-danger {
+    color: tokens.$color-danger;
+
+    &:hover {
+      background: tokens.$color-danger-bg;
+    }
+  }
+}
+
+.ds-dropdown-divider {
+  height: 1px;
+  background: tokens.$border-subtle;
+  margin: tokens.$space-1 0;
+}
+
+@keyframes dsDropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

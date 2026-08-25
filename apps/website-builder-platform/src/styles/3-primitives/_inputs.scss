@@ -1,0 +1,233 @@
+@use '../1-tokens' as tokens;
+
+.ds-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .ds-input-prefix,
+  .ds-input-suffix {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: tokens.$text-muted;
+    pointer-events: none;
+  }
+
+  .ds-input-prefix {
+    left: tokens.$space-2-5;
+  }
+
+  .ds-input-suffix {
+    right: tokens.$space-2-5;
+    pointer-events: auto;
+  }
+}
+
+.ds-input,
+.ws-text-input,
+.ws-dnd-search-input,
+.ws-page-title-input {
+  width: 100%;
+  height: 32px;
+  background: tokens.$bg-surface-1;
+  border: 1px solid tokens.$border-subtle;
+  border-radius: tokens.$radius-sm;
+  color: tokens.$text-primary;
+  font-size: tokens.$font-size-base;
+  padding: 0 tokens.$space-2-5;
+  transition: all tokens.$transition-fast;
+
+  &::placeholder {
+    color: tokens.$text-muted;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: tokens.$border-medium;
+  }
+
+  &:focus {
+    border-color: tokens.$color-primary;
+    background: tokens.$bg-surface-2;
+    box-shadow: 0 0 0 2px tokens.$color-primary-light;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  &--has-prefix {
+    padding-left: tokens.$space-8;
+  }
+
+  &--has-suffix {
+    padding-right: tokens.$space-8;
+  }
+
+  &--error {
+    border-color: tokens.$color-danger;
+
+    &:focus {
+      box-shadow: 0 0 0 2px tokens.$color-danger-bg;
+    }
+  }
+
+  &--sm {
+    height: 26px;
+    font-size: tokens.$font-size-sm;
+    padding: 0 tokens.$space-2;
+  }
+
+  &--lg {
+    height: 38px;
+    font-size: tokens.$font-size-md;
+    padding: 0 tokens.$space-3-5;
+  }
+}
+
+// Textarea input
+.ds-textarea,
+.ws-textarea-input {
+  width: 100%;
+  min-height: 72px;
+  background: tokens.$bg-surface-1;
+  border: 1px solid tokens.$border-subtle;
+  border-radius: tokens.$radius-sm;
+  color: tokens.$text-primary;
+  font-size: tokens.$font-size-base;
+  padding: tokens.$space-2 tokens.$space-2-5;
+  resize: vertical;
+  line-height: tokens.$line-height-normal;
+  transition: all tokens.$transition-fast;
+
+  &::placeholder {
+    color: tokens.$text-muted;
+  }
+
+  &:hover:not(:disabled) {
+    border-color: tokens.$border-medium;
+  }
+
+  &:focus {
+    border-color: tokens.$color-primary;
+    background: tokens.$bg-surface-2;
+    box-shadow: 0 0 0 2px tokens.$color-primary-light;
+  }
+}
+
+// Number input with steppers
+.ds-number-input-wrap {
+  display: flex;
+  align-items: center;
+  background: tokens.$bg-surface-1;
+  border: 1px solid tokens.$border-subtle;
+  border-radius: tokens.$radius-sm;
+  overflow: hidden;
+  transition: all tokens.$transition-fast;
+
+  &:focus-within {
+    border-color: tokens.$color-primary;
+    box-shadow: 0 0 0 2px tokens.$color-primary-light;
+  }
+
+  .ds-number-input {
+    width: 100%;
+    height: 32px;
+    background: transparent;
+    border: none;
+    color: tokens.$text-primary;
+    font-size: tokens.$font-size-base;
+    padding: 0 tokens.$space-2-5;
+    -moz-appearance: textfield;
+
+    &::-webkit-inner-spin-button,
+    &::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+
+  .ds-number-steppers {
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid tokens.$border-subtle;
+
+    button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 16px;
+      color: tokens.$text-muted;
+      background: tokens.$bg-surface-2;
+      transition: background tokens.$transition-fast;
+
+      &:hover {
+        background: tokens.$bg-surface-3;
+        color: tokens.$text-primary;
+      }
+
+      &:first-child {
+        border-bottom: 1px solid tokens.$border-subtle;
+      }
+    }
+  }
+}
+
+// Range Slider Input (e.g. for opacity / sizing)
+input[type='range'],
+.ds-range-input {
+  width: 100%;
+  height: 6px;
+  background: tokens.$bg-surface-3;
+  border-radius: tokens.$radius-full;
+  outline: none;
+  appearance: none;
+  cursor: pointer;
+  transition: all tokens.$transition-fast;
+  margin: tokens.$space-2 0;
+
+  &::-webkit-slider-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: tokens.$radius-full;
+    background: tokens.$color-primary;
+    border: 2px solid #ffffff;
+    box-shadow: tokens.$shadow-sm;
+    cursor: pointer;
+    transition:
+      transform tokens.$transition-fast,
+      box-shadow tokens.$transition-fast;
+
+    &:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 8px tokens.$color-primary-glow;
+    }
+  }
+
+  &::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: tokens.$radius-full;
+    background: tokens.$color-primary;
+    border: 2px solid #ffffff;
+    box-shadow: tokens.$shadow-sm;
+    cursor: pointer;
+    transition:
+      transform tokens.$transition-fast,
+      box-shadow tokens.$transition-fast;
+
+    &:hover {
+      transform: scale(1.15);
+      box-shadow: 0 0 8px tokens.$color-primary-glow;
+    }
+  }
+
+  &:focus-visible {
+    box-shadow: 0 0 0 2px tokens.$color-primary-light;
+  }
+}

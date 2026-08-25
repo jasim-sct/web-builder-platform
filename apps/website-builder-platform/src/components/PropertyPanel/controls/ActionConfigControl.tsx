@@ -1,3 +1,7 @@
+import React from 'react';
+
+import { FormField, Select, Switch, TextInput } from '../../../design-system';
+
 import type { ActionConfig, ActionPropertySchema, ActionType } from '@repo/component-library';
 
 interface ActionConfigControlProps {
@@ -6,6 +10,14 @@ interface ActionConfigControlProps {
   actionConfig?: ActionConfig | undefined;
   onChange: (name: string, config: ActionConfig) => void;
 }
+
+const ACTION_TYPE_OPTIONS = [
+  { value: 'navigate', label: 'Navigate Internal Route' },
+  { value: 'externalUrl', label: 'Open External URL' },
+  { value: 'openPopup', label: 'Open Modal / Popup' },
+  { value: 'scrollToSection', label: 'Scroll to Section' },
+  { value: 'submitApi', label: 'Submit API Payload' },
+];
 
 export const ActionConfigControl: React.FC<ActionConfigControlProps> = ({
   actionName,
@@ -30,91 +42,54 @@ export const ActionConfigControl: React.FC<ActionConfigControlProps> = ({
   };
 
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">{schema?.label || actionName}</label>
-      </div>
-
-      {schema?.description && <p className="ws-form-desc">{schema.description}</p>}
-
-      {/* Action Type */}
-      <div className="ws-form-group" style={{ marginTop: '4px' }}>
-        <span className="ws-form-label" style={{ fontSize: '11px' }}>
-          Action Type
-        </span>
-        <select
-          className="ws-select-input"
+    <div className="ds-action-config-control">
+      <FormField label="Action Type" description={schema?.description}>
+        <Select
+          options={ACTION_TYPE_OPTIONS}
           value={currentType}
           onChange={(e) => handleTypeChange(e.target.value as ActionType)}
-        >
-          <option value="navigate">Navigate Internal Route</option>
-          <option value="externalUrl">Open External URL</option>
-          <option value="openPopup">Open Modal / Popup</option>
-          <option value="scrollToSection">Scroll to Section</option>
-          <option value="submitApi">Submit API Payload</option>
-        </select>
-      </div>
+        />
+      </FormField>
 
       {/* Action Target / URL Input based on Action Type */}
       {currentType === 'navigate' && (
-        <div className="ws-form-group" style={{ marginTop: '4px' }}>
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            Target Route (e.g. /pricing, /about)
-          </span>
-          <input
-            type="text"
-            className="ws-text-input"
+        <FormField label="Target Route (e.g. /pricing, /about)">
+          <TextInput
             value={actionConfig.target || ''}
             placeholder="/contact"
             onChange={(e) => handleFieldChange('target', e.target.value)}
           />
-        </div>
+        </FormField>
       )}
 
       {currentType === 'externalUrl' && (
-        <div className="ws-form-group" style={{ marginTop: '4px' }}>
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            External URL
-          </span>
-          <input
-            type="text"
-            className="ws-text-input"
+        <FormField label="External URL">
+          <TextInput
             value={actionConfig.url || ''}
             placeholder="https://example.com"
             onChange={(e) => handleFieldChange('url', e.target.value)}
           />
-        </div>
+        </FormField>
       )}
 
       {currentType === 'scrollToSection' && (
-        <div className="ws-form-group" style={{ marginTop: '4px' }}>
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            Target Section ID
-          </span>
-          <input
-            type="text"
-            className="ws-text-input"
+        <FormField label="Target Section ID">
+          <TextInput
             value={actionConfig.sectionId || ''}
             placeholder="pricing-section"
             onChange={(e) => handleFieldChange('sectionId', e.target.value)}
           />
-        </div>
+        </FormField>
       )}
 
       {/* Open in New Tab Toggle for Links */}
       {(currentType === 'externalUrl' || currentType === 'navigate') && (
-        <div className="ws-toggle-row" style={{ marginTop: '4px' }}>
-          <span className="ws-toggle-label" style={{ fontSize: '12px' }}>
-            Open in New Tab
-          </span>
-          <label className="ws-dnd-property-toggle">
-            <input
-              type="checkbox"
-              checked={actionConfig.openInNewTab || false}
-              onChange={(e) => handleFieldChange('openInNewTab', e.target.checked)}
-            />
-            <span className="ws-toggle-slider" />
-          </label>
+        <div style={{ marginTop: 8 }}>
+          <Switch
+            checked={actionConfig.openInNewTab || false}
+            onChange={(checked) => handleFieldChange('openInNewTab', checked)}
+            label="Open in New Tab"
+          />
         </div>
       )}
     </div>

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FormField, NumberInput } from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface NumberInputControlProps {
@@ -23,25 +25,17 @@ export const NumberInputControl: React.FC<NumberInputControlProps> = ({
         : 0;
 
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">{schema.label || propKey}</label>
-        {schema.required && <span className="ws-form-required">*</span>}
-      </div>
-
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
-
-      <input
-        type="number"
-        className="ws-number-input"
+    <FormField
+      label={schema.label || propKey}
+      required={schema.required}
+      description={schema.description}
+    >
+      <NumberInput
         value={numValue}
         min={schema.validation?.min}
         max={schema.validation?.max}
-        onChange={(e) => {
-          const val = parseFloat(e.target.value);
-          onChange(propKey, isNaN(val) ? 0 : val);
-        }}
+        onChange={(val) => onChange(propKey, val)}
       />
-    </div>
+    </FormField>
   );
 };

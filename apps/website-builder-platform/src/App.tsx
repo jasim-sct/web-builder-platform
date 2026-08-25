@@ -4,26 +4,26 @@ import { EditorCanvas } from './components/Canvas/EditorCanvas';
 import { ComponentPanel } from './components/ComponentPanel/ComponentPanel';
 import { EditorHeader } from './components/Header/EditorHeader';
 import { PropertyPanel } from './components/PropertyPanel/PropertyPanel';
+import { PlatformShell, ToastProvider } from './design-system';
 import { EditorProvider } from './state/editorContext';
 
 export const AppContent: React.FC = () => {
   return (
-    <div className="ws-editor-root">
-      <EditorHeader />
-      <div className="ws-editor-main-body">
-        <ComponentPanel />
-        <EditorCanvas />
-        <PropertyPanel />
-      </div>
-    </div>
+    <PlatformShell header={<EditorHeader />}>
+      <ComponentPanel />
+      <EditorCanvas />
+      <PropertyPanel />
+    </PlatformShell>
   );
 };
 
 export const App: React.FC = () => {
   return (
-    <EditorProvider>
-      <AppContent />
-    </EditorProvider>
+    <ToastProvider>
+      <EditorProvider>
+        <AppContent />
+      </EditorProvider>
+    </ToastProvider>
   );
 };
 

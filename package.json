@@ -8,6 +8,9 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
+    "storybook": "pnpm --filter @repo/component-library storybook",
+    "storybook:build": "pnpm --filter @repo/component-library build-storybook",
+    "storybook:preview": "pnpm --filter @repo/component-library storybook --ci",
     "dev": "turbo dev",
     "build": "turbo build",
     "lint": "turbo lint",

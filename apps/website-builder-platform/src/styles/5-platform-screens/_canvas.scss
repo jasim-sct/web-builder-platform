@@ -1,0 +1,318 @@
+@use '../1-tokens' as tokens;
+
+.ds-canvas-area,
+.ws-dnd-canvas-area {
+  flex: 1;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  background-color: tokens.$bg-canvas;
+  background-image: radial-gradient(tokens.$bg-canvas-dot 1.2px, transparent 1.2px);
+  background-size: 20px 20px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: tokens.$space-8 tokens.$space-6;
+
+  .ws-canvas-container {
+    width: 100%;
+    max-width: 1280px;
+    background-color: #ffffff;
+    min-height: calc(100vh - #{tokens.$header-height} - 64px);
+    box-shadow: tokens.$shadow-lg;
+    border-radius: tokens.$radius-md;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    transition: width tokens.$transition-normal;
+    color: #1e293b;
+  }
+
+  // Drop Indicators
+  .ws-drop-indicator-zone {
+    width: 100%;
+    height: 12px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: -6px 0;
+    z-index: 15;
+    transition: height tokens.$transition-fast;
+
+    .ws-drop-line {
+      width: 100%;
+      height: 2px;
+      background-color: transparent;
+      transition: all tokens.$transition-fast;
+      position: relative;
+    }
+
+    &.is-active {
+      height: 28px;
+      margin: -14px 0;
+
+      .ws-drop-line {
+        height: 3px;
+        background-color: tokens.$color-primary;
+        box-shadow: 0 0 12px tokens.$color-primary-glow;
+
+        &::after {
+          content: 'Drop Here';
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          background-color: tokens.$color-primary;
+          color: #ffffff;
+          font-size: 11px;
+          font-weight: 700;
+          padding: 3px 12px;
+          border-radius: tokens.$radius-full;
+          letter-spacing: 0.06em;
+          text-transform: uppercase;
+          box-shadow: tokens.$shadow-sm;
+          white-space: nowrap;
+        }
+      }
+    }
+  }
+
+  // Empty State Placeholder
+  .ws-empty-canvas-state {
+    flex: 1;
+    min-height: 480px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 24px;
+    text-align: center;
+    border: 2px dashed #cbd5e1;
+    border-radius: tokens.$radius-md;
+    margin: 24px;
+    background-color: #f8fafc;
+    transition: all tokens.$transition-fast;
+
+    &.is-drag-over {
+      border-color: tokens.$color-primary;
+      background-color: rgba(59, 130, 246, 0.04);
+      transform: scale(0.995);
+    }
+
+    .ws-empty-icon-bubble {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background-color: #e2e8f0;
+      color: tokens.$color-primary;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .ws-empty-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 8px;
+    }
+
+    .ws-empty-desc {
+      font-size: 14px;
+      color: #64748b;
+      max-width: 360px;
+      line-height: 1.5;
+      margin-bottom: 24px;
+    }
+
+    .ws-quick-add-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      max-width: 500px;
+    }
+  }
+
+  // Floating Quick-Add Trigger when Component Palette is Closed
+  .ws-canvas-floating-trigger {
+    position: fixed;
+    bottom: 24px;
+    left: 24px;
+    z-index: tokens.$z-floating-palette;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 16px 8px 10px;
+    background-color: tokens.$bg-glass-panel;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid tokens.$border-glass;
+    border-radius: tokens.$radius-full;
+    color: tokens.$text-primary;
+    font-size: 13px;
+    font-weight: 600;
+    box-shadow: tokens.$shadow-floating;
+    cursor: pointer;
+    transition: all tokens.$transition-fast;
+
+    .ws-trigger-icon-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, tokens.$color-primary, tokens.$color-purple);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 16px;
+      line-height: 1;
+
+      .ws-plus-sign {
+        margin-top: -1px;
+      }
+    }
+
+    &:hover {
+      background-color: tokens.$bg-surface-3;
+      transform: translateY(-2px);
+      box-shadow:
+        0 20px 30px -5px rgba(0, 0, 0, 0.6),
+        0 0 0 1px tokens.$color-primary;
+      color: #ffffff;
+    }
+  }
+}
+
+// Section Wrapper styling
+.ws-dnd-section-wrapper {
+  position: relative;
+  width: 100%;
+  transition: all tokens.$transition-fast;
+  user-select: auto;
+
+  // Hover outline
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border: 1px dashed transparent;
+    pointer-events: none;
+    z-index: 8;
+    transition: all tokens.$transition-fast;
+  }
+
+  &:hover:not(.is-selected) {
+    &::before {
+      border-color: rgba(59, 130, 246, 0.4);
+      background-color: rgba(59, 130, 246, 0.015);
+    }
+
+    .ws-section-hover-badge {
+      opacity: 1;
+    }
+  }
+
+  // Selected State
+  &.is-selected {
+    &::before {
+      border: 2px solid tokens.$color-primary;
+      box-shadow: 0 0 0 1px tokens.$color-primary-glow;
+      pointer-events: none;
+      background-color: transparent;
+    }
+
+    .ws-section-floating-toolbar {
+      display: flex;
+    }
+
+    .ws-section-hover-badge {
+      opacity: 1;
+      background-color: tokens.$color-primary;
+      color: #ffffff;
+    }
+  }
+
+  // Section Header Badge
+  .ws-section-hover-badge {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    background-color: rgba(15, 23, 42, 0.85);
+    color: #f8fafc;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: tokens.$radius-xs;
+    backdrop-filter: blur(4px);
+    z-index: 10;
+    opacity: 0;
+    transition: opacity tokens.$transition-fast;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    letter-spacing: 0.02em;
+    box-shadow: tokens.$shadow-xs;
+  }
+
+  // Floating Contextual Toolbar (ComponentClickAction group)
+  .ws-section-floating-toolbar {
+    position: absolute;
+    top: 8px;
+    right: 12px;
+    display: none;
+    align-items: center;
+    background-color: tokens.$bg-surface-1;
+    border: 1px solid tokens.$border-medium;
+    border-radius: tokens.$radius-sm;
+    box-shadow: tokens.$shadow-floating;
+    padding: 2px;
+    gap: 2px;
+    z-index: 12;
+
+    .ws-toolbar-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: tokens.$radius-xs;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: tokens.$text-secondary;
+      background: transparent;
+      transition: all tokens.$transition-fast;
+
+      &:hover:not(:disabled) {
+        background-color: tokens.$bg-surface-3;
+        color: tokens.$text-primary;
+      }
+
+      &.btn-delete:hover:not(:disabled) {
+        background-color: rgba(239, 68, 68, 0.2);
+        color: #ef4444;
+      }
+
+      &:disabled {
+        opacity: 0.3;
+        cursor: not-allowed;
+      }
+    }
+
+    .ws-toolbar-divider {
+      width: 1px;
+      height: 16px;
+      background-color: tokens.$border-medium;
+      margin: 0 2px;
+    }
+  }
+
+  // Actual rendered library component container
+  .ws-section-content {
+    width: 100%;
+    position: relative;
+    z-index: 2;
+  }
+}

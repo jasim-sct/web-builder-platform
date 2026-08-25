@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ColorPicker, FormField, Select, TextInput } from '../../../design-system';
+
 import type { SectionStyle } from '@repo/component-library';
 
 interface BorderShadowControlProps {
@@ -7,78 +9,51 @@ interface BorderShadowControlProps {
   onChange: (updatedStyle: Partial<SectionStyle>) => void;
 }
 
+const SHADOW_OPTIONS = [
+  { value: 'none', label: 'None' },
+  { value: 'sm', label: 'Small (Subtle)' },
+  { value: 'md', label: 'Medium' },
+  { value: 'lg', label: 'Large' },
+  { value: 'xl', label: 'Extra Large' },
+  { value: '2xl', label: 'Deep Floating' },
+];
+
 export const BorderShadowControl: React.FC<BorderShadowControlProps> = ({
   style = {},
   onChange,
 }) => {
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">Border & Shadow</label>
-      </div>
-
-      {/* Border Radius */}
-      <div className="ws-form-group" style={{ marginTop: '6px' }}>
-        <div className="ws-label-row">
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            Border Radius
-          </span>
-        </div>
-        <input
-          type="text"
-          className="ws-text-input"
+    <div className="ds-border-shadow-group">
+      <FormField label="Border Radius">
+        <TextInput
           value={style.borderRadius ?? ''}
-          placeholder="0px or 12px"
+          placeholder="0px, 8px, 16px..."
           onChange={(e) => onChange({ borderRadius: e.target.value })}
         />
-      </div>
+      </FormField>
 
-      {/* Border Width & Color */}
-      <div className="ws-form-group" style={{ marginTop: '6px' }}>
-        <div className="ws-label-row">
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            Border Width & Color
-          </span>
-        </div>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          <input
-            type="text"
-            className="ws-text-input"
-            style={{ width: '80px' }}
-            value={style.borderWidth ?? ''}
-            placeholder="1px"
-            onChange={(e) => onChange({ borderWidth: e.target.value })}
-          />
-          <input
-            type="text"
-            className="ws-color-hex-input"
-            value={style.borderColor || ''}
-            placeholder="#e2e8f0"
-            onChange={(e) => onChange({ borderColor: e.target.value })}
-          />
-        </div>
-      </div>
+      <FormField label="Border Width">
+        <TextInput
+          value={style.borderWidth ?? ''}
+          placeholder="1px, 2px..."
+          onChange={(e) => onChange({ borderWidth: e.target.value })}
+        />
+      </FormField>
 
-      {/* Box Shadow */}
-      <div className="ws-form-group" style={{ marginTop: '6px' }}>
-        <div className="ws-label-row">
-          <span className="ws-form-label" style={{ fontSize: '11px' }}>
-            Box Shadow
-          </span>
-        </div>
-        <select
-          className="ws-select-input"
+      <FormField label="Border Color">
+        <ColorPicker
+          value={style.borderColor || '#e2e8f0'}
+          onChange={(val) => onChange({ borderColor: val })}
+        />
+      </FormField>
+
+      <FormField label="Box Shadow Elevation">
+        <Select
+          options={SHADOW_OPTIONS}
           value={style.boxShadow || 'none'}
           onChange={(e) => onChange({ boxShadow: e.target.value })}
-        >
-          <option value="none">None</option>
-          <option value="sm">Small (Subtle)</option>
-          <option value="md">Medium</option>
-          <option value="lg">Large</option>
-          <option value="xl">Extra Large</option>
-          <option value="2xl">Deep Floating</option>
-        </select>
-      </div>
+        />
+      </FormField>
     </div>
   );
 };

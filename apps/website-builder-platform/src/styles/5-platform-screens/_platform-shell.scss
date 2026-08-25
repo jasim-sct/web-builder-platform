@@ -1,0 +1,19 @@
+@use '../1-tokens' as tokens;
+
+.ds-platform-shell,
+.ws-editor-root {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  background-color: tokens.$bg-app;
+}
+
+.ds-platform-body,
+.ws-editor-main-body {
+  position: relative;
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}

@@ -10,6 +10,7 @@ import {
   X,
 } from 'lucide-react';
 
+import { EmptyState, IconButton, Panel, PanelBody, PanelHeader, Tabs } from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 import { ActionsTab } from './tabs/ActionsTab';
 import { PropsTab } from './tabs/PropsTab';
@@ -30,12 +31,12 @@ export const PropertyPanel: React.FC = () => {
   if (!state.isPropertyPanelOpen) return null;
 
   return (
-    <aside
-      className={`ws-dnd-property-panel ${state.isPropsExpanded ? 'is-expanded' : ''} ${
-        state.propertyPanelPosition === 'left' ? 'position-left' : ''
-      }`}
+    <Panel
+      isExpanded={state.isPropsExpanded}
+      position={state.propertyPanelPosition}
+      className="ws-dnd-property-panel"
     >
-      <div className="ws-property-header">
+      <PanelHeader className="ws-property-header">
         <div className="ws-property-header-top">
           <div className="ws-property-title-group">
             <div className="ws-property-title">
@@ -51,86 +52,51 @@ export const PropertyPanel: React.FC = () => {
           </div>
 
           <div className="ws-header-actions">
-            <button
-              type="button"
-              className="ws-btn-base ws-btn-ghost ws-btn-icon-only"
-              onClick={togglePropsExpand}
+            <IconButton
+              icon={state.isPropsExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
               title={state.isPropsExpanded ? 'Collapse Width' : 'Expand Width'}
-            >
-              {state.isPropsExpanded ? <Minimize2 size={14} /> : <Maximize2 size={14} />}
-            </button>
+              onClick={togglePropsExpand}
+              size="sm"
+            />
 
-            <button
-              type="button"
-              className="ws-btn-base ws-btn-ghost ws-btn-icon-only"
-              onClick={togglePropertyPanelPosition}
+            <IconButton
+              icon={<ArrowLeftRight size={14} />}
               title={`Move panel to ${state.propertyPanelPosition === 'right' ? 'left' : 'right'}`}
-            >
-              <ArrowLeftRight size={14} />
-            </button>
+              onClick={togglePropertyPanelPosition}
+              size="sm"
+            />
 
             {selectedSection && (
-              <button
-                type="button"
-                className="ws-btn-base ws-btn-ghost ws-btn-icon-only"
-                onClick={() => selectSection(null)}
+              <IconButton
+                icon={<X size={14} />}
                 title="Close Inspector"
-              >
-                <X size={14} />
-              </button>
+                onClick={() => selectSection(null)}
+                size="sm"
+              />
             )}
           </div>
         </div>
 
         {selectedSection && (
-          <div className="ws-property-tabs-nav">
-            <button
-              type="button"
-              className={`ws-property-tab-btn ${
-                state.activePropertyTab === 'props' ? 'active' : ''
-              }`}
-              onClick={() => setActivePropertyTab('props')}
-            >
-              <FileText size={13} />
-              Props
-            </button>
-
-            <button
-              type="button"
-              className={`ws-property-tab-btn ${
-                state.activePropertyTab === 'style' ? 'active' : ''
-              }`}
-              onClick={() => setActivePropertyTab('style')}
-            >
-              <Sliders size={13} />
-              Style
-            </button>
-
-            <button
-              type="button"
-              className={`ws-property-tab-btn ${
-                state.activePropertyTab === 'actions' ? 'active' : ''
-              }`}
-              onClick={() => setActivePropertyTab('actions')}
-            >
-              <MousePointerClick size={13} />
-              Actions
-            </button>
-          </div>
+          <Tabs
+            activeTab={state.activePropertyTab}
+            onChange={(tab) => setActivePropertyTab(tab as 'props' | 'style' | 'actions')}
+            tabs={[
+              { id: 'props', label: 'Props', icon: <FileText size={13} /> },
+              { id: 'style', label: 'Style', icon: <Sliders size={13} /> },
+              { id: 'actions', label: 'Actions', icon: <MousePointerClick size={13} /> },
+            ]}
+          />
         )}
-      </div>
+      </PanelHeader>
 
-      <div className="ws-property-body-scroll">
+      <PanelBody className="ws-property-body-scroll">
         {!selectedSection ? (
-          <div className="ws-property-empty">
-            <div className="ws-empty-icon">
-              <Layers size={24} />
-            </div>
-            <div className="ws-empty-title">Select a Section</div>
-            <div className="ws-empty-desc">
-              Click on any section inside the canvas to edit its Props, Styles, and Action triggers.
-            </div>
-          </div>
+          <EmptyState
+            icon={<Layers size={24} />}
+            title="Select a Section"
+            description="Click on any section inside the canvas to edit its Props, Styles, and Action triggers."
+          />
         ) : (
           <>
             {state.activePropertyTab === 'props' && (
@@ -144,7 +110,7 @@ export const PropertyPanel: React.FC = () => {
             )}
           </>
         )}
-      </div>
-    </aside>
+      </PanelBody>
+    </Panel>
   );
 };

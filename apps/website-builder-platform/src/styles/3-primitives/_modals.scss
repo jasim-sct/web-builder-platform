@@ -1,0 +1,88 @@
+@use '../1-tokens' as tokens;
+
+.ds-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: tokens.$bg-modal-overlay;
+  backdrop-filter: blur(4px);
+  z-index: tokens.$z-modal-overlay;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: tokens.$space-4;
+  animation: dsModalFadeIn tokens.$transition-fast ease-out;
+}
+
+.ds-modal {
+  width: 100%;
+  max-width: 540px;
+  background: tokens.$bg-surface-1;
+  border: 1px solid tokens.$border-medium;
+  border-radius: tokens.$radius-lg;
+  box-shadow: tokens.$shadow-xl;
+  z-index: tokens.$z-modal;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  animation: dsModalSlideUp tokens.$transition-fast ease-out;
+
+  &--lg {
+    max-width: 720px;
+  }
+
+  &--sm {
+    max-width: 400px;
+  }
+}
+
+.ds-modal-header {
+  padding: tokens.$space-4 tokens.$space-5;
+  border-bottom: 1px solid tokens.$border-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: tokens.$bg-surface-2;
+}
+
+.ds-modal-title {
+  font-family: tokens.$font-display;
+  font-size: tokens.$font-size-md;
+  font-weight: tokens.$font-weight-bold;
+  color: tokens.$text-primary;
+}
+
+.ds-modal-body {
+  padding: tokens.$space-5;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.ds-modal-footer {
+  padding: tokens.$space-3-5 tokens.$space-5;
+  border-top: 1px solid tokens.$border-subtle;
+  background: tokens.$bg-surface-2;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: tokens.$space-2-5;
+}
+
+@keyframes dsModalFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes dsModalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}

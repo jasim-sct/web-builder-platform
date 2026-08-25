@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { ColorPicker, FormField } from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface ColorPickerControlProps {
@@ -23,29 +25,12 @@ export const ColorPickerControl: React.FC<ColorPickerControlProps> = ({
         : '#3b82f6';
 
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">{schema.label || propKey}</label>
-        {schema.required && <span className="ws-form-required">*</span>}
-      </div>
-
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
-
-      <div className="ws-color-picker-row">
-        <div className="ws-color-preview-box" style={{ backgroundColor: colorValue }}>
-          <input
-            type="color"
-            value={colorValue}
-            onChange={(e) => onChange(propKey, e.target.value)}
-          />
-        </div>
-        <input
-          type="text"
-          className="ws-color-hex-input"
-          value={colorValue}
-          onChange={(e) => onChange(propKey, e.target.value)}
-        />
-      </div>
-    </div>
+    <FormField
+      label={schema.label || propKey}
+      required={schema.required}
+      description={schema.description}
+    >
+      <ColorPicker value={colorValue} onChange={(val) => onChange(propKey, val)} />
+    </FormField>
   );
 };

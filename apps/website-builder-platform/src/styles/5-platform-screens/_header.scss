@@ -1,0 +1,80 @@
+@use '../1-tokens' as tokens;
+
+.ds-header,
+.ws-editor-header {
+  height: tokens.$header-height;
+  background: tokens.$bg-surface-1;
+  border-bottom: 1px solid tokens.$border-subtle;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 tokens.$space-4;
+  z-index: tokens.$z-header;
+  position: relative;
+
+  .ws-header-left {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-3;
+  }
+
+  .ws-brand {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-2;
+    font-family: tokens.$font-display;
+    font-weight: tokens.$font-weight-bold;
+    font-size: tokens.$font-size-md;
+    color: tokens.$text-primary;
+
+    .ws-brand-icon {
+      width: 28px;
+      height: 28px;
+      background: tokens.$color-primary-light;
+      color: tokens.$color-primary;
+      border-radius: tokens.$radius-sm;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid rgba(59, 130, 246, 0.3);
+    }
+  }
+
+  .ws-header-divider {
+    width: 1px;
+    height: 20px;
+    background: tokens.$border-subtle;
+  }
+
+  .ws-page-info {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-2;
+
+    .ws-page-title-input {
+      width: 180px;
+      height: 28px;
+      font-size: tokens.$font-size-sm;
+      font-weight: tokens.$font-weight-medium;
+      background: transparent;
+      border: 1px solid transparent;
+
+      &:hover {
+        border-color: tokens.$border-subtle;
+        background: tokens.$bg-surface-2;
+      }
+    }
+  }
+
+  .ws-header-center {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .ws-header-right {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-2;
+  }
+}

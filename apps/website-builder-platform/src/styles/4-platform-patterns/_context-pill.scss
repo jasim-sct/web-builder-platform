@@ -1,0 +1,28 @@
+@use '../1-tokens' as tokens;
+
+.ds-context-pill,
+.ws-context-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-2;
+  height: 30px;
+  padding: 0 tokens.$space-3;
+  background: tokens.$bg-surface-2;
+  border: 1px solid tokens.$border-subtle;
+  border-radius: tokens.$radius-full;
+  font-size: tokens.$font-size-xs;
+  color: tokens.$text-secondary;
+
+  .ws-context-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: tokens.$radius-full;
+    background: tokens.$color-primary;
+    box-shadow: 0 0 6px tokens.$color-primary;
+  }
+
+  strong {
+    color: tokens.$text-primary;
+    font-weight: tokens.$font-weight-semibold;
+  }
+}

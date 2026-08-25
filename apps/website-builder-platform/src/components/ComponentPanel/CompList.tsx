@@ -3,6 +3,7 @@ import { SearchX } from 'lucide-react';
 
 import { getAllSections } from '@repo/component-library';
 
+import { EmptyState, SegmentedControl } from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 import { DraggableComponentCard } from './DraggableComponentCard';
 
@@ -56,39 +57,35 @@ export const CompList: React.FC = () => {
     return groups;
   }, [filteredSections]);
 
+  const categoryItems = useMemo(() => {
+    return ALL_CATEGORIES.map((cat) => {
+      const count =
+        cat === 'All' ? allSections.length : allSections.filter((s) => s.category === cat).length;
+      return {
+        value: cat,
+        label: cat,
+        count,
+      };
+    }).filter((cat) => cat.value === 'All' || (cat.count && cat.count > 0));
+  }, [allSections]);
+
   return (
     <>
-      <div className="ws-category-filter-bar">
-        {ALL_CATEGORIES.map((cat) => {
-          const count =
-            cat === 'All'
-              ? allSections.length
-              : allSections.filter((s) => s.category === cat).length;
-          if (cat !== 'All' && count === 0) return null;
-
-          return (
-            <button
-              type="button"
-              key={cat}
-              className={`ws-category-chip ${state.selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              <span>{cat}</span>
-              <span className="ws-chip-count">{count}</span>
-            </button>
-          );
-        })}
-      </div>
+      <SegmentedControl
+        value={state.selectedCategory}
+        onChange={(cat) => setSelectedCategory(cat as SectionCategory | 'All')}
+        items={categoryItems}
+        className="ws-category-filter-bar"
+      />
 
       <div className="ws-component-list-scroll">
         {filteredSections.length === 0 ? (
-          <div className="ws-empty-search">
-            <SearchX size={32} />
-            <div>
-              <strong>No sections found</strong>
-              <p>Try searching for a different keyword or category</p>
-            </div>
-          </div>
+          <EmptyState
+            icon={<SearchX size={28} />}
+            title="No sections found"
+            description="Try searching for a different keyword or category."
+            className="ws-empty-search"
+          />
         ) : (
           Object.entries(groupedSections).map(([category, items]) => (
             <div key={category} className="ws-category-group">

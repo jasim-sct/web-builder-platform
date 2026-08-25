@@ -158,6 +158,12 @@ pnpm check
 
 # Clean build artifacts, caches, and node_modules
 pnpm clean
+
+# Run Storybook to preview components alone in isolation (port 6006)
+pnpm storybook
+
+# Build static Storybook documentation/preview bundle
+pnpm storybook:build
 ```
 
 ### Filtered Commands (Turborepo)

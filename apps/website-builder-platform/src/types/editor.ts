@@ -52,6 +52,7 @@ export type EditorAction =
   | { type: 'TOGGLE_PROPERTY_PANEL' }
   | { type: 'TOGGLE_PROPERTY_PANEL_POSITION' }
   | { type: 'TOGGLE_PROPS_EXPAND' }
+  | { type: 'SET_PAGE_NAME'; name: string }
   | { type: 'RESET_PAGE' };
 
 export interface DragComponentPayload {

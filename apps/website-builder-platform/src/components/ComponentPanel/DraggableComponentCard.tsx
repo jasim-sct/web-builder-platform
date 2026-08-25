@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
 import {
   Compass,
   CreditCard,
@@ -13,6 +14,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
+import { useToast } from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 
 import type { SectionRegistryItem } from '@repo/component-library';
@@ -48,6 +50,7 @@ export const getComponentIcon = (componentId: string, category: string) => {
 
 export const DraggableComponentCard: React.FC<DraggableComponentCardProps> = ({ item }) => {
   const { addSection, setActiveDropIndex } = useEditor();
+  const { addToast } = useToast();
   const [isDragging, setIsDragging] = useState(false);
 
   const handleDragStart = (e: React.DragEvent<HTMLButtonElement>) => {
@@ -67,14 +70,23 @@ export const DraggableComponentCard: React.FC<DraggableComponentCardProps> = ({ 
     setActiveDropIndex(null);
   };
 
+  const handleClick = () => {
+    addSection(item.componentId);
+    addToast({
+      title: 'Section Added',
+      message: `Added "${item.displayName}" to page canvas.`,
+      type: 'success',
+    });
+  };
+
   return (
     <button
       type="button"
-      className={`ws-dnd-d-c-item ${isDragging ? 'is-dragging' : ''}`}
+      className={clsx('ws-dnd-d-c-item', isDragging && 'is-dragging')}
       draggable
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
-      onClick={() => addSection(item.componentId)}
+      onClick={handleClick}
       title={`Click to add or drag ${item.displayName} to canvas`}
     >
       <div className="ws-card-icon-wrap">{getComponentIcon(item.componentId, item.category)}</div>

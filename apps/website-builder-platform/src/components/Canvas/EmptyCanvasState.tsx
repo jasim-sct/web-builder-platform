@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
+import clsx from 'clsx';
 import { Compass, CreditCard, LayoutGrid, Plus, Sparkles } from 'lucide-react';
 
+import { Button, useToast } from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 import { executeDrop, extractDropData } from './dndHelpers';
 
 export const EmptyCanvasState: React.FC = () => {
   const { addSection, reorderSections, setActiveDropIndex } = useEditor();
+  const { addToast } = useToast();
   const [isDragOver, setIsDragOver] = useState(false);
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -35,15 +38,29 @@ export const EmptyCanvasState: React.FC = () => {
         reorderSections,
         setActiveDropIndex,
       });
+      addToast({
+        title: 'Section Added',
+        message: 'Dropped new section onto canvas.',
+        type: 'success',
+      });
     } catch (err) {
       console.error('Error dropping on EmptyCanvasState:', err);
       setActiveDropIndex(null);
     }
   };
 
+  const handleQuickAdd = (componentId: string, label: string) => {
+    addSection(componentId);
+    addToast({
+      title: 'Section Added',
+      message: `Added ${label} to canvas.`,
+      type: 'success',
+    });
+  };
+
   return (
     <div
-      className={`ws-empty-canvas-state ${isDragOver ? 'is-drag-over' : ''}`}
+      className={clsx('ws-empty-canvas-state', isDragOver && 'is-drag-over')}
       onDragOver={handleDragOver}
       onDragLeave={handleDragLeave}
       onDrop={handleDrop}
@@ -59,41 +76,37 @@ export const EmptyCanvasState: React.FC = () => {
       </p>
 
       <div className="ws-quick-add-grid">
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-secondary"
-          onClick={() => addSection('header')}
+        <Button
+          variant="secondary"
+          icon={<Compass size={14} />}
+          onClick={() => handleQuickAdd('header', 'Header Section')}
         >
-          <Compass size={14} />
           Add Header
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-primary"
-          onClick={() => addSection('hero')}
+        <Button
+          variant="primary"
+          icon={<Sparkles size={14} />}
+          onClick={() => handleQuickAdd('hero', 'Hero Section')}
         >
-          <Sparkles size={14} />
           Add Hero Section
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-secondary"
-          onClick={() => addSection('features')}
+        <Button
+          variant="secondary"
+          icon={<Plus size={14} />}
+          onClick={() => handleQuickAdd('features', 'Features Section')}
         >
-          <Plus size={14} />
           Add Features
-        </button>
+        </Button>
 
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-secondary"
-          onClick={() => addSection('pricing')}
+        <Button
+          variant="secondary"
+          icon={<CreditCard size={14} />}
+          onClick={() => handleQuickAdd('pricing', 'Pricing Table')}
         >
-          <CreditCard size={14} />
           Add Pricing
-        </button>
+        </Button>
       </div>
     </div>
   );

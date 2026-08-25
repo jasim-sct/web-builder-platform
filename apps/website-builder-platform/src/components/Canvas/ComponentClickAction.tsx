@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowDown, ArrowUp, Copy, Sliders, Trash2 } from 'lucide-react';
 
+import { useToast } from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 
 interface ComponentClickActionProps {
@@ -15,6 +16,25 @@ export const ComponentClickAction: React.FC<ComponentClickActionProps> = ({
   totalSections,
 }) => {
   const { moveSection, duplicateSection, removeSection, selectSection } = useEditor();
+  const { addToast } = useToast();
+
+  const handleDuplicate = () => {
+    duplicateSection(sectionId);
+    addToast({
+      title: 'Section Duplicated',
+      message: 'Created a duplicate of this section.',
+      type: 'info',
+    });
+  };
+
+  const handleRemove = () => {
+    removeSection(sectionId);
+    addToast({
+      title: 'Section Deleted',
+      message: 'Section removed from canvas.',
+      type: 'warning',
+    });
+  };
 
   return (
     <div
@@ -47,7 +67,7 @@ export const ComponentClickAction: React.FC<ComponentClickActionProps> = ({
       <button
         type="button"
         className="ws-toolbar-btn"
-        onClick={() => duplicateSection(sectionId)}
+        onClick={handleDuplicate}
         title="Duplicate Section"
       >
         <Copy size={14} />
@@ -67,7 +87,7 @@ export const ComponentClickAction: React.FC<ComponentClickActionProps> = ({
       <button
         type="button"
         className="ws-toolbar-btn btn-delete"
-        onClick={() => removeSection(sectionId)}
+        onClick={handleRemove}
         title="Delete Section"
       >
         <Trash2 size={14} />

@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FormField, Select } from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface SelectDropdownControlProps {
@@ -22,26 +24,22 @@ export const SelectDropdownControl: React.FC<SelectDropdownControlProps> = ({
         ? schema.defaultValue
         : '';
 
+  const options = (schema.options || []).map((opt) => ({
+    value: String(opt.value),
+    label: opt.label,
+  }));
+
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">{schema.label || propKey}</label>
-        {schema.required && <span className="ws-form-required">*</span>}
-      </div>
-
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
-
-      <select
-        className="ws-select-input"
+    <FormField
+      label={schema.label || propKey}
+      required={schema.required}
+      description={schema.description}
+    >
+      <Select
+        options={options}
         value={selectValue}
         onChange={(e) => onChange(propKey, e.target.value)}
-      >
-        {schema.options?.map((opt) => (
-          <option key={String(opt.value)} value={String(opt.value)}>
-            {opt.label}
-          </option>
-        ))}
-      </select>
-    </div>
+      />
+    </FormField>
   );
 };

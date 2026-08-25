@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FormField, Switch } from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface SwitchToggleControlProps {
@@ -23,21 +25,16 @@ export const SwitchToggleControl: React.FC<SwitchToggleControlProps> = ({
         : false;
 
   return (
-    <div className="ws-form-group">
-      <div className="ws-toggle-row">
-        <span className="ws-toggle-label">{schema.label || propKey}</span>
-
-        <label className="ws-dnd-property-toggle">
-          <input
-            type="checkbox"
-            checked={boolValue}
-            onChange={(e) => onChange(propKey, e.target.checked)}
-          />
-          <span className="ws-toggle-slider" />
-        </label>
-      </div>
-
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
-    </div>
+    <FormField
+      label={schema.label || propKey}
+      required={schema.required}
+      description={schema.description}
+    >
+      <Switch
+        checked={boolValue}
+        onChange={(checked) => onChange(propKey, checked)}
+        label={boolValue ? 'Enabled' : 'Disabled'}
+      />
+    </FormField>
   );
 };

@@ -1,0 +1,78 @@
+@use '../1-tokens' as tokens;
+
+.ds-switch-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-2-5;
+  cursor: pointer;
+  user-select: none;
+
+  &.is-disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.ds-switch,
+.ws-switch-track {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  background: tokens.$bg-surface-3;
+  border-radius: tokens.$radius-full;
+  border: 1px solid tokens.$border-subtle;
+  transition: all tokens.$transition-fast;
+  display: inline-flex;
+  align-items: center;
+
+  .ds-switch-thumb,
+  .ws-switch-thumb {
+    position: absolute;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    background: #ffffff;
+    border-radius: tokens.$radius-full;
+    transition: transform tokens.$transition-fast;
+    box-shadow: tokens.$shadow-xs;
+  }
+
+  &.is-checked,
+  &.active {
+    background: tokens.$color-primary;
+    border-color: tokens.$color-primary;
+
+    .ds-switch-thumb,
+    .ws-switch-thumb {
+      transform: translateX(16px);
+    }
+  }
+}
+
+// Checkbox
+.ds-checkbox-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-2;
+  cursor: pointer;
+  user-select: none;
+
+  .ds-checkbox {
+    width: 16px;
+    height: 16px;
+    background: tokens.$bg-surface-1;
+    border: 1px solid tokens.$border-medium;
+    border-radius: tokens.$radius-xs;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: transparent;
+    transition: all tokens.$transition-fast;
+
+    &.is-checked {
+      background: tokens.$color-primary;
+      border-color: tokens.$color-primary;
+      color: #ffffff;
+    }
+  }
+}

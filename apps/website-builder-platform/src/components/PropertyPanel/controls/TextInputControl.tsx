@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { FormField, Textarea, TextInput } from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface TextInputControlProps {
@@ -20,30 +22,24 @@ export const TextInputControl: React.FC<TextInputControlProps> = ({
   const strValue = typeof value === 'string' ? value : '';
 
   return (
-    <div className="ws-form-group">
-      <div className="ws-label-row">
-        <label className="ws-form-label">{schema.label || propKey}</label>
-        {schema.required && <span className="ws-form-required">*</span>}
-      </div>
-
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
-
+    <FormField
+      label={schema.label || propKey}
+      required={schema.required}
+      description={schema.description}
+    >
       {isTextarea || schema.type === 'textarea' ? (
-        <textarea
-          className="ws-textarea-input"
+        <Textarea
           value={strValue}
           placeholder={typeof schema.defaultValue === 'string' ? schema.defaultValue : ''}
           onChange={(e) => onChange(propKey, e.target.value)}
         />
       ) : (
-        <input
-          type="text"
-          className="ws-text-input"
+        <TextInput
           value={strValue}
           placeholder={typeof schema.defaultValue === 'string' ? schema.defaultValue : ''}
           onChange={(e) => onChange(propKey, e.target.value)}
         />
       )}
-    </div>
+    </FormField>
   );
 };

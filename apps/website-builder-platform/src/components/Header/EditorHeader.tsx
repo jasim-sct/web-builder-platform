@@ -1,6 +1,17 @@
-import React from 'react';
-import { Layers, Plus, RotateCcw, SlidersHorizontal, Sparkles, X } from 'lucide-react';
+import React, { useState } from 'react';
+import { Code, Layers, Plus, RotateCcw, Settings, SlidersHorizontal, Sparkles } from 'lucide-react';
 
+import {
+  Badge,
+  Button,
+  ConfirmDialog,
+  ContextPill,
+  Divider,
+  ExportCodeModal,
+  IconButton,
+  ProjectSettingsModal,
+  useToast,
+} from '../../design-system';
 import { useEditor } from '../../state/editorContext';
 
 export const EditorHeader: React.FC = () => {
@@ -13,113 +24,176 @@ export const EditorHeader: React.FC = () => {
     togglePropertyPanel,
     resetPage,
     addSection,
+    setPageName,
   } = useEditor();
+
+  const { addToast } = useToast();
+  const [isResetConfirmOpen, setIsResetConfirmOpen] = useState(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState(false);
+  const [isExportOpen, setIsExportOpen] = useState(false);
 
   const handleReset = () => {
     if (state.page.sections.length === 0) return;
-    if (window.confirm('Are you sure you want to clear all sections from the canvas?')) {
-      resetPage();
-    }
+    setIsResetConfirmOpen(true);
+  };
+
+  const confirmReset = () => {
+    resetPage();
+    setIsResetConfirmOpen(false);
+    addToast({
+      title: 'Canvas Cleared',
+      message: 'All sections have been removed from the canvas.',
+      type: 'info',
+    });
+  };
+
+  const handleQuickAddHero = () => {
+    addSection('hero');
+    addToast({
+      title: 'Section Added',
+      message: 'Added Hero Section to canvas.',
+      type: 'success',
+    });
   };
 
   return (
-    <header className="ws-editor-header">
-      <div className="ws-header-left">
-        <div className="ws-brand">
-          <div className="ws-brand-icon">
-            <Sparkles size={16} />
+    <>
+      <header className="ds-header ws-editor-header">
+        <div className="ws-header-left">
+          <div className="ws-brand">
+            <div className="ws-brand-icon">
+              <Sparkles size={16} />
+            </div>
+            <span>Website Builder Platform</span>
           </div>
-          <span>Website Builder Platform</span>
+
+          <Divider vertical />
+
+          <div className="ws-page-info">
+            <input
+              type="text"
+              className="ds-input ds-input--sm ws-page-title-input"
+              value={state.page.name}
+              readOnly
+              title="Page Name (Click settings to edit)"
+              onClick={() => setIsSettingsOpen(true)}
+              style={{ cursor: 'pointer' }}
+            />
+            <Badge variant="default" className="ws-section-count-badge">
+              {state.page.sections.length}{' '}
+              {state.page.sections.length === 1 ? 'Section' : 'Sections'}
+            </Badge>
+
+            <IconButton
+              icon={<Settings size={13} />}
+              title="Page Settings"
+              size="xs"
+              onClick={() => setIsSettingsOpen(true)}
+            />
+          </div>
         </div>
 
-        <div className="ws-header-divider" />
-
-        <div className="ws-page-info">
-          <input
-            type="text"
-            className="ws-page-title-input"
-            value={state.page.name}
-            readOnly
-            title="Page Name"
-          />
-          <span className="ws-section-count-badge">
-            {state.page.sections.length} {state.page.sections.length === 1 ? 'Section' : 'Sections'}
-          </span>
+        <div className="ws-header-center">
+          {selectedSection ? (
+            <ContextPill
+              label="Editing:"
+              name={selectedSectionItem?.displayName || selectedSection.componentId}
+              onDeselect={() => selectSection(null)}
+            />
+          ) : (
+            <ContextPill
+              icon={<Layers size={13} />}
+              label="Page Overview (Select a section to edit)"
+            />
+          )}
         </div>
-      </div>
 
-      <div className="ws-header-center">
-        {selectedSection ? (
-          <div className="ws-context-pill">
-            <div className="ws-context-indicator" />
-            <span>Editing:</span>
-            <strong>{selectedSectionItem?.displayName || selectedSection.componentId}</strong>
-            <button
-              type="button"
-              className="ws-btn-base ws-btn-ghost ws-btn-icon-only"
-              onClick={() => selectSection(null)}
-              title="Deselect Section"
-            >
-              <X size={13} />
-            </button>
-          </div>
-        ) : (
-          <div className="ws-context-pill">
-            <Layers size={13} />
-            <span>Page Overview (Select a section to edit)</span>
-          </div>
-        )}
-      </div>
-
-      <div className="ws-header-right">
-        <button
-          type="button"
-          className={`ws-btn-base ws-btn-components-toggle ${
-            state.isComponentPanelOpen ? 'ws-btn-primary' : 'ws-btn-secondary'
-          }`}
-          onClick={toggleComponentPanel}
-          title="Toggle Components Palette"
-        >
-          <Plus size={14} />
-          <span>Components</span>
-        </button>
-
-        {state.page.sections.length === 0 && (
-          <button
-            type="button"
-            className="ws-btn-base ws-btn-secondary"
-            onClick={() => addSection('hero')}
-            title="Quick add Hero section"
+        <div className="ws-header-right">
+          <Button
+            variant={state.isComponentPanelOpen ? 'primary' : 'secondary'}
+            size="sm"
+            icon={<Plus size={14} />}
+            onClick={toggleComponentPanel}
+            title="Toggle Components Palette"
+            className="ws-btn-components-toggle"
           >
-            <Sparkles size={13} />
-            <span>Add Hero</span>
-          </button>
-        )}
+            Components
+          </Button>
 
-        <div className="ws-header-divider" />
+          {state.page.sections.length === 0 && (
+            <Button
+              variant="secondary"
+              size="sm"
+              icon={<Sparkles size={13} />}
+              onClick={handleQuickAddHero}
+              title="Quick add Hero section"
+            >
+              Add Hero
+            </Button>
+          )}
 
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-secondary ws-btn-icon-only"
-          onClick={handleReset}
-          title="Clear Canvas"
-          disabled={state.page.sections.length === 0}
-        >
-          <RotateCcw size={14} />
-        </button>
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={<Code size={14} />}
+            onClick={() => setIsExportOpen(true)}
+            title="Export page JSON schema or code"
+          >
+            Export
+          </Button>
 
-        <button
-          type="button"
-          className={`ws-btn-base ${
-            state.isPropertyPanelOpen ? 'ws-btn-primary' : 'ws-btn-secondary'
-          }`}
-          onClick={togglePropertyPanel}
-          title="Toggle Properties Panel"
-        >
-          <SlidersHorizontal size={14} />
-          <span>Inspector</span>
-        </button>
-      </div>
-    </header>
+          <Divider vertical />
+
+          <IconButton
+            icon={<RotateCcw size={14} />}
+            title="Clear Canvas"
+            variant="secondary"
+            size="sm"
+            disabled={state.page.sections.length === 0}
+            onClick={handleReset}
+          />
+
+          <Button
+            variant={state.isPropertyPanelOpen ? 'primary' : 'secondary'}
+            size="sm"
+            icon={<SlidersHorizontal size={14} />}
+            onClick={togglePropertyPanel}
+            title="Toggle Properties Panel"
+          >
+            Inspector
+          </Button>
+        </div>
+      </header>
+
+      <ConfirmDialog
+        isOpen={isResetConfirmOpen}
+        onCancel={() => setIsResetConfirmOpen(false)}
+        onConfirm={confirmReset}
+        title="Clear Canvas"
+        message="Are you sure you want to clear all sections from the canvas? This action cannot be undone."
+        confirmLabel="Clear All"
+        variant="danger"
+      />
+
+      <ProjectSettingsModal
+        isOpen={isSettingsOpen}
+        onClose={() => setIsSettingsOpen(false)}
+        pageName={state.page.name}
+        onSave={(newName) => {
+          setPageName(newName);
+          addToast({
+            title: 'Settings Saved',
+            message: `Page name updated to "${newName}".`,
+            type: 'success',
+          });
+        }}
+      />
+
+      <ExportCodeModal
+        isOpen={isExportOpen}
+        onClose={() => setIsExportOpen(false)}
+        pageData={state.page}
+      />
+    </>
   );
 };

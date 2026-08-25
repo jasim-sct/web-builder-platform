@@ -1,0 +1,197 @@
+@use '../1-tokens' as tokens;
+
+.ds-property-panel,
+.ws-dnd-property-panel {
+  width: tokens.$property-panel-width;
+  min-width: tokens.$property-panel-width;
+  height: 100%;
+  background: tokens.$bg-surface-1;
+  border-left: 1px solid tokens.$border-subtle;
+  display: flex;
+  flex-direction: column;
+  z-index: tokens.$z-property-panel;
+  transition:
+    width tokens.$transition-fast,
+    min-width tokens.$transition-fast;
+
+  &.is-expanded {
+    width: tokens.$property-panel-expanded-width;
+    min-width: tokens.$property-panel-expanded-width;
+  }
+
+  &.position-left {
+    border-left: none;
+    border-right: 1px solid tokens.$border-subtle;
+    order: -1;
+  }
+}
+
+.ws-property-header {
+  padding: tokens.$space-3-5 tokens.$space-4;
+  border-bottom: 1px solid tokens.$border-subtle;
+  background: tokens.$bg-surface-2;
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$space-3;
+}
+
+.ws-property-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .ws-property-title-group {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+
+    .ws-property-title {
+      font-size: tokens.$font-size-md;
+      font-weight: tokens.$font-weight-semibold;
+      color: tokens.$text-primary;
+    }
+
+    .ws-property-subtitle {
+      font-size: tokens.$font-size-xs;
+      color: tokens.$text-muted;
+    }
+  }
+
+  .ws-header-actions {
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-1;
+  }
+}
+
+.ws-property-body-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: tokens.$space-4;
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$space-4;
+}
+
+.ws-prop-section {
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$space-3;
+  padding-bottom: tokens.$space-4;
+  border-bottom: 1px solid tokens.$border-subtle;
+
+  &:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+
+  .ws-prop-section-title {
+    font-size: tokens.$font-size-xs;
+    font-weight: tokens.$font-weight-semibold;
+    color: tokens.$text-secondary;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    display: flex;
+    align-items: center;
+    gap: tokens.$space-2;
+  }
+}
+
+.ws-prop-divider {
+  height: 1px;
+  background-color: tokens.$border-subtle;
+  margin: tokens.$space-2 0;
+}
+
+// Property Panel Control Groups (Layout, Background, Typography, Borders, Actions)
+.ds-layout-control-group,
+.ds-typography-control-group,
+.ds-background-control-group,
+.ds-border-shadow-group,
+.ds-action-config-control {
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$space-3;
+}
+
+// Array List Manager
+.ws-array-list-manager {
+  display: flex;
+  flex-direction: column;
+  gap: tokens.$space-2-5;
+
+  .ws-array-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .ws-array-title {
+      font-size: tokens.$font-size-xs;
+      font-weight: tokens.$font-weight-semibold;
+      color: tokens.$text-primary;
+    }
+  }
+
+  .ws-array-items-list {
+    display: flex;
+    flex-direction: column;
+    gap: tokens.$space-2;
+
+    .ws-array-item-card {
+      background: tokens.$bg-surface-2;
+      border: 1px solid tokens.$border-subtle;
+      border-radius: tokens.$radius-sm;
+
+      .ws-item-index-badge {
+        font-size: 10px;
+      }
+
+      .ws-item-remove-btn {
+        color: tokens.$text-muted;
+
+        &:hover {
+          color: tokens.$color-danger;
+          background: tokens.$color-danger-bg;
+        }
+      }
+    }
+  }
+}
+
+// Actions & Property Empty State
+.ws-property-empty {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: tokens.$space-8 tokens.$space-4;
+  text-align: center;
+  color: tokens.$text-muted;
+
+  .ws-empty-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: tokens.$radius-full;
+    background-color: tokens.$bg-surface-2;
+    color: tokens.$text-secondary;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: tokens.$space-3-5;
+  }
+
+  .ws-empty-title {
+    font-size: tokens.$font-size-sm;
+    font-weight: tokens.$font-weight-semibold;
+    color: tokens.$text-primary;
+    margin-bottom: tokens.$space-1;
+  }
+
+  .ws-empty-desc {
+    font-size: tokens.$font-size-xs;
+    color: tokens.$text-muted;
+    line-height: tokens.$line-height-normal;
+    max-width: 260px;
+  }
+}

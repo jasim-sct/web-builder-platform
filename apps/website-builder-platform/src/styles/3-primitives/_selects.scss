@@ -1,0 +1,45 @@
+@use '../1-tokens' as tokens;
+
+.ds-select-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+
+  .ds-select-chevron {
+    position: absolute;
+    right: tokens.$space-2-5;
+    color: tokens.$text-muted;
+    pointer-events: none;
+  }
+}
+
+.ds-select,
+.ws-select-input {
+  width: 100%;
+  height: 32px;
+  background: tokens.$bg-surface-1;
+  border: 1px solid tokens.$border-subtle;
+  border-radius: tokens.$radius-sm;
+  color: tokens.$text-primary;
+  font-size: tokens.$font-size-base;
+  padding: 0 tokens.$space-8 0 tokens.$space-2-5;
+  appearance: none;
+  cursor: pointer;
+  transition: all tokens.$transition-fast;
+
+  &:hover:not(:disabled) {
+    border-color: tokens.$border-medium;
+  }
+
+  &:focus {
+    border-color: tokens.$color-primary;
+    background: tokens.$bg-surface-2;
+    box-shadow: 0 0 0 2px tokens.$color-primary-light;
+  }
+
+  option {
+    background: tokens.$bg-surface-1;
+    color: tokens.$text-primary;
+  }
+}

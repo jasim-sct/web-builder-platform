@@ -1,0 +1,53 @@
+@use '../1-tokens' as tokens;
+
+.ds-badge,
+.ws-section-count-badge,
+.ws-palette-count-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: tokens.$space-1;
+  font-size: tokens.$font-size-xs;
+  font-weight: tokens.$font-weight-medium;
+  padding: 2px tokens.$space-2;
+  border-radius: tokens.$radius-full;
+  line-height: 1;
+  white-space: nowrap;
+
+  &--default,
+  &.ws-section-count-badge,
+  &.ws-palette-count-badge {
+    background: tokens.$bg-surface-3;
+    color: tokens.$text-secondary;
+    border: 1px solid tokens.$border-subtle;
+  }
+
+  &--primary {
+    background: tokens.$color-primary-light;
+    color: tokens.$color-primary;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+  }
+
+  &--success {
+    background: tokens.$color-success-bg;
+    color: tokens.$color-success;
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+
+  &--warning {
+    background: tokens.$color-warning-bg;
+    color: tokens.$color-warning;
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+
+  &--danger {
+    background: tokens.$color-danger-bg;
+    color: tokens.$color-danger;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+  }
+
+  &--purple {
+    background: tokens.$color-purple-bg;
+    color: tokens.$color-purple;
+    border: 1px solid rgba(139, 92, 246, 0.3);
+  }
+}

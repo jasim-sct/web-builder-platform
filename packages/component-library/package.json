@@ -27,7 +27,7 @@
     "test:watch": "vitest",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "clean": "rimraf dist coverage *.tsbuildinfo"
+    "clean": "rimraf dist coverage storybook-static *.tsbuildinfo"
   },
   "dependencies": {
     "clsx": "^2.1.1",

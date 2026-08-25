@@ -309,6 +309,16 @@ export function editorReducer(state: EditorState, action: EditorAction): EditorS
       };
     }
 
+    case 'SET_PAGE_NAME': {
+      return {
+        ...state,
+        page: {
+          ...state.page,
+          name: action.name,
+        },
+      };
+    }
+
     case 'RESET_PAGE': {
       return {
         ...state,

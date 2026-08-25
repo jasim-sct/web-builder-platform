@@ -1,6 +1,18 @@
 import React from 'react';
 import { Plus, Trash2 } from 'lucide-react';
 
+import {
+  Badge,
+  Button,
+  Card,
+  CardBody,
+  CardHeader,
+  FormField,
+  IconButton,
+  Textarea,
+  TextInput,
+} from '../../../design-system';
+
 import type { PropertySchema } from '@repo/component-library';
 
 interface ArrayListControlProps {
@@ -20,7 +32,6 @@ export const ArrayListControl: React.FC<ArrayListControlProps> = ({
   const itemSchema = schema.itemSchema || {};
 
   const handleAddItem = () => {
-    // Generate default item from itemSchema
     const defaultItem: Record<string, unknown> = {};
     Object.entries(itemSchema).forEach(([k, s]) => {
       defaultItem[k] = s.defaultValue ?? '';
@@ -50,98 +61,94 @@ export const ArrayListControl: React.FC<ArrayListControlProps> = ({
 
   return (
     <div className="ws-array-list-manager">
-      <div className="ws-array-header">
-        <span className="ws-array-title">
+      <div
+        className="ws-array-header"
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 8,
+        }}
+      >
+        <span
+          className="ws-array-title"
+          style={{ fontSize: '12px', fontWeight: 600, color: '#f8fafc' }}
+        >
           {schema.label || propKey} ({items.length})
         </span>
 
-        <button
-          type="button"
-          className="ws-btn-base ws-btn-secondary"
-          style={{ padding: '4px 8px', fontSize: '11px' }}
-          onClick={handleAddItem}
-        >
-          <Plus size={12} />
+        <Button variant="secondary" size="xs" icon={<Plus size={12} />} onClick={handleAddItem}>
           Add Item
-        </button>
+        </Button>
       </div>
 
-      {schema.description && <p className="ws-form-desc">{schema.description}</p>}
+      {schema.description && <p className="ds-form-desc ws-form-desc">{schema.description}</p>}
 
-      <div className="ws-array-items-list">
+      <div
+        className="ws-array-items-list"
+        style={{ display: 'flex', flexDirection: 'column', gap: 8 }}
+      >
         {items.map((item, index) => {
           const isObject = typeof item === 'object' && item !== null;
 
           return (
-            <div key={index} className="ws-array-item-card">
-              <div className="ws-array-item-header">
-                <span className="ws-item-index-badge">Item #{index + 1}</span>
+            <Card key={index} className="ws-array-item-card">
+              <CardHeader style={{ padding: '8px 12px' }}>
+                <Badge variant="default" className="ws-item-index-badge">
+                  Item #{index + 1}
+                </Badge>
 
-                <button
-                  type="button"
-                  className="ws-item-remove-btn"
-                  onClick={() => handleRemoveItem(index)}
+                <IconButton
+                  icon={<Trash2 size={13} />}
                   title="Remove Item"
-                >
-                  <Trash2 size={13} />
-                </button>
-              </div>
-
-              {isObject ? (
-                Object.entries(itemSchema).length > 0 ? (
-                  Object.entries(itemSchema).map(([fieldKey, subSchema]) => (
-                    <div key={fieldKey} className="ws-form-group">
-                      <div className="ws-label-row">
-                        <span className="ws-form-label" style={{ fontSize: '11px' }}>
-                          {subSchema.label || fieldKey}
-                        </span>
-                      </div>
-
-                      {subSchema.type === 'textarea' ? (
-                        <textarea
-                          className="ws-textarea-input"
-                          style={{ minHeight: '50px', fontSize: '12px' }}
-                          value={String((item as Record<string, unknown>)[fieldKey] ?? '')}
-                          onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
-                        />
-                      ) : (
-                        <input
-                          type="text"
-                          className="ws-text-input"
-                          style={{ fontSize: '12px', padding: '6px 8px' }}
-                          value={String((item as Record<string, unknown>)[fieldKey] ?? '')}
-                          onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
-                        />
-                      )}
-                    </div>
-                  ))
-                ) : (
-                  Object.entries(item as Record<string, unknown>).map(([fieldKey, val]) => (
-                    <div key={fieldKey} className="ws-form-group">
-                      <div className="ws-label-row">
-                        <span className="ws-form-label" style={{ fontSize: '11px' }}>
-                          {fieldKey}
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        className="ws-text-input"
-                        style={{ fontSize: '12px', padding: '6px 8px' }}
-                        value={String(val ?? '')}
-                        onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
-                      />
-                    </div>
-                  ))
-                )
-              ) : (
-                <input
-                  type="text"
-                  className="ws-text-input"
-                  value={String(item ?? '')}
-                  onChange={(e) => handleFieldChange(index, '', e.target.value)}
+                  variant="ghost"
+                  size="xs"
+                  onClick={() => handleRemoveItem(index)}
+                  className="ws-item-remove-btn"
                 />
-              )}
-            </div>
+              </CardHeader>
+
+              <CardBody
+                style={{ padding: '10px 12px', display: 'flex', flexDirection: 'column', gap: 8 }}
+              >
+                {isObject ? (
+                  Object.entries(itemSchema).length > 0 ? (
+                    Object.entries(itemSchema).map(([fieldKey, subSchema]) => (
+                      <FormField key={fieldKey} label={subSchema.label || fieldKey}>
+                        {subSchema.type === 'textarea' ? (
+                          <Textarea
+                            value={String((item as Record<string, unknown>)[fieldKey] ?? '')}
+                            onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
+                          />
+                        ) : (
+                          <TextInput
+                            inputSize="sm"
+                            value={String((item as Record<string, unknown>)[fieldKey] ?? '')}
+                            onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
+                          />
+                        )}
+                      </FormField>
+                    ))
+                  ) : (
+                    Object.entries(item as Record<string, unknown>).map(([fieldKey, val]) => (
+                      <FormField key={fieldKey} label={fieldKey}>
+                        <TextInput
+                          inputSize="sm"
+                          value={String(val ?? '')}
+                          onChange={(e) => handleFieldChange(index, fieldKey, e.target.value)}
+                        />
+                      </FormField>
+                    ))
+                  )
+                ) : (
+                  <TextInput
+                    inputSize="sm"
+                    value={String(item ?? '')}
+                    onChange={(e) => handleFieldChange(index, '', e.target.value)}
+                  />
+                )}
+              </CardBody>
+            </Card>
           );
         })}
       </div>
