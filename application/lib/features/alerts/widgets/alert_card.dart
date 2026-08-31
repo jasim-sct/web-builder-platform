@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/date_formatter.dart';
 import '../../../models/alert.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -25,17 +25,25 @@ class AlertCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
     final isUrgent = alert.isUrgent;
+
+    BorderSide? customBorder;
+    if (isUrgent) {
+      customBorder = BorderSide(
+        color: AppColors.error.withValues(alpha: isDark ? 0.6 : 0.4),
+        width: 1.5,
+      );
+    }
 
     return AppCard(
       onTap: onTap,
-      border: isUrgent
-          ? BorderSide(color: AppColors.error.withOpacity(0.6), width: 1.5)
-          : null,
+      border: customBorder,
+      padding: const EdgeInsets.all(16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Header: Priority + Status + Repeat
+          // Header: Priority + Repeat Type + Status
           Row(
             children: [
               PriorityBadge(priority: alert.priority),
@@ -44,17 +52,25 @@ class AlertCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
                   decoration: BoxDecoration(
-                    color: AppColors.surfaceVariant,
+                    color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
                     borderRadius: BorderRadius.circular(4),
                   ),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      const Icon(Icons.repeat_rounded, size: 12, color: AppColors.textSecondary),
+                      Icon(
+                        Icons.repeat_rounded,
+                        size: 11,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 3),
                       Text(
                         alert.repeatType,
-                        style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                        style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                          color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                        ),
                       ),
                     ],
                   ),
@@ -67,42 +83,85 @@ class AlertCard extends StatelessWidget {
           ),
           const SizedBox(height: 12),
 
-          // Title & Message
+          // Title
           Text(
             alert.title,
-            style: AppTextStyles.headingSmall.copyWith(
-              color: isUrgent ? AppColors.error : AppColors.textPrimary,
+            style: TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+              color: isUrgent
+                  ? AppColors.error
+                  : (isDark ? AppColors.darkTextPrimary : AppColors.textPrimary),
+              letterSpacing: -0.2,
             ),
           ),
           const SizedBox(height: 4),
+
+          // Message
           Text(
             alert.message,
-            style: AppTextStyles.bodyMedium,
+            style: TextStyle(
+              fontSize: 13,
+              color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+              height: 1.4,
+            ),
             maxLines: 2,
             overflow: TextOverflow.ellipsis,
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 14),
 
-          // Target Group & Time Footer
+          // Footer Info (Target Group, Next Trigger)
           Row(
             children: [
-              const Icon(Icons.group_outlined, size: 16, color: AppColors.textMuted),
-              const SizedBox(width: 6),
               Expanded(
-                child: Text(
-                  alert.groupName ?? 'Target Group',
-                  style: AppTextStyles.bodySmall.copyWith(
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary,
+                child: InkWell(
+                  onTap: () {
+                    if (alert.groupId.isNotEmpty) {
+                      context.push('/groups/details/${alert.groupId}');
+                    }
+                  },
+                  borderRadius: BorderRadius.circular(4),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.groups_outlined,
+                        size: 14,
+                        color: isDark ? AppColors.primaryLight : AppColors.primary,
+                      ),
+                      const SizedBox(width: 4),
+                      Flexible(
+                        child: Text(
+                          alert.groupName ?? 'Target Group',
+                          style: TextStyle(
+                            fontSize: 11.5,
+                            fontWeight: FontWeight.w600,
+                            color: isDark ? AppColors.primaryLight : AppColors.primary,
+                            decoration: TextDecoration.underline,
+                            decorationColor: (isDark ? AppColors.primaryLight : AppColors.primary).withValues(alpha: 0.5),
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                    ],
                   ),
-                  overflow: TextOverflow.ellipsis,
                 ),
               ),
-              const Icon(Icons.schedule_rounded, size: 15, color: AppColors.textMuted),
+              const SizedBox(width: 8),
+              Icon(
+                Icons.schedule_rounded,
+                size: 13,
+                color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+              ),
               const SizedBox(width: 4),
               Text(
-                DateFormatter.formatAlertDateTime(alert.nextTriggerAt ?? alert.scheduledAt),
-                style: AppTextStyles.bodySmall,
+                DateFormatter.formatAlertDateTime(
+                  alert.nextTriggerAt ?? alert.scheduledAt,
+                ),
+                style: TextStyle(
+                  fontSize: 11,
+                  color: isDark ? AppColors.darkTextMuted : AppColors.textMuted,
+                ),
               ),
             ],
           ),
@@ -111,3 +170,4 @@ class AlertCard extends StatelessWidget {
     );
   }
 }
+

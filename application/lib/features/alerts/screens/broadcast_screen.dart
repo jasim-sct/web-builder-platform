@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../core/layout/responsive_layout.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../core/utils/validators.dart';
 import '../../../models/group.dart';
 import '../../../shared/widgets/app_button.dart';
@@ -63,8 +63,8 @@ class _BroadcastScreenState extends ConsumerState<BroadcastScreen> {
 
     final confirmed = await ConfirmationDialog.show(
       context,
-      title: '⚠ Broadcast Alert',
-      message: 'This message will immediately alert all participants in "${group.name}".',
+      title: '⚠ Broadcast Emergency Alert',
+      message: 'This message will immediately ring all connected participants in "${group.name}".',
       extraContent: Container(
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
@@ -131,120 +131,173 @@ class _BroadcastScreenState extends ConsumerState<BroadcastScreen> {
           (g) => g?.id == _selectedGroupId,
           orElse: () => null,
         );
+    final isDark = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.background,
       appBar: AppBar(
-        title: const Text('Broadcast Urgent Alert'),
+        title: const Text('Emergency Broadcast'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_rounded),
+          onPressed: () => context.pop(),
+        ),
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Notice Banner
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: AppColors.priorityUrgentBg,
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.error.withOpacity(0.3)),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.campaign_rounded, color: AppColors.error, size: 24),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        'Immediate broadcasts ring and alert connected participants in real time without scheduling.',
-                        style: TextStyle(color: AppColors.error, fontSize: 13, fontWeight: FontWeight.w500),
-                      ),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+        child: ResponsiveContainer(
+          maxWidth: 640,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Warning Notice Banner
+                Container(
+                  padding: const EdgeInsets.all(16),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkPriorityUrgentBg : AppColors.priorityUrgentBg,
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(
+                      color: AppColors.error.withValues(alpha: isDark ? 0.5 : 0.3),
                     ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 20),
-
-              if (_errorMessage != null) ...[
-                Text(_errorMessage!, style: const TextStyle(color: Colors.red, fontSize: 13)),
-                const SizedBox(height: 14),
-              ],
-
-              // Target Group
-              AppDropdown<String>(
-                label: 'Target Group',
-                value: _selectedGroupId,
-                hint: 'Select group to alert',
-                items: groupsState.groups.map((g) {
-                  return DropdownMenuItem(
-                    value: g.id,
-                    child: Text('${g.name} (${g.memberCount} members)'),
-                  );
-                }).toList(),
-                onChanged: (val) => setState(() => _selectedGroupId = val),
-              ),
-              const SizedBox(height: 16),
-
-              if (selectedGroup != null) ...[
-                AppCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  ),
                   child: Row(
                     children: [
-                      const Icon(Icons.people_outline_rounded, size: 18, color: AppColors.textSecondary),
-                      const SizedBox(width: 8),
-                      Text(
-                        'Recipients: ${selectedGroup.memberCount} participants',
-                        style: AppTextStyles.labelMedium,
+                      Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                          color: AppColors.error.withValues(alpha: 0.15),
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(Icons.campaign_rounded, color: AppColors.error, size: 22),
+                      ),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          'Immediate broadcasts bypass all scheduling queues and ring all active participants in real time.',
+                          style: TextStyle(
+                            color: isDark ? AppColors.errorLight : AppColors.error,
+                            fontSize: 13,
+                            height: 1.4,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(height: 16),
-              ],
+                const SizedBox(height: 20),
 
-              AppTextField(
-                label: 'Broadcast Title',
-                controller: _titleController,
-                validator: (v) => Validators.requiredField(v, 'Title'),
-              ),
-              const SizedBox(height: 16),
-
-              AppTextField(
-                label: 'Message',
-                controller: _messageController,
-                hint: 'Type urgent broadcast message...',
-                maxLines: 4,
-                validator: (v) => Validators.requiredField(v, 'Message'),
-              ),
-              const SizedBox(height: 16),
-
-              AppDropdown<String>(
-                label: 'Priority',
-                value: _selectedPriority,
-                items: const [
-                  DropdownMenuItem(value: 'URGENT', child: Text('Urgent (Immediate Warning)')),
-                  DropdownMenuItem(value: 'HIGH', child: Text('High Priority')),
-                  DropdownMenuItem(value: 'NORMAL', child: Text('Normal Priority')),
+                if (_errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkPriorityUrgentBg : AppColors.priorityUrgentBg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(_errorMessage!, style: const TextStyle(color: AppColors.error, fontSize: 13)),
+                  ),
+                  const SizedBox(height: 16),
                 ],
-                onChanged: (val) {
-                  if (val != null) setState(() => _selectedPriority = val);
-                },
-              ),
-              const SizedBox(height: 32),
 
-              AppButton(
-                label: 'BROADCAST NOW',
-                icon: Icons.campaign_rounded,
-                variant: AppButtonVariant.danger,
-                width: double.infinity,
-                isLoading: _isLoading,
-                onPressed: _handleBroadcast,
-              ),
-            ],
+                // Form Card
+                AppCard(
+                  padding: const EdgeInsets.all(24),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Target Group
+                      AppDropdown<String>(
+                        label: 'Target Channel',
+                        value: _selectedGroupId,
+                        hint: 'Select channel to alert',
+                        items: groupsState.groups.map((g) {
+                          return DropdownMenuItem(
+                            value: g.id,
+                            child: Text('${g.name} (${g.memberCount} members)'),
+                          );
+                        }).toList(),
+                        onChanged: (val) => setState(() => _selectedGroupId = val),
+                      ),
+                      const SizedBox(height: 16),
+
+                      if (selectedGroup != null) ...[
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant,
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          child: Row(
+                            children: [
+                              Icon(
+                                Icons.people_outline_rounded,
+                                size: 16,
+                                color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                              ),
+                              const SizedBox(width: 8),
+                              Text(
+                                'Audience: ${selectedGroup.memberCount} participants will be alerted instantly',
+                                style: TextStyle(
+                                  fontSize: 12.5,
+                                  fontWeight: FontWeight.w500,
+                                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                      ],
+
+                      AppTextField(
+                        label: 'Broadcast Title',
+                        controller: _titleController,
+                        validator: (v) => Validators.requiredField(v, 'Title'),
+                      ),
+                      const SizedBox(height: 16),
+
+                      AppTextField(
+                        label: 'Message',
+                        controller: _messageController,
+                        hint: 'Type emergency broadcast message...',
+                        maxLines: 4,
+                        validator: (v) => Validators.requiredField(v, 'Message'),
+                      ),
+                      const SizedBox(height: 16),
+
+                      AppDropdown<String>(
+                        label: 'Urgency Priority',
+                        value: _selectedPriority,
+                        items: const [
+                          DropdownMenuItem(value: 'URGENT', child: Text('Urgent (Immediate Audible Alarm)')),
+                          DropdownMenuItem(value: 'HIGH', child: Text('High Priority')),
+                          DropdownMenuItem(value: 'NORMAL', child: Text('Normal Priority')),
+                        ],
+                        onChanged: (val) {
+                          if (val != null) setState(() => _selectedPriority = val);
+                        },
+                      ),
+                      const SizedBox(height: 28),
+
+                      AppButton(
+                        label: 'SEND BROADCAST NOW',
+                        icon: Icons.campaign_rounded,
+                        variant: AppButtonVariant.danger,
+                        size: AppButtonSize.large,
+                        width: double.infinity,
+                        isLoading: _isLoading,
+                        onPressed: _handleBroadcast,
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 }
+

@@ -7,6 +7,8 @@ class AppCard extends StatelessWidget {
   final VoidCallback? onTap;
   final Color? color;
   final BorderSide? border;
+  final double borderRadius;
+  final List<BoxShadow>? boxShadow;
 
   const AppCard({
     super.key,
@@ -15,29 +17,43 @@ class AppCard extends StatelessWidget {
     this.onTap,
     this.color,
     this.border,
+    this.borderRadius = 12.0,
+    this.boxShadow,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final defaultBg = isDark ? AppColors.darkSurface : AppColors.surface;
+    final defaultBorderColor = isDark ? AppColors.darkBorder : AppColors.border;
+
     Widget card = Container(
       decoration: BoxDecoration(
-        color: color ?? AppColors.surface,
-        borderRadius: BorderRadius.circular(12),
+        color: color ?? defaultBg,
+        borderRadius: BorderRadius.circular(borderRadius),
         border: Border.fromBorderSide(
-          border ?? const BorderSide(color: AppColors.border, width: 1),
+          border ?? BorderSide(color: defaultBorderColor, width: 1),
         ),
+        boxShadow: boxShadow,
       ),
       padding: padding,
       child: child,
     );
 
     if (onTap != null) {
-      return InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: card,
+      return Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(borderRadius),
+          hoverColor: isDark
+              ? AppColors.darkSurfaceVariant.withValues(alpha: 0.5)
+              : AppColors.surfaceVariant.withValues(alpha: 0.7),
+          child: card,
+        ),
       );
     }
     return card;
   }
 }
+

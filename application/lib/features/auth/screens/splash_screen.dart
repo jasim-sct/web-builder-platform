@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../providers/auth_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
@@ -33,44 +32,60 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
-      backgroundColor: AppColors.primary,
+      backgroundColor: isDark ? AppColors.darkBackground : AppColors.sidebarBg,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              padding: const EdgeInsets.all(24),
+              padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.15),
-                shape: BoxShape.circle,
+                color: AppColors.primary,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: AppColors.primary.withValues(alpha: 0.4),
+                    blurRadius: 28,
+                    spreadRadius: 4,
+                  ),
+                ],
               ),
               child: const Icon(
                 Icons.notifications_active_rounded,
-                size: 64,
+                size: 48,
                 color: Colors.white,
               ),
             ),
             const SizedBox(height: 24),
-            Text(
-              'Alert System',
-              style: AppTextStyles.headingLarge.copyWith(
+            const Text(
+              'Organization Alert System',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w700,
                 color: Colors.white,
-                fontSize: 28,
+                letterSpacing: -0.5,
               ),
             ),
             const SizedBox(height: 8),
             Text(
-              'Organization Alert & Reminder Platform',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: Colors.white.withOpacity(0.85),
+              'Real-Time Enterprise Broadcasts & Schedules',
+              style: TextStyle(
+                fontSize: 13,
+                color: AppColors.sidebarTextMuted,
               ),
             ),
-            const SizedBox(height: 48),
-            const CircularProgressIndicator(
-              strokeWidth: 2.5,
-              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            const SizedBox(height: 40),
+            const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(AppColors.primaryLight),
+              ),
             ),
           ],
         ),
@@ -78,3 +93,4 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     );
   }
 }
+

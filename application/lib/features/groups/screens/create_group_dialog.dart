@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/validators.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_text_field.dart';
@@ -61,47 +61,71 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: const Text('Create Group', style: AppTextStyles.headingMedium),
-      content: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              if (_errorMessage != null) ...[
-                Text(
-                  _errorMessage!,
-                  style: const TextStyle(color: Colors.red, fontSize: 13),
+      backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.border),
+      ),
+      title: Text(
+        'Create New Channel',
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+        ),
+      ),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 440),
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                if (_errorMessage != null) ...[
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkPriorityUrgentBg : AppColors.priorityUrgentBg,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      _errorMessage!,
+                      style: const TextStyle(color: AppColors.error, fontSize: 13),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                ],
+                AppTextField(
+                  label: 'Channel Name',
+                  controller: _nameController,
+                  hint: 'e.g. Engineering Team',
+                  validator: (v) => Validators.requiredField(v, 'Channel Name'),
                 ),
-                const SizedBox(height: 12),
+                const SizedBox(height: 14),
+                AppTextField(
+                  label: 'Description (Optional)',
+                  controller: _descController,
+                  hint: 'Purpose or members of this channel...',
+                  maxLines: 2,
+                ),
               ],
-              AppTextField(
-                label: 'Group Name',
-                controller: _nameController,
-                hint: 'e.g. Development Team',
-                validator: (v) => Validators.requiredField(v, 'Group Name'),
-              ),
-              const SizedBox(height: 14),
-              AppTextField(
-                label: 'Description (Optional)',
-                controller: _descController,
-                hint: 'Description of group responsibilities...',
-                maxLines: 2,
-              ),
-            ],
+            ),
           ),
         ),
       ),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
           child: const Text('Cancel'),
         ),
         AppButton(
-          label: 'Create Group',
+          label: 'Create Channel',
           isLoading: _isLoading,
           onPressed: _handleCreate,
         ),
@@ -109,3 +133,4 @@ class _CreateGroupDialogState extends ConsumerState<CreateGroupDialog> {
     );
   }
 }
+

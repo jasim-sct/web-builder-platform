@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../layout/app_shell.dart';
 import '../../features/alerts/screens/alert_details_screen.dart';
 import '../../features/alerts/screens/alerts_list_screen.dart';
 import '../../features/alerts/screens/broadcast_screen.dart';
@@ -14,13 +14,14 @@ import '../../features/groups/screens/group_details_screen.dart';
 import '../../features/groups/screens/groups_list_screen.dart';
 import '../../features/profile/screens/profile_screen.dart';
 import '../../features/users/screens/add_user_dialog.dart';
+import '../../features/users/screens/user_details_screen.dart';
 import '../../features/users/screens/users_list_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    initialLocation: '/',
+    initialLocation: '/dashboard',
     redirect: (context, state) {
       final isAuth = authState.isAuthenticated;
       final isLoggingIn = state.matchedLocation == '/login';
@@ -49,7 +50,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) {
-          return _ScaffoldWithNavBar(
+          return AppShell(
             navigationShell: navigationShell,
             isAdmin: authState.isAdmin,
           );
@@ -65,16 +66,30 @@ final routerProvider = Provider<GoRouter>((ref) {
                     ),
                   ],
                 ),
-                // 1: Users
+                // 1: Users / Participants
                 StatefulShellBranch(
                   routes: [
                     GoRoute(
                       path: '/users',
-                      builder: (context, state) => const UsersListScreen(),
+                      builder: (context, state) {
+                        final role = state.uri.queryParameters['role'];
+                        final groupId = state.uri.queryParameters['groupId'];
+                        return UsersListScreen(
+                          initialRole: role,
+                          initialGroupId: groupId,
+                        );
+                      },
                       routes: [
                         GoRoute(
                           path: 'new',
                           builder: (context, state) => const AddUserDialog(),
+                        ),
+                        GoRoute(
+                          path: 'details/:id',
+                          builder: (context, state) {
+                            final id = state.pathParameters['id'] ?? '';
+                            return UserDetailsScreen(userId: id);
+                          },
                         ),
                       ],
                     ),
@@ -103,7 +118,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                   routes: [
                     GoRoute(
                       path: '/alerts',
-                      builder: (context, state) => const AlertsListScreen(),
+                      builder: (context, state) {
+                        final priority = state.uri.queryParameters['priority'];
+                        final groupId = state.uri.queryParameters['groupId'];
+                        final tab = state.uri.queryParameters['tab'];
+                        final filter = state.uri.queryParameters['filter'];
+                        final filterToday =
+                            filter == 'today' || state.uri.queryParameters['today'] == 'true';
+                        return AlertsListScreen(
+                          initialPriority: priority,
+                          initialGroupId: groupId,
+                          initialTab: tab,
+                          filterToday: filterToday,
+                        );
+                      },
                       routes: [
                         GoRoute(
                           path: 'new',
@@ -167,7 +195,20 @@ final routerProvider = Provider<GoRouter>((ref) {
                   routes: [
                     GoRoute(
                       path: '/alerts',
-                      builder: (context, state) => const AlertsListScreen(),
+                      builder: (context, state) {
+                        final priority = state.uri.queryParameters['priority'];
+                        final groupId = state.uri.queryParameters['groupId'];
+                        final tab = state.uri.queryParameters['tab'];
+                        final filter = state.uri.queryParameters['filter'];
+                        final filterToday =
+                            filter == 'today' || state.uri.queryParameters['today'] == 'true';
+                        return AlertsListScreen(
+                          initialPriority: priority,
+                          initialGroupId: groupId,
+                          initialTab: tab,
+                          filterToday: filterToday,
+                        );
+                      },
                       routes: [
                         GoRoute(
                           path: 'details/:id',
@@ -194,79 +235,3 @@ final routerProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
-
-class _ScaffoldWithNavBar extends StatelessWidget {
-  final StatefulNavigationShell navigationShell;
-  final bool isAdmin;
-
-  const _ScaffoldWithNavBar({
-    required this.navigationShell,
-    required this.isAdmin,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: navigationShell,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: navigationShell.currentIndex,
-        onDestinationSelected: (index) {
-          navigationShell.goBranch(
-            index,
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-        destinations: isAdmin
-            ? const [
-                NavigationDestination(
-                  icon: Icon(Icons.dashboard_outlined),
-                  selectedIcon: Icon(Icons.dashboard_rounded),
-                  label: 'Dashboard',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.people_outline_rounded),
-                  selectedIcon: Icon(Icons.people_rounded),
-                  label: 'Participants',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.groups_outlined),
-                  selectedIcon: Icon(Icons.groups_rounded),
-                  label: 'Groups',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.notifications_none_rounded),
-                  selectedIcon: Icon(Icons.notifications_rounded),
-                  label: 'Alerts',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outline_rounded),
-                  selectedIcon: Icon(Icons.person_rounded),
-                  label: 'Profile',
-                ),
-              ]
-            : const [
-                NavigationDestination(
-                  icon: Icon(Icons.dashboard_outlined),
-                  selectedIcon: Icon(Icons.dashboard_rounded),
-                  label: 'Dashboard',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.groups_outlined),
-                  selectedIcon: Icon(Icons.groups_rounded),
-                  label: 'My Groups',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.notifications_none_rounded),
-                  selectedIcon: Icon(Icons.notifications_rounded),
-                  label: 'Alerts',
-                ),
-                NavigationDestination(
-                  icon: Icon(Icons.person_outline_rounded),
-                  selectedIcon: Icon(Icons.person_rounded),
-                  label: 'Profile',
-                ),
-              ],
-      ),
-    );
-  }
-}

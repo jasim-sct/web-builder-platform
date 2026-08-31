@@ -47,4 +47,10 @@ class LocalStorage {
   }
 
   String? getCustomBaseUrl() => _prefs.getString(AppConfig.keyCustomBaseUrl);
+
+  Future<void> saveThemeMode(String mode) async {
+    await _prefs.setString('app_theme_mode', mode);
+  }
+
+  String? getThemeMode() => _prefs.getString('app_theme_mode');
 }

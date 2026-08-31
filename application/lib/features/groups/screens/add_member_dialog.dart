@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/theme/app_colors.dart';
-import '../../../core/theme/app_text_styles.dart';
 import '../../../models/group.dart';
 import '../../../shared/loading/loading_view.dart';
 import '../../../shared/widgets/app_button.dart';
@@ -22,6 +21,7 @@ class _AddMemberDialogState extends ConsumerState<AddMemberDialog> {
   final Set<String> _selectedUserIds = {};
   bool _isLoading = false;
   String? _errorMessage;
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -57,101 +57,165 @@ class _AddMemberDialogState extends ConsumerState<AddMemberDialog> {
   @override
   Widget build(BuildContext context) {
     final usersState = ref.watch(usersProvider);
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     final existingMemberIds = {
       ...widget.group.memberIds,
       ...widget.group.members.map((m) => m.id),
     };
 
-    final availableUsers = usersState.users.where((u) => !existingMemberIds.contains(u.id)).toList();
+    final availableUsers = usersState.users
+        .where((u) => !existingMemberIds.contains(u.id))
+        .where((u) =>
+            _searchQuery.isEmpty ||
+            u.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
+            u.email.toLowerCase().contains(_searchQuery.toLowerCase()))
+        .toList();
 
     return AlertDialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      title: Text('Add Members to ${widget.group.name}', style: AppTextStyles.headingSmall),
-      content: SizedBox(
-        width: double.maxFinite,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (_errorMessage != null) ...[
-              Text(
-                _errorMessage!,
-                style: const TextStyle(color: Colors.red, fontSize: 13),
-              ),
-              const SizedBox(height: 10),
-            ],
-            if (usersState.isLoading)
-              const SizedBox(height: 120, child: LoadingView(message: 'Loading participants...'))
-            else if (availableUsers.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 24.0),
-                child: Center(
-                  child: Text(
-                    'All organization participants are already members of this group.',
-                    style: AppTextStyles.bodySmall,
-                    textAlign: TextAlign.center,
-                  ),
-                ),
-              )
-            else
-              ConstrainedBox(
-                constraints: const BoxConstraints(maxHeight: 280),
-                child: ListView.separated(
-                  shrinkWrap: true,
-                  itemCount: availableUsers.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 6),
-                  itemBuilder: (context, index) {
-                    final user = availableUsers[index];
-                    final isSelected = _selectedUserIds.contains(user.id);
-
-                    return AppCard(
-                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      border: isSelected
-                          ? const BorderSide(color: AppColors.primary, width: 1.5)
-                          : null,
-                      onTap: () {
-                        setState(() {
-                          if (isSelected) {
-                            _selectedUserIds.remove(user.id);
-                          } else {
-                            _selectedUserIds.add(user.id);
-                          }
-                        });
-                      },
-                      child: Row(
-                        children: [
-                          Checkbox(
-                            value: isSelected,
-                            activeColor: AppColors.primary,
-                            onChanged: (val) {
-                              setState(() {
-                                if (val == true) {
-                                  _selectedUserIds.add(user.id);
-                                } else {
-                                  _selectedUserIds.remove(user.id);
-                                }
-                              });
-                            },
-                          ),
-                          const SizedBox(width: 6),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(user.name, style: AppTextStyles.labelMedium),
-                                Text(user.email, style: AppTextStyles.bodySmall),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    );
-                  },
-                ),
-              ),
-          ],
+      backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(16),
+        side: BorderSide(color: isDark ? AppColors.darkBorder : AppColors.border),
+      ),
+      title: Text(
+        'Add Members to ${widget.group.name}',
+        style: TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.w700,
+          color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
         ),
       ),
+      content: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 460),
+        child: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_errorMessage != null) ...[
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(
+                    color: isDark ? AppColors.darkPriorityUrgentBg : AppColors.priorityUrgentBg,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  child: Text(
+                    _errorMessage!,
+                    style: const TextStyle(color: AppColors.error, fontSize: 13),
+                  ),
+                ),
+                const SizedBox(height: 10),
+              ],
+              TextField(
+                onChanged: (val) => setState(() => _searchQuery = val.trim()),
+                decoration: InputDecoration(
+                  hintText: 'Search available participants...',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 18),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                ),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                ),
+              ),
+              const SizedBox(height: 12),
+              if (usersState.isLoading)
+                const SizedBox(height: 120, child: LoadingView(message: 'Loading participants...'))
+              else if (availableUsers.isEmpty)
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 24.0),
+                  child: Center(
+                    child: Text(
+                      _searchQuery.isNotEmpty
+                          ? 'No matching participants found.'
+                          : 'All organization participants are already enrolled in this channel.',
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                      ),
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                )
+              else
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 280),
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    itemCount: availableUsers.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 6),
+                    itemBuilder: (context, index) {
+                      final user = availableUsers[index];
+                      final isSelected = _selectedUserIds.contains(user.id);
+
+                      return AppCard(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                        border: isSelected
+                            ? BorderSide(
+                                color: isDark ? AppColors.primaryLight : AppColors.primary,
+                                width: 1.5,
+                              )
+                            : null,
+                        onTap: () {
+                          setState(() {
+                            if (isSelected) {
+                              _selectedUserIds.remove(user.id);
+                            } else {
+                              _selectedUserIds.add(user.id);
+                            }
+                          });
+                        },
+                        child: Row(
+                          children: [
+                            Checkbox(
+                              value: isSelected,
+                              activeColor: isDark ? AppColors.primaryLight : AppColors.primary,
+                              onChanged: (val) {
+                                setState(() {
+                                  if (val == true) {
+                                    _selectedUserIds.add(user.id);
+                                  } else {
+                                    _selectedUserIds.remove(user.id);
+                                  }
+                                });
+                              },
+                            ),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    user.name,
+                                    style: TextStyle(
+                                      fontSize: 13,
+                                      fontWeight: FontWeight.w600,
+                                      color: isDark ? AppColors.darkTextPrimary : AppColors.textPrimary,
+                                    ),
+                                  ),
+                                  Text(
+                                    user.email,
+                                    style: TextStyle(
+                                      fontSize: 11.5,
+                                      color: isDark ? AppColors.darkTextSecondary : AppColors.textSecondary,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
+                ),
+            ],
+          ),
+        ),
+      ),
+      actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
@@ -166,3 +230,4 @@ class _AddMemberDialogState extends ConsumerState<AddMemberDialog> {
     );
   }
 }
+

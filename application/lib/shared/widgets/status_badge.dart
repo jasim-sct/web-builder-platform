@@ -3,55 +3,81 @@ import '../../core/theme/app_colors.dart';
 
 class StatusBadge extends StatelessWidget {
   final String status;
+  final bool showDot;
 
   const StatusBadge({
     super.key,
     required this.status,
+    this.showDot = true,
   });
 
   @override
   Widget build(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+
     Color bg;
     Color fg;
+    Color dot;
 
     switch (status.toUpperCase()) {
       case 'COMPLETED':
       case 'ACKNOWLEDGED':
-        bg = AppColors.successBg;
+        bg = isDark ? AppColors.darkSuccessBg : AppColors.successBg;
         fg = AppColors.success;
+        dot = AppColors.success;
         break;
       case 'TRIGGERED':
-        bg = AppColors.priorityUrgentBg;
+        bg = isDark ? AppColors.darkPriorityUrgentBg : AppColors.priorityUrgentBg;
         fg = AppColors.priorityUrgent;
+        dot = AppColors.priorityUrgent;
         break;
       case 'DISABLED':
       case 'CANCELLED':
-        bg = AppColors.surfaceVariant;
-        fg = AppColors.textMuted;
+        bg = isDark ? AppColors.darkSurfaceVariant : AppColors.surfaceVariant;
+        fg = isDark ? AppColors.darkTextMuted : AppColors.textMuted;
+        dot = isDark ? AppColors.darkTextMuted : AppColors.textMuted;
         break;
       case 'SCHEDULED':
       case 'DELIVERED':
       default:
-        bg = AppColors.priorityNormalBg;
-        fg = AppColors.priorityNormal;
+        bg = isDark ? AppColors.darkPriorityNormalBg : AppColors.priorityNormalBg;
+        fg = isDark ? AppColors.primaryLight : AppColors.priorityNormal;
+        dot = isDark ? AppColors.primaryLight : AppColors.priorityNormal;
         break;
     }
 
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
         color: bg,
         borderRadius: BorderRadius.circular(6),
       ),
-      child: Text(
-        status.toUpperCase(),
-        style: TextStyle(
-          color: fg,
-          fontSize: 11,
-          fontWeight: FontWeight.w600,
-          letterSpacing: 0.2,
-        ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (showDot) ...[
+            Container(
+              width: 6,
+              height: 6,
+              decoration: BoxDecoration(
+                color: dot,
+                shape: BoxShape.circle,
+              ),
+            ),
+            const SizedBox(width: 5),
+          ],
+          Text(
+            status.toUpperCase(),
+            style: TextStyle(
+              color: fg,
+              fontSize: 10.5,
+              fontWeight: FontWeight.w700,
+              letterSpacing: 0.2,
+            ),
+          ),
+        ],
       ),
     );
   }
 }
+

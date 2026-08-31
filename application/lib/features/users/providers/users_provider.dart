@@ -93,3 +93,20 @@ class UsersNotifier extends StateNotifier<UsersState> {
 final usersProvider = StateNotifierProvider<UsersNotifier, UsersState>((ref) {
   return UsersNotifier(ref);
 });
+
+final singleUserProvider = FutureProvider.family.autoDispose<User?, String>((ref, userId) async {
+  final usersState = ref.watch(usersProvider);
+  final existing = usersState.users.where((u) => u.id == userId).firstOrNull;
+  if (existing != null) return existing;
+
+  final api = ref.watch(apiClientProvider);
+  try {
+    final res = await api.get('${ApiConfig.users}/$userId');
+    if (res is Map<String, dynamic>) {
+      return User.fromJson(res);
+    }
+  } catch (_) {
+    // If not found or error, return null
+  }
+  return null;
+});
