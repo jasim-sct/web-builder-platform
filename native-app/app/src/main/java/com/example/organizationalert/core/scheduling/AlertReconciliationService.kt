@@ -23,7 +23,7 @@ class AlertReconciliationService(
     fun reconcile(
         currentLocalAlerts: List<Alert>,
         incomingServerAlerts: List<Alert>,
-        now: Instant = Instant.now()
+        now: Instant = ScheduleTimeCalculator.now()
     ): AlertReconciliationResult {
         Log.d(TAG, "[RECONCILE] Starting reconciliation. Local count=${currentLocalAlerts.size}, Server count=${incomingServerAlerts.size}")
 
@@ -35,45 +35,46 @@ class AlertReconciliationService(
         val localAlertsMap = currentLocalAlerts.associateBy { it.id }
         val serverAlertsMap = incomingServerAlerts.associateBy { it.id }
 
-        // 1. Process server alerts
         for (serverAlert in incomingServerAlerts) {
             val localAlert = localAlertsMap[serverAlert.id]
-
-            val isFuture = (serverAlert.nextTriggerAt ?: serverAlert.scheduledAt).isAfter(now)
-            val shouldBeScheduled = serverAlert.isEnabled &&
-                    serverAlert.status == AlertStatus.SCHEDULED &&
-                    isFuture
+            val resolvedTrigger = ScheduleTimeCalculator.resolveNextTriggerInstant(serverAlert, now)
+            val shouldBeScheduled = resolvedTrigger != null &&
+                serverAlert.isEnabled &&
+                serverAlert.status == AlertStatus.SCHEDULED
 
             if (shouldBeScheduled) {
-                // Check if already correctly scheduled locally with same trigger time
+                val alertToSchedule = serverAlert.copy(nextTriggerAt = resolvedTrigger)
+                val localResolvedTrigger = localAlert?.let {
+                    ScheduleTimeCalculator.resolveNextTriggerInstant(it, now)
+                }
+
                 val needsReschedule = localAlert == null ||
-                        localAlert.nextTriggerAt != serverAlert.nextTriggerAt ||
+                        localResolvedTrigger != resolvedTrigger ||
                         localAlert.scheduledAt != serverAlert.scheduledAt ||
                         localAlert.status != serverAlert.status ||
                         localAlert.isEnabled != serverAlert.isEnabled ||
-                        localAlert.version != serverAlert.version
+                        localAlert.version != serverAlert.version ||
+                        localAlert.timezoneId != serverAlert.timezoneId ||
+                        localAlert.recipientUserIds != serverAlert.recipientUserIds
 
                 if (needsReschedule) {
-                    // Cancel previous alarm to avoid duplicate and schedule current
                     scheduler.cancelAlert(serverAlert.id)
-                    val scheduled = scheduler.scheduleAlert(serverAlert)
+                    val scheduled = scheduler.scheduleAlert(alertToSchedule)
                     if (scheduled) scheduledCount++
                 } else {
                     unchangedCount++
                 }
             } else {
-                // Should not be scheduled: cancel any existing local alarm
-                if (localAlert != null && (localAlert.status == AlertStatus.SCHEDULED && localAlert.isEnabled)) {
+                if (localAlert != null && localAlert.isEnabled && localAlert.status == AlertStatus.SCHEDULED) {
                     scheduler.cancelAlert(serverAlert.id)
                     cancelledCount++
                 }
-                if (!isFuture && serverAlert.status == AlertStatus.SCHEDULED) {
+                if (resolvedTrigger == null && serverAlert.status == AlertStatus.SCHEDULED) {
                     skippedPastCount++
                 }
             }
         }
 
-        // 2. Identify local alerts deleted from server entirely
         for (localAlert in currentLocalAlerts) {
             if (!serverAlertsMap.containsKey(localAlert.id)) {
                 scheduler.cancelAlert(localAlert.id)
@@ -90,7 +91,8 @@ class AlertReconciliationService(
 
         Log.d(
             TAG,
-            "[RECONCILE] Reconciliation finished: Scheduled=$scheduledCount, Cancelled=$cancelledCount, Unchanged=$unchangedCount, SkippedPast=$skippedPastCount"
+            "[RECONCILE] Finished: Scheduled=$scheduledCount, Cancelled=$cancelledCount, " +
+                "Unchanged=$unchangedCount, SkippedPast=$skippedPastCount"
         )
         return result
     }

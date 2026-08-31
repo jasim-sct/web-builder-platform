@@ -8,8 +8,8 @@ A robust, modular, real-time Node.js & Express backend for managing organization
 
 * **Layered Architecture:** Controllers, Services, Models, Sockets, and Middlewares cleanly separated.
 * **Centralized Alert Design:** Alerts target Groups dynamically. Changing group membership instantly reflects in future alert dispatches without modifying existing alert records.
-* **Recurrence Scheduler:** Lightweight interval-based engine supporting `ONCE`, `DAILY`, and `WEEKLY` intervals with race-condition safe updates.
-* **Real-Time WebSockets:** Socket.IO integration with room scoping (`organization:{id}`, `group:{id}`, `user:{id}`) for broadcasts, immediate alerts, and acknowledgements.
+* **Recurrence metadata (server):** Optional interval tick advances DAILY/WEEKLY `nextTriggerAt` for sync — **does not ring devices**. ONCE alerts are executed only on Android after sync.
+* **Real-Time WebSockets:** Socket.IO for immediate broadcasts and live dashboard updates.
 * **Delivery & Acknowledgement Tracking:** Records deliveries per participant and enables acknowledgment via REST or WebSockets.
 * **Comprehensive Automated Test Suite:** Integrated with Jest, Supertest, and `mongodb-memory-server` for zero-setup execution.
 

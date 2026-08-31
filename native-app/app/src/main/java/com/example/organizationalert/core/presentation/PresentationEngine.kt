@@ -26,6 +26,16 @@ class PresentationEngine(
     fun presentEvent(event: EventEntity) {
         Log.d(TAG, "[PRESENTATION] Delegating to AlarmEngine for eventId=${event.eventId}")
         CoroutineScope(Dispatchers.IO).launch {
+            val now = Instant.now()
+            if (event.expiresAt != null && event.expiresAt.isBefore(now)) {
+                Log.d(TAG, "[PRESENTATION] Event expired before ring: ${event.eventId}")
+                database.eventDao().markPresentationBlocked(
+                    eventId = event.eventId,
+                    status = EventStatus.EXPIRED,
+                    error = "Expired at ${event.expiresAt}"
+                )
+                return@launch
+            }
             val started = alarmEngine.triggerFromEvent(event, event.alarmType)
             if (started) {
                 database.eventDao().markDisplayed(
@@ -51,10 +61,19 @@ class PresentationEngine(
         groupId: String?,
         groupName: String?,
         broadcasterId: String?,
-        broadcasterName: String?
+        broadcasterName: String?,
+        recipientUserIds: List<String>? = null
     ) {
         CoroutineScope(Dispatchers.IO).launch {
-            alarmEngine.trigger(
+            val stored = ImmediateEventStore.upsertImmediateEvent(
+                database, preferences, sessionId, title, message, priority,
+                groupId, groupName, broadcasterId, broadcasterName
+            )
+            if (stored == null) {
+                Log.d(TAG, "[PRESENTATION] Duplicate immediate session suppressed: $sessionId")
+                return@launch
+            }
+            val started = alarmEngine.trigger(
                 com.example.organizationalert.core.alarm.AlarmTrigger(
                     sessionId = sessionId,
                     title = title,
@@ -65,10 +84,18 @@ class PresentationEngine(
                     groupId = groupId,
                     groupName = groupName,
                     broadcasterId = broadcasterId,
-                    broadcasterName = broadcasterName
+                    broadcasterName = broadcasterName,
+                    recipientUserIds = recipientUserIds
                 ),
-                persistEventId = null
+                persistEventId = sessionId
             )
+            if (started) {
+                database.eventDao().markDisplayed(
+                    eventId = sessionId,
+                    status = EventStatus.PRESENTED,
+                    displayedAt = Instant.now()
+                )
+            }
         }
     }
 

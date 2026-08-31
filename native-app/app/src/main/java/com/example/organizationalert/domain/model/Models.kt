@@ -53,6 +53,9 @@ data class Alert(
     val lastTriggeredAt: Instant? = null,
     val nextTriggerAt: Instant? = null,
     val version: Int = 1,
+    val timezoneId: String = "UTC",
+    val recipientUserIds: List<String> = emptyList(),
+    val occurrenceCount: Int = 0,
     val createdAt: Instant = Instant.now(),
     val updatedAt: Instant = Instant.now()
 )

@@ -5,6 +5,27 @@ const VALID_REPEAT_TYPES = ['ONCE', 'DAILY', 'WEEKLY'];
 const VALID_PRIORITIES = ['LOW', 'NORMAL', 'HIGH', 'URGENT'];
 const VALID_STATUSES = ['SCHEDULED', 'TRIGGERED', 'DISABLED', 'CANCELLED', 'COMPLETED'];
 
+const validateRecipientUserIds = (recipientUserIds, errors) => {
+  if (recipientUserIds === undefined) return;
+  if (!Array.isArray(recipientUserIds)) {
+    errors.push('recipientUserIds must be an array of ObjectIds');
+    return;
+  }
+  for (const id of recipientUserIds) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      errors.push('Each recipientUserIds entry must be a valid ObjectId');
+      break;
+    }
+  }
+};
+
+const validateTimezoneId = (timezoneId, errors) => {
+  if (timezoneId === undefined) return;
+  if (typeof timezoneId !== 'string' || timezoneId.trim().length === 0) {
+    errors.push('timezoneId must be a non-empty IANA timezone string');
+  }
+};
+
 const validateCreateAlert = (data) => {
   const errors = [];
 
@@ -43,6 +64,9 @@ const validateCreateAlert = (data) => {
   if (data.createdBy !== undefined && data.createdBy !== null && !mongoose.Types.ObjectId.isValid(data.createdBy)) {
     errors.push('createdBy must be a valid ObjectId');
   }
+
+  validateRecipientUserIds(data.recipientUserIds, errors);
+  validateTimezoneId(data.timezoneId, errors);
 
   return {
     isValid: errors.length === 0,
@@ -93,6 +117,9 @@ const validateUpdateAlert = (data) => {
     errors.push('isEnabled must be a boolean');
   }
 
+  validateRecipientUserIds(data.recipientUserIds, errors);
+  validateTimezoneId(data.timezoneId, errors);
+
   return {
     isValid: errors.length === 0,
     errors,
@@ -129,6 +156,9 @@ const validateBroadcastNow = (data) => {
   if (data.createdBy !== undefined && data.createdBy !== null && !mongoose.Types.ObjectId.isValid(data.createdBy)) {
     errors.push('createdBy must be a valid ObjectId');
   }
+
+  validateRecipientUserIds(data.recipientUserIds, errors);
+  validateTimezoneId(data.timezoneId, errors);
 
   return {
     isValid: errors.length === 0,

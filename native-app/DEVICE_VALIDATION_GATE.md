@@ -64,6 +64,40 @@ adb shell cmd alarm get-config
 
 ---
 
+## Required Device Validation Matrix
+
+Do **not** mark PASS without recorded evidence.
+
+| Scenario | Mode | Expected | Evidence status |
+|----------|------|----------|-----------------|
+| App foreground | 1/2 | Alarm rings | NOT YET VERIFIED |
+| App background | 1/2 | Alarm rings | NOT YET VERIFIED |
+| UI closed | 1 | Scheduled alarm | NOT YET VERIFIED |
+| Process killed | 1 | Scheduled alarm (not force-stop) | PARTIALLY VERIFIED (see PHYSICAL_DEVICE_RESULTS) |
+| Process killed | 2 | **Not guaranteed** without FCM | DOCUMENTED |
+| Screen locked | 1/2 | Full-screen alarm | NOT YET VERIFIED |
+| Internet OFF | 1 | Scheduled alarm | NOT YET VERIFIED |
+| Doze | 1 | Alarm (platform-limited) | NOT YET VERIFIED |
+| Reboot | 1 | Rescheduled idempotently | PARTIALLY VERIFIED |
+| Timezone changed | 1 | Recalculated | NOT YET VERIFIED |
+| Schedule 19:00→22:00 | 1 | Only 22:00 rings | UNIT TESTED · DEVICE PENDING |
+| Duplicate sync | 1 | One alarm | UNIT TESTED |
+| Duplicate event (socket+sync) | 2 | One execution | UNIT TESTED |
+| Offline ACK | 1/2 | Local ACK + retry | UNIT TESTED |
+| Broadcaster | 2 | No alarm | UNIT TESTED |
+| Recipient | 1/2 | Alarm | UNIT TESTED |
+| Expired event | 2 | No stale ring | IMPLEMENTED |
+
+### Business scenario tests (device required)
+
+| Scenario | Steps | Pass criteria |
+|----------|-------|---------------|
+| **Shop closing override** | Default 19:00; exception 22:00; sync 18:00; offline/killed until 22:00 | No ring at 19:00; ring at 22:00 |
+| **Daily report reminder** | DAILY 20:30 Asia/Kolkata; ACK offline | Ring at 20:30; ACK_PENDING → backend |
+| **Urgent product issue** | Manager broadcasts; Staff A/B/C targeted | Manager silent; staff ring independently |
+
+---
+
 ## Record Results
 
 | Device | Android API | OEM | Exact alarm | Notifications | Full-screen | Offline RECEIVE | ACK to backend | Result |

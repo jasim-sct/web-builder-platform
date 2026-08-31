@@ -38,20 +38,23 @@ Built with **Jetpack Compose, MVVM Architecture, Room Database, Retrofit, Socket
             ▼                                     ▼
 ┌───────────────────────┐             ┌───────────────────────┐
 │ AlertBroadcastReceiver│             │ BootCompletedReceiver │
+│ / EventAlarmReceiver  │             │ + reconcile           │
 └───────────┬───────────┘             └───────────┬───────────┘
             ▼                                     ▼
 ┌───────────────────────┐             ┌───────────────────────┐
-│ NotificationManager   │             │ Query Room Database   │
-│ 🔔 Audio (res/raw)    │             │ & Restore All Alarms  │
-│ 📳 Vibration Channel  │             └───────────────────────┘
-│ 📱 Notification Tap   │
+│ AlarmEngine           │             │ Restore from Room     │
+│ → AlarmRingingService │             │ (idempotent)          │
+│ → MandatoryReceive UI │             └───────────────────────┘
 └───────────┬───────────┘
             ▼
 ┌───────────────────────┐
-│ AlertDetailsScreen    │
-│ (Acknowledge / View)  │
+│ ACK / DISMISS         │
+│ AckManager + queue    │
 └───────────────────────┘
 ```
+
+> **Mode 1:** After sync + AlarmManager registration, scheduled execution does not require internet.  
+> **Mode 2:** Socket.IO is not guaranteed to a dead process without FCM.
 
 > **Key Architectural Principle**:
 > The backend decides **WHAT** and **WHEN** the alert should happen.
@@ -110,8 +113,8 @@ Built with **Jetpack Compose, MVVM Architecture, Room Database, Retrofit, Socket
 
 | Feature | Mechanism | Offline Behavior | Process Terminated Behavior |
 |---|---|---|---|
-| **Scheduled Alerts & Reminders** | `AlarmManager` + `BroadcastReceiver` | ✅ Fires reliably on time | ✅ Fires reliably (OS AlarmManager wakes device) |
-| **Immediate Live Broadcast** | `Socket.IO` (`alert:broadcast`) | ❌ Requires live connection | ❌ Only received when app process is active/connected |
+| **Scheduled Alerts & Reminders** | `AlarmManager` + `AlarmEngine` | ✅ Fires locally after sync (Mode 1) | ✅ OS alarm can wake receiver (platform-limited; not force-stop) |
+| **Immediate Live Broadcast** | `Socket.IO` (+ optional FCM server) | ❌ Requires live connection | ❌ **Not guaranteed** — process must be alive or FCM must wake |
 | **Live Updates / Edits** | `Socket.IO` (`alert:updated`) | Reconciles upon reconnection | Reconciles upon next app launch/sync |
 | **Reboot Restoration** | `BootCompletedReceiver` + `Room` | ✅ Fully restored from local Room cache | ✅ Automatically restores future alarms |
 

@@ -160,6 +160,40 @@ class AckManager(
         }
     }
 
+    suspend fun markAlertDismissed(alertId: String): Boolean = withContext(Dispatchers.IO) {
+        val userId = preferences.getUserId()
+        val deviceId = preferences.getOrCreateDeviceId()
+        if (userId.isNullOrBlank()) return@withContext false
+
+        val now = Instant.now()
+        try {
+            AlarmEngine.getInstance(context, database, preferences)
+                .stop(alertId, AlarmStopReason.DISMISSED)
+
+            database.withTransaction {
+                val existingAck = database.ackQueueDao().getAckByEventId(alertId)
+                if (existingAck == null) {
+                    database.ackQueueDao().enqueueAck(
+                        AckQueueEntity(
+                            eventId = alertId,
+                            action = ACTION_ALERT_DISMISS,
+                            userId = userId,
+                            deviceId = deviceId,
+                            receivedAt = now,
+                            status = QueueStatus.PENDING,
+                            nextRetryAt = now
+                        )
+                    )
+                }
+            }
+            triggerAckWorker(context)
+            true
+        } catch (e: Exception) {
+            Log.e(TAG, "[ALERT_DISMISS] Error", e)
+            false
+        }
+    }
+
     /**
      * Alert-based session ACK (sessionId = alertId, no EventEntity in Room).
      * Stops alarm, persists local delivery state when possible, emits socket + REST ACK.
@@ -167,6 +201,7 @@ class AckManager(
      */
     suspend fun markAlertAcknowledged(alertId: String): Boolean = withContext(Dispatchers.IO) {
         val userId = preferences.getUserId()
+        val deviceId = preferences.getOrCreateDeviceId()
         if (userId.isNullOrBlank()) {
             Log.w(TAG, "[ALERT_ACK] User ID missing for alertId=$alertId")
             return@withContext false
@@ -180,26 +215,37 @@ class AckManager(
             AlarmEngine.getInstance(context, database, preferences)
                 .stop(alertId, AlarmStopReason.ACKNOWLEDGED)
 
-            val alreadyAcknowledged = database.alertDeliveryDao()
-                .getAcknowledgedAt(alertId, userId)
-            if (alreadyAcknowledged != null) {
-                Log.d(TAG, "[ALERT_ACK] Alert already acknowledged (idempotent): $alertId")
-                return@withContext true
+            database.withTransaction {
+                val alreadyAcknowledged = database.alertDeliveryDao()
+                    .getAcknowledgedAt(alertId, userId)
+                if (alreadyAcknowledged != null) {
+                    Log.d(TAG, "[ALERT_ACK] Alert already acknowledged (idempotent): $alertId")
+                    return@withTransaction
+                }
+
+                database.alertDeliveryDao().markAcknowledged(alertId, userId, now)
+
+                val existingAck = database.ackQueueDao().getAckByEventId(alertId)
+                if (existingAck == null) {
+                    database.ackQueueDao().enqueueAck(
+                        AckQueueEntity(
+                            eventId = alertId,
+                            action = ACTION_ALERT_ACK,
+                            userId = userId,
+                            deviceId = deviceId,
+                            receivedAt = now,
+                            status = QueueStatus.PENDING,
+                            retryCount = 0,
+                            nextRetryAt = now,
+                            createdAt = now
+                        )
+                    )
+                    Log.d(TAG, "[ALERT_ACK] Queued offline-capable ACK for alertId=$alertId")
+                }
             }
 
-            database.alertDeliveryDao().markAcknowledged(alertId, userId, now)
-
-            socketManager?.acknowledgeAlert(alertId, userId)
-
-            val api = ApiClient.getService(preferences.getServerUrl())
-            val response = api.acknowledgeAlert(alertId, AcknowledgeRequest(userId))
-            if (response.isSuccessful) {
-                Log.d(TAG, "[ALERT_ACK] Server confirmed ACK for alertId=$alertId")
-                true
-            } else {
-                Log.w(TAG, "[ALERT_ACK] Server returned HTTP ${response.code()} for alertId=$alertId")
-                false
-            }
+            triggerAckWorker(context)
+            true
         } catch (e: Exception) {
             Log.e(TAG, "[ALERT_ACK] Error acknowledging alert", e)
             false
@@ -209,6 +255,8 @@ class AckManager(
     companion object {
         private const val TAG = "AckManager"
         const val WORK_NAME_ACK = "resilient_ack_work"
+        const val ACTION_ALERT_ACK = "ALERT_ACK"
+        const val ACTION_ALERT_DISMISS = "ALERT_DISMISS"
 
         fun triggerAckWorker(context: Context) {
             val constraints = Constraints.Builder()
@@ -276,50 +324,89 @@ class ResilientAckWorker(
 
         for (ack in pendingAcks) {
             try {
-                database.eventDao().updateAckStatus(ack.eventId, AckStatus.SENDING)
-                Log.d(TAG, "[ACK_SENT] Sending ACK for eventId=${ack.eventId}...")
-                val req = ReceiveEventRequest(
-                    userId = ack.userId,
-                    deviceId = ack.deviceId,
-                    receivedAt = TimezoneHelper.formatInstantToIso(ack.receivedAt)
-                )
-
-                val response = if (ack.action == "DISMISS") {
-                    // Local dismissal already persisted; no dedicated backend contract yet.
-                    null
-                } else {
-                    api.receiveEvent(ack.eventId, req)
-                }
-                if (ack.action == "DISMISS") {
-                    Log.d(TAG, "[ACK_CONFIRMED] Dismiss recorded locally for eventId=${ack.eventId}")
-                    database.ackQueueDao().deleteById(ack.id)
-                    continue
-                }
-                if (response != null && response.isSuccessful) {
-                    Log.d(TAG, "[ACK_CONFIRMED] Server confirmed ACK for eventId=${ack.eventId}")
-
-                    database.eventDao().markAcknowledged(
-                        eventId = ack.eventId,
-                        ackStatus = AckStatus.CONFIRMED,
-                        acknowledgedAt = Instant.now()
-                    )
-
-                    database.ackQueueDao().deleteById(ack.id)
-                } else {
-                    val code = response?.code() ?: -1
-                    Log.w(TAG, "[ACK_FAILED] Server returned HTTP $code for eventId=${ack.eventId}")
-                    hasFailures = true
-                    database.eventDao().updateAckStatus(ack.eventId, AckStatus.FAILED)
-                    val nextRetry = Instant.now().plus(
-                        Math.min(300L, (ack.retryCount + 1) * 15L),
-                        ChronoUnit.SECONDS
-                    )
-                    database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
+                when (ack.action) {
+                    AckManager.ACTION_ALERT_ACK -> {
+                        Log.d(TAG, "[ACK_SENT] Sending alert ACK for alertId=${ack.eventId}...")
+                        val response = api.acknowledgeAlert(
+                            ack.eventId,
+                            AcknowledgeRequest(ack.userId ?: "")
+                        )
+                        if (response.isSuccessful) {
+                            Log.d(TAG, "[ACK_CONFIRMED] Server confirmed alert ACK for ${ack.eventId}")
+                            database.ackQueueDao().deleteById(ack.id)
+                        } else {
+                            Log.w(TAG, "[ACK_FAILED] Alert ACK HTTP ${response.code()} for ${ack.eventId}")
+                            hasFailures = true
+                            val nextRetry = Instant.now().plus(
+                                Math.min(300L, (ack.retryCount + 1) * 15L),
+                                ChronoUnit.SECONDS
+                            )
+                            database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
+                        }
+                    }
+                    AckManager.ACTION_ALERT_DISMISS -> {
+                        val response = api.dismissAlert(
+                            ack.eventId,
+                            AcknowledgeRequest(ack.userId ?: "")
+                        )
+                        if (response.isSuccessful) {
+                            database.ackQueueDao().deleteById(ack.id)
+                        } else {
+                            hasFailures = true
+                            val nextRetry = Instant.now().plus(15, ChronoUnit.SECONDS)
+                            database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
+                        }
+                    }
+                    "DISMISS" -> {
+                        val response = api.dismissEvent(ack.eventId, ReceiveEventRequest(
+                            userId = ack.userId,
+                            deviceId = ack.deviceId,
+                            receivedAt = TimezoneHelper.formatInstantToIso(ack.receivedAt)
+                        ))
+                        if (response.isSuccessful) {
+                            database.ackQueueDao().deleteById(ack.id)
+                        } else {
+                            hasFailures = true
+                            val nextRetry = Instant.now().plus(15, ChronoUnit.SECONDS)
+                            database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
+                        }
+                    }
+                    else -> {
+                        database.eventDao().updateAckStatus(ack.eventId, AckStatus.SENDING)
+                        Log.d(TAG, "[ACK_SENT] Sending event ACK for eventId=${ack.eventId}...")
+                        val req = ReceiveEventRequest(
+                            userId = ack.userId,
+                            deviceId = ack.deviceId,
+                            receivedAt = TimezoneHelper.formatInstantToIso(ack.receivedAt)
+                        )
+                        val response = api.receiveEvent(ack.eventId, req)
+                        if (response.isSuccessful) {
+                            Log.d(TAG, "[ACK_CONFIRMED] Server confirmed ACK for eventId=${ack.eventId}")
+                            database.eventDao().markAcknowledged(
+                                eventId = ack.eventId,
+                                ackStatus = AckStatus.CONFIRMED,
+                                acknowledgedAt = Instant.now()
+                            )
+                            database.ackQueueDao().deleteById(ack.id)
+                        } else {
+                            val code = response.code()
+                            Log.w(TAG, "[ACK_FAILED] Server returned HTTP $code for eventId=${ack.eventId}")
+                            hasFailures = true
+                            database.eventDao().updateAckStatus(ack.eventId, AckStatus.FAILED)
+                            val nextRetry = Instant.now().plus(
+                                Math.min(300L, (ack.retryCount + 1) * 15L),
+                                ChronoUnit.SECONDS
+                            )
+                            database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
+                        }
+                    }
                 }
             } catch (e: Exception) {
-                Log.e(TAG, "[ACK_FAILED] Network exception sending ACK for eventId=${ack.eventId}", e)
+                Log.e(TAG, "[ACK_FAILED] Network exception for ${ack.eventId} action=${ack.action}", e)
                 hasFailures = true
-                database.eventDao().updateAckStatus(ack.eventId, AckStatus.FAILED)
+                if (ack.action == "RECEIVE") {
+                    database.eventDao().updateAckStatus(ack.eventId, AckStatus.FAILED)
+                }
                 val nextRetry = Instant.now().plus(15, ChronoUnit.SECONDS)
                 database.ackQueueDao().updateRetry(ack.id, QueueStatus.FAILED, nextRetry)
             }

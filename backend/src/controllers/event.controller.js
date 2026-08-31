@@ -195,6 +195,41 @@ class EventController {
     return ApiResponse.success(res, event, 'Event receipt acknowledged');
   });
 
+  dismissEvent = asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { userId, deviceId, receivedAt } = req.body;
+
+    if (!userId) {
+      throw ApiError.unauthorized('userId is required');
+    }
+
+    const event = await Event.findOne({
+      $or: [{ _id: id.match(/^[0-9a-fA-F]{24}$/) ? id : null }, { eventId: id }],
+    });
+
+    if (!event) {
+      throw ApiError.notFound('Event not found');
+    }
+
+    const user = await User.findById(userId);
+    if (!user || user.organizationId.toString() !== event.organizationId.toString()) {
+      throw ApiError.forbidden('User not authorized for this event');
+    }
+
+    const now = receivedAt ? new Date(receivedAt) : new Date();
+    if (event.status !== 'RECEIVED' && event.status !== 'ACKNOWLEDGED') {
+      event.status = 'CANCELLED';
+    }
+    event.receivedBy.push({
+      userId,
+      deviceId: deviceId || '',
+      receivedAt: now,
+    });
+    await event.save();
+
+    return ApiResponse.success(res, event, 'Event dismissed');
+  });
+
   getEventById = asyncHandler(async (req, res) => {
     const { id } = req.params;
     const event = await Event.findOne({

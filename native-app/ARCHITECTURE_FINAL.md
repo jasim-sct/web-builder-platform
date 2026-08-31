@@ -3,6 +3,9 @@
 **Date:** 2026-08-31  
 **Architecture Classification:** Three-Tier Decoupled Event Scheduling & Acknowledgement Engine  
 
+> **Reliability model:** See `DELIVERY_ANALYSIS.md` and `FINAL_PRODUCTION_VERIFICATION.md`.  
+> Mode 1 (pre-synced scheduled) ≠ Mode 2 (immediate). Do not claim unconditional “app killed” guarantees.
+
 ---
 
 ## 🏛️ System Overview
@@ -49,7 +52,8 @@ The system is decoupled into three independent, loosely-coupled architectural sy
 
 ### 2. System B — Local Event Scheduling Layer
 * **Responsibility**: Autonomous, offline-capable event execution independent of process life or network state.
-* **Components**:
+* **Time authority**: Backend stores canonical UTC `scheduledAt`; Android `ScheduleTimeCalculator` computes `delay = scheduledAt - deviceNow` and registers `AlarmManager` (RTC_WAKEUP).
+* **Backend scheduler**: Does **not** execute or ring scheduled alarms. Optional DAILY/WEEKLY metadata tick only.
   - `Room Database (`EventEntity`)`: Local source of truth.
   - `EventAlarmScheduler`: Requests exact alarm from Android OS via `AlarmManager.setExactAndAllowWhileIdle(RTC_WAKEUP, scheduledAt, pendingIntent)`.
   - `EventAlarmReceiver`: BroadcastReceiver invoked by Android kernel timer when `scheduledAt` is reached.

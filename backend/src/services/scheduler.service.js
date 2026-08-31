@@ -1,5 +1,4 @@
 const Alert = require('../models/Alert');
-const broadcastService = require('./broadcast.service');
 const { calculateNextTriggerAt } = require('../utils/date');
 const config = require('../config/env');
 
@@ -52,11 +51,13 @@ class SchedulerService {
   }
 
   /**
-   * Process all alerts currently due for execution.
-   * Atomic transition prevents double-triggering across ticks.
+   * Process due alerts for **server-side lifecycle metadata only**.
+   *
+   * Android devices execute pre-synchronized schedules locally via AlarmManager.
+   * This tick must NOT broadcast/socket-ring clients at fire time.
    *
    * @param {Date} [referenceDate=new Date()]
-   * @returns {Promise<Array<Object>>} List of successfully processed alert summaries
+   * @returns {Promise<Array<Object>>} Processed alert summaries
    */
   async processDueAlerts(referenceDate = new Date()) {
     if (this.isProcessing) {
@@ -77,24 +78,25 @@ class SchedulerService {
       });
 
       for (const alert of dueAlerts) {
-        // Calculate new fields
-        let nextStatus = 'SCHEDULED';
-        let nextTrigger = null;
-
+        // ONCE alerts are executed on-device via AlarmManager after sync.
+        // Server must not complete them at fire time — that would cancel local alarms on sync.
         if (alert.repeatType === 'ONCE') {
-          nextStatus = 'COMPLETED';
-          nextTrigger = null;
-        } else {
-          nextTrigger = calculateNextTriggerAt(alert.repeatType, alert.nextTriggerAt || now, now);
+          continue;
         }
 
-        // Atomically transition the alert to prevent race condition or duplicate processing
+        let nextStatus = 'SCHEDULED';
+        let nextTrigger = calculateNextTriggerAt(
+          alert.repeatType,
+          alert.nextTriggerAt || now,
+          now
+        );
+
         const updatedAlert = await Alert.findOneAndUpdate(
           {
             _id: alert._id,
             isEnabled: true,
             status: 'SCHEDULED',
-            nextTriggerAt: alert.nextTriggerAt, // ensure hasn't changed
+            nextTriggerAt: alert.nextTriggerAt,
           },
           {
             $set: {
@@ -107,25 +109,15 @@ class SchedulerService {
         );
 
         if (updatedAlert) {
-          // Broadcast to current members
-          try {
-            const broadcastResult = await broadcastService.broadcastAlert(
-              updatedAlert,
-              'alert:triggered'
-            );
-
-            processedAlerts.push({
-              alertId: updatedAlert._id.toString(),
-              title: updatedAlert.title,
-              repeatType: updatedAlert.repeatType,
-              status: updatedAlert.status,
-              recipientCount: broadcastResult.recipientCount,
-              lastTriggeredAt: updatedAlert.lastTriggeredAt,
-              nextTriggerAt: updatedAlert.nextTriggerAt,
-            });
-          } catch (broadcastErr) {
-            console.error(`[Scheduler] Broadcast error for alert ${alert._id}:`, broadcastErr.message);
-          }
+          processedAlerts.push({
+            alertId: updatedAlert._id.toString(),
+            title: updatedAlert.title,
+            repeatType: updatedAlert.repeatType,
+            status: updatedAlert.status,
+            executionMode: 'SERVER_RECURRENCE_METADATA_ONLY',
+            lastTriggeredAt: updatedAlert.lastTriggeredAt,
+            nextTriggerAt: updatedAlert.nextTriggerAt,
+          });
         }
       }
     } finally {

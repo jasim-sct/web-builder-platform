@@ -47,6 +47,12 @@ class AlarmEngine(
     }
 
     suspend fun triggerFromAlert(alert: AlertEntity, alarmType: AlarmType): Boolean {
+        val recipientIds = try {
+            val arr = org.json.JSONArray(alert.recipientUserIdsJson)
+            (0 until arr.length()).mapNotNull { i -> arr.optString(i).takeIf { it.isNotBlank() } }
+        } catch (_: Exception) {
+            emptyList()
+        }
         return trigger(
             AlarmTrigger(
                 sessionId = alert.id,
@@ -60,7 +66,8 @@ class AlarmEngine(
                 broadcasterId = alert.createdBy,
                 broadcasterName = alert.creatorName,
                 vibrationEnabled = true,
-                requiresAcknowledge = true
+                requiresAcknowledge = true,
+                recipientUserIds = recipientIds.takeIf { it.isNotEmpty() }
             ),
             persistEventId = null
         )

@@ -26,10 +26,10 @@ Broadcaster → Backend → Socket.IO (alert:broadcast)
 
 ### Scheduled alarm (offline-capable)
 ```
-Sync → Room (alerts/events) → EventAlarmScheduler / AlertScheduler
-    → AlarmManager.setExactAndAllowWhileIdle (when permitted)
+Sync → Room → ScheduleTimeCalculator (delay = scheduledAt - now)
+    → AlertScheduler / EventAlarmScheduler → AlarmManager (RTC_WAKEUP absolute millis)
     → At scheduled time: EventAlarmReceiver / AlertBroadcastReceiver
-    → AlarmEngine → ring (no network required at fire time)
+    → Stale guard (version + trigger) → AlarmEngine → ring (no network)
 ```
 
 ### Reboot recovery
@@ -85,25 +85,26 @@ BOOT_COMPLETED → BootCompletedReceiver
 
 ---
 
-## Test Results
+## Test Results (honest status — do not mark PASS without device evidence)
 
-| Scenario | Expected | Result |
+| Scenario | Expected | Status |
 |----------|----------|--------|
-| Immediate (socket) | Device rings | **PASS** (unit + manual on emulator) |
-| Scheduled | Local AlarmManager fires | **PASS** (existing scheduler tests + architecture) |
-| App killed | Alarm executes | **PASS** (FGS + BroadcastReceiver design; manual gate pending) |
-| Screen locked | Full-screen alarm | **PASS** (activity flags; manual gate pending) |
-| Offline scheduled | No HTTP at fire time | **PASS** (AlarmManager path unchanged) |
-| Doze | Exact-alarm rules apply | **PARTIAL** — platform/OEM dependent |
-| Reboot | Alarms restored | **PASS** (`BootCompletedReceiver` + reconcile) |
-| Duplicate event | One ring session | **PASS** (`markRingingIfEligible` + `activeSessionId`) |
-| Broadcaster | Does not ring | **PASS** (`AlarmEligibilityLogicTest`) |
-| Recipient | Rings | **PASS** (`AlarmEligibilityLogicTest`) |
-| ACK | Reliable queue | **PASS** (existing `AckManager` + worker) |
-| Dismiss | Stops alarm | **PASS** (`markDismissed` + service stop) |
+| Immediate (socket, foreground) | Device rings | IMPLEMENTED · NOT YET VERIFIED on full device matrix |
+| Scheduled (AlarmManager) | Local fire | IMPLEMENTED · UNIT TESTED |
+| Process killed — **scheduled** | OS delivers broadcast | PLATFORM-LIMITED · DEVICE VALIDATION PENDING |
+| Process killed — **immediate** | Requires FCM/sync | NOT GUARANTEED without wake transport |
+| Screen locked | Full-screen alarm | IMPLEMENTED · DEVICE VALIDATION PENDING |
+| Offline scheduled | No HTTP at fire time | IMPLEMENTED · UNIT TESTED |
+| Doze | Exact-alarm rules | PLATFORM-LIMITED · NOT YET VERIFIED |
+| Reboot | Alarms restored idempotently | IMPLEMENTED · PARTIALLY VERIFIED |
+| Duplicate event | One ring session | IMPLEMENTED · UNIT TESTED |
+| Broadcaster exclusion | Does not ring | IMPLEMENTED · UNIT TESTED |
+| Recipient | Rings | IMPLEMENTED · UNIT TESTED |
+| ACK offline | Durable queue | IMPLEMENTED · UNIT TESTED |
+| Dismiss | Stops + sync | IMPLEMENTED · backend `POST .../dismiss` |
 
-**Automated:** `./gradlew testDebugUnitTest` — all unit tests pass.  
-**Manual:** Run `DEVICE_VALIDATION_GATE.md` on physical devices for Doze/OEM/process-death confirmation.
+**Automated:** `./gradlew testDebugUnitTest` — unit tests pass.  
+**Manual:** `DEVICE_VALIDATION_GATE.md` + `FINAL_PRODUCTION_VERIFICATION.md`
 
 ---
 
@@ -120,5 +121,6 @@ BOOT_COMPLETED → BootCompletedReceiver
 ## Not Claimed Without Device Testing
 
 - Guaranteed Doze delivery on all OEMs  
-- Full-screen intent on API 34+ without `USE_FULL_SCREEN_INTENT` grant (we use direct activity launch from FGS instead)  
-- DISMISS backend sync (queued locally; no dedicated API endpoint yet)
+- Full-screen intent on API 34+ without grant (FGS direct activity launch is primary path)  
+- Immediate delivery to force-stopped or long-dead process without FCM  
+- Unconditional “app killed” guarantee — only **Mode 1 scheduled** applies

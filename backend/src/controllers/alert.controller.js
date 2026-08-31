@@ -53,6 +53,11 @@ class AlertController {
     return ApiResponse.success(res, delivery, 'Alert acknowledged successfully');
   });
 
+  dismissAlert = asyncHandler(async (req, res) => {
+    const delivery = await alertService.dismissAlert(req.params.id, req.body.userId);
+    return ApiResponse.success(res, delivery, 'Alert dismissed successfully');
+  });
+
   getAlertDeliveries = asyncHandler(async (req, res) => {
     const deliveries = await alertService.getAlertDeliveries(req.params.id);
     return ApiResponse.success(res, deliveries, 'Alert deliveries retrieved successfully');

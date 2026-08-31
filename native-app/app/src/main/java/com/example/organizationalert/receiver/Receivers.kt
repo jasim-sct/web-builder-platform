@@ -10,6 +10,8 @@ import com.example.organizationalert.core.preferences.UserPreferences
 import com.example.organizationalert.domain.model.AlarmType
 import com.example.organizationalert.core.scheduling.AlertScheduler
 import com.example.organizationalert.core.scheduling.RecurrenceHelper
+import com.example.organizationalert.core.scheduling.ScheduleTimeCalculator
+import com.example.organizationalert.core.scheduling.TimezoneHelper
 import com.example.organizationalert.domain.model.AlertStatus
 import com.example.organizationalert.domain.model.Priority
 import com.example.organizationalert.domain.model.RepeatType
@@ -33,6 +35,8 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
         val repeatTypeStr = intent.getStringExtra(EXTRA_REPEAT_TYPE)
         val groupName = intent.getStringExtra(EXTRA_GROUP_NAME)
         val scheduledAtMillis = intent.getLongExtra(EXTRA_SCHEDULED_AT, System.currentTimeMillis())
+        val intentTriggerMillis = intent.getLongExtra(EXTRA_TRIGGER_AT, scheduledAtMillis)
+        val intentVersion = intent.getIntExtra(EXTRA_ALERT_VERSION, -1)
 
         val priority = Priority.fromString(priorityStr)
         val repeatType = RepeatType.fromString(repeatTypeStr)
@@ -48,16 +52,57 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val alertEntity = database.alertDao().getAlertByIdDirect(alertId)
-                if (alertEntity != null) {
-                    val started = alarmEngine.triggerFromAlert(alertEntity, AlarmType.SCHEDULED_ALARM)
-                    if (!started) {
-                        Log.d(TAG, "[ALARM_RECEIVER] Ring suppressed for alertId=$alertId (ineligible/duplicate)")
-                    }
-                } else {
+                if (alertEntity == null) {
                     Log.w(TAG, "[ALARM_RECEIVER] Alert $alertId not in local DB — cannot ring")
+                    return@launch
                 }
 
+                val domainAlert = alertEntity.toDomain()
                 val now = Instant.now()
+
+                if (!domainAlert.isEnabled || domainAlert.status != AlertStatus.SCHEDULED) {
+                    Log.w(TAG, "[ALARM_RECEIVER] Stale alarm suppressed: alert $alertId disabled or not SCHEDULED")
+                    return@launch
+                }
+
+                if (intentVersion >= 0 && domainAlert.version != intentVersion) {
+                    Log.w(
+                        TAG,
+                        "[ALARM_RECEIVER] Stale alarm suppressed: version mismatch " +
+                            "(intent=$intentVersion local=${domainAlert.version})"
+                    )
+                    return@launch
+                }
+
+                val authoritativeTrigger = ScheduleTimeCalculator
+                    .resolveNextTriggerInstant(domainAlert, now)
+                val authoritativeMillis = authoritativeTrigger?.toEpochMilli()
+                if (authoritativeMillis == null ||
+                    kotlin.math.abs(authoritativeMillis - intentTriggerMillis) > STALE_TOLERANCE_MS
+                ) {
+                    Log.w(
+                        TAG,
+                        "[ALARM_RECEIVER] Stale alarm suppressed: trigger mismatch " +
+                            "(intent=$intentTriggerMillis authoritative=$authoritativeMillis)"
+                    )
+                    AlertScheduler.getInstance(context).cancelAlert(alertId)
+                    authoritativeTrigger?.let { next ->
+                        AlertScheduler.getInstance(context).scheduleAlert(
+                            domainAlert.copy(nextTriggerAt = next)
+                        )
+                    }
+                    return@launch
+                }
+
+                val started = alarmEngine.triggerFromAlert(alertEntity, AlarmType.SCHEDULED_ALARM)
+                if (!started) {
+                    Log.d(TAG, "[ALARM_RECEIVER] Ring suppressed for alertId=$alertId (ineligible/duplicate)")
+                    return@launch
+                }
+
+                database.alertDao().incrementOccurrenceCount(alertId)
+
+                val zone = ScheduleTimeCalculator.resolveZoneId(alertEntity.timezoneId)
 
                 if (repeatType == RepeatType.ONCE) {
                     database.alertDao().updateExecution(
@@ -71,7 +116,8 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
                     val nextOccurrence = RecurrenceHelper.calculateNextOccurrence(
                         repeatType = repeatType,
                         baseScheduledAt = scheduledAt,
-                        fromInstant = now
+                        fromInstant = now,
+                        zoneId = zone
                     )
 
                     database.alertDao().updateExecution(
@@ -109,6 +155,9 @@ class AlertBroadcastReceiver : BroadcastReceiver() {
         const val EXTRA_REPEAT_TYPE = "extra_repeat_type"
         const val EXTRA_GROUP_NAME = "extra_group_name"
         const val EXTRA_SCHEDULED_AT = "extra_scheduled_at"
+        const val EXTRA_TRIGGER_AT = "extra_trigger_at"
+        const val EXTRA_ALERT_VERSION = "extra_alert_version"
+        private const val STALE_TOLERANCE_MS = 60_000L
     }
 }
 

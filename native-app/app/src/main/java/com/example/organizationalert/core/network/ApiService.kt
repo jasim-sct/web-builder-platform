@@ -190,6 +190,12 @@ interface ApiService {
         @Body request: AcknowledgeRequest
     ): Response<ApiResponseDto<AlertDeliveryDto>>
 
+    @POST("/api/alerts/{id}/dismiss")
+    suspend fun dismissAlert(
+        @Path("id") id: String,
+        @Body request: AcknowledgeRequest
+    ): Response<ApiResponseDto<AlertDeliveryDto>>
+
     @GET("/api/alerts/{id}/deliveries")
     suspend fun getAlertDeliveries(
         @Path("id") id: String
@@ -221,6 +227,12 @@ interface ApiService {
 
     @POST("/api/events/{id}/receive")
     suspend fun receiveEvent(
+        @Path("id") id: String,
+        @Body request: com.example.organizationalert.core.network.dto.ReceiveEventRequest
+    ): Response<ApiResponseDto<com.example.organizationalert.core.network.dto.EventDto>>
+
+    @POST("/api/events/{id}/dismiss")
+    suspend fun dismissEvent(
         @Path("id") id: String,
         @Body request: com.example.organizationalert.core.network.dto.ReceiveEventRequest
     ): Response<ApiResponseDto<com.example.organizationalert.core.network.dto.EventDto>>

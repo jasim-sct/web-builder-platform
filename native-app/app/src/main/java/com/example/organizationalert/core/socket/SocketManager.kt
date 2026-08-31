@@ -148,6 +148,9 @@ class SocketManager(
                 ?.takeIf { it.isNotBlank() }
             val broadcasterName = json.optString("creatorName", json.optString("broadcasterName", null))
                 ?.takeIf { it.isNotBlank() }
+            val recipientUserIds = json.optJSONArray("recipientUserIds")?.let { arr ->
+                (0 until arr.length()).mapNotNull { i -> arr.optString(i).takeIf { it.isNotBlank() } }
+            }?.takeIf { it.isNotEmpty() }
 
             if (isImmediateBroadcast) {
                 presentationEngine.presentImmediateAlarm(
@@ -158,7 +161,8 @@ class SocketManager(
                     groupId = groupId,
                     groupName = groupName,
                     broadcasterId = broadcasterId,
-                    broadcasterName = broadcasterName
+                    broadcasterName = broadcasterName,
+                    recipientUserIds = recipientUserIds
                 )
             }
 

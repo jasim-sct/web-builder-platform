@@ -94,6 +94,9 @@ data class AlertDto(
     @SerializedName("lastTriggeredAt") val lastTriggeredAt: String? = null,
     @SerializedName("nextTriggerAt") val nextTriggerAt: String? = null,
     @SerializedName("version") val version: Int = 1,
+    @SerializedName("timezoneId") val timezoneId: String? = "UTC",
+    @SerializedName("recipientUserIds") val recipientUserIds: List<String>? = null,
+    @SerializedName("occurrenceCount") val occurrenceCount: Int = 0,
     @SerializedName("createdAt") val createdAt: String? = null,
     @SerializedName("updatedAt") val updatedAt: String? = null
 ) {

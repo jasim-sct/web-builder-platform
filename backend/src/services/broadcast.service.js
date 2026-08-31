@@ -2,7 +2,8 @@ const Group = require('../models/Group');
 const User = require('../models/User');
 const AlertDelivery = require('../models/AlertDelivery');
 const { getIO } = require('../socket/socket');
-const { getGroupRoom, getOrganizationRoom } = require('../socket/rooms');
+const { getGroupRoom, getUserRoom } = require('../socket/rooms');
+const pushService = require('./push.service');
 const { ApiError } = require('../utils/apiResponse');
 
 class BroadcastService {
@@ -25,10 +26,18 @@ class BroadcastService {
     }
 
     // 2. Resolve current active group members dynamically
-    const currentActiveMembers = await User.find({
+    let currentActiveMembers = await User.find({
       _id: { $in: group.members },
       isActive: true,
     });
+
+    // Targeted delivery: restrict to explicit recipient list when provided
+    const targetIds = (alert.recipientUserIds || []).map((id) => id.toString());
+    if (targetIds.length > 0) {
+      currentActiveMembers = currentActiveMembers.filter((m) =>
+        targetIds.includes(m._id.toString())
+      );
+    }
 
     const triggeredAt = new Date();
 
@@ -65,14 +74,31 @@ class BroadcastService {
       status: alert.status,
       triggeredAt: triggeredAt.toISOString(),
       recipientCount: currentActiveMembers.length,
+      recipientUserIds: currentActiveMembers.map((u) => u._id.toString()),
     };
 
-    // 5. Emit Socket.IO event to group room (and organization room for admins if needed)
+    // 5. Emit Socket.IO to group room and targeted user rooms
     const io = getIO();
     if (io) {
       const groupRoom = getGroupRoom(alert.groupId);
       io.to(groupRoom).emit(eventName, payload);
+      for (const member of currentActiveMembers) {
+        io.to(getUserRoom(member._id)).emit(eventName, payload);
+      }
     }
+
+    // 6. Optional FCM high-priority data push (wake dead processes when configured)
+    const pushResult = await pushService.sendToUsers(
+      currentActiveMembers.map((u) => u._id.toString()),
+      {
+        type: eventName === 'alert:broadcast' ? 'IMMEDIATE_ALARM' : 'ALERT_TRIGGERED',
+        alertId: alert._id.toString(),
+        title: alert.title,
+        message: alert.message,
+        priority: alert.priority,
+        groupId: alert.groupId.toString(),
+      }
+    );
 
     return {
       alertId: alert._id.toString(),
@@ -80,6 +106,7 @@ class BroadcastService {
       recipientCount: currentActiveMembers.length,
       recipientUserIds: currentActiveMembers.map((u) => u._id.toString()),
       triggeredAt: triggeredAt.toISOString(),
+      pushSent: pushResult.sent,
     };
   }
 }

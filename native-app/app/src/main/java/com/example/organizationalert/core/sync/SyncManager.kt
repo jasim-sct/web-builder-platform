@@ -16,6 +16,7 @@ import com.example.organizationalert.core.network.dto.SyncResponseDto
 import com.example.organizationalert.core.preferences.UserPreferences
 import com.example.organizationalert.core.scheduling.AlertReconciliationService
 import com.example.organizationalert.core.scheduling.AlertScheduler
+import com.example.organizationalert.core.scheduling.AlarmSyncCoordinator
 import com.example.organizationalert.core.scheduling.EventAlarmScheduler
 import com.example.organizationalert.core.scheduling.TimezoneHelper
 import com.example.organizationalert.domain.model.Alert
@@ -46,6 +47,12 @@ class SyncManager(
     private val deviceRegistrationManager: DeviceRegistrationManager,
     private val eventAlarmScheduler: EventAlarmScheduler
 ) {
+
+    private val alarmSyncCoordinator = AlarmSyncCoordinator(
+        reconciliationService,
+        scheduler,
+        eventAlarmScheduler
+    )
 
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
     val syncState: StateFlow<SyncState> = _syncState.asStateFlow()
@@ -152,6 +159,9 @@ class SyncManager(
                     lastTriggeredAt = TimezoneHelper.parseIsoToInstant(a.lastTriggeredAt),
                     nextTriggerAt = TimezoneHelper.parseIsoToInstant(a.nextTriggerAt),
                     version = a.version,
+                    timezoneId = a.timezoneId ?: "UTC",
+                    recipientUserIdsJson = org.json.JSONArray(a.recipientUserIds ?: emptyList<String>()).toString(),
+                    occurrenceCount = a.occurrenceCount,
                     createdAt = TimezoneHelper.parseIsoToInstant(a.createdAt) ?: Instant.now(),
                     updatedAt = TimezoneHelper.parseIsoToInstant(a.updatedAt) ?: Instant.now()
                 )
@@ -181,14 +191,8 @@ class SyncManager(
                 database.alertDeliveryDao().insertOrUpdateAll(deliveryEntities)
             }
 
-            // 5. Reconcile alarms with Android AlarmManager
+            // 5. Sync Events (before unified alarm reconciliation)
             val serverDomainAlerts = alertEntities.map { it.toDomain() }
-            val reconcileResult = reconciliationService.reconcile(
-                currentLocalAlerts = existingLocalAlerts,
-                incomingServerAlerts = serverDomainAlerts
-            )
-
-            // 6. Sync Events & reconcile event alarms
             val deviceId = preferences.getOrCreateDeviceId()
             val eventsResponse = api.syncEvents(
                 userId = userId,
@@ -197,8 +201,7 @@ class SyncManager(
             )
 
             var eventCount = 0
-            var eventScheduledCount = 0
-            var eventCancelledCount = 0
+            var cancelledEventIds = emptyList<String>()
 
             if (eventsResponse.isSuccessful && eventsResponse.body()?.data != null) {
                 val syncInstant = Instant.now()
@@ -211,33 +214,32 @@ class SyncManager(
                     database.eventDao().insertOrUpdateAll(eventEntities)
                 }
 
-                eventEntities
+                cancelledEventIds = eventEntities
                     .filter { it.status == EventStatus.CANCELLED }
-                    .forEach { event ->
-                        if (eventAlarmScheduler.cancelEvent(event.eventId)) {
-                            eventCancelledCount++
-                        }
-                    }
+                    .map { it.eventId }
 
-                val eventReconcileResult = eventAlarmScheduler.reconcileScheduledEvents(database)
-                eventScheduledCount = eventReconcileResult.scheduledCount
-                eventCancelledCount += eventReconcileResult.cancelledCount
-
-                Log.d(
-                    TAG,
-                    "[SYNC] Events: $eventCount synced, $eventScheduledCount scheduled, $eventCancelledCount cancelled"
-                )
+                Log.d(TAG, "[SYNC] Events: $eventCount synced from server")
             } else {
                 val eventError = eventsResponse.body()?.message
                     ?: "Event sync failed with HTTP ${eventsResponse.code()}"
                 Log.w(TAG, "[SYNC] $eventError")
             }
 
+            // 6. Unified alarm reconciliation (alerts + events)
+            val reconcileResult = alarmSyncCoordinator.reconcileAfterSync(
+                database = database,
+                existingLocalAlerts = existingLocalAlerts,
+                incomingServerAlerts = serverDomainAlerts,
+                cancelledEventIds = cancelledEventIds
+            )
+            val eventScheduledCount = reconcileResult.eventScheduled
+            val eventCancelledCount = reconcileResult.eventCancelled
+
             val now = Instant.now()
             preferences.setLastSyncTime(now.toEpochMilli())
 
             val successMsg = buildString {
-                append("Synchronized: ${alertEntities.size} alerts (${reconcileResult.scheduledCount} scheduled, ${reconcileResult.cancelledCount} cancelled)")
+                append("Synchronized: ${alertEntities.size} alerts (${reconcileResult.alertScheduled} scheduled, ${reconcileResult.alertCancelled} cancelled)")
                 if (eventCount > 0 || eventsResponse.isSuccessful) {
                     append(", $eventCount events ($eventScheduledCount scheduled, $eventCancelledCount cancelled)")
                 }

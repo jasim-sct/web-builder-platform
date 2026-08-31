@@ -6,6 +6,8 @@
 * Express.js + MongoDB Backend (`/home/sct/dnd/backend`)  
 **Auditor:** Senior Android Platform & Reliability Architecture Engineering  
 
+> **Post-audit status (2026-08-31):** Remediation items 1–9 implemented. Current guarantees and evidence: `FINAL_PRODUCTION_VERIFICATION.md`. Living walkthrough: `../DEVELOPMENT_WALKTHROUGH.md`.
+
 ---
 
 ## 📋 Executive Summary

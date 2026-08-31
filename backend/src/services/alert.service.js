@@ -59,6 +59,8 @@ class AlertService {
       createdBy: data.createdBy || null,
       lastTriggeredAt: null,
       nextTriggerAt: scheduledDate,
+      recipientUserIds: data.recipientUserIds || [],
+      timezoneId: data.timezoneId || 'UTC',
     });
 
     await alert.save();
@@ -148,6 +150,14 @@ class AlertService {
       }
     }
 
+    if (data.recipientUserIds !== undefined) {
+      alert.recipientUserIds = data.recipientUserIds;
+    }
+    if (data.timezoneId !== undefined) {
+      alert.timezoneId = data.timezoneId;
+    }
+
+    alert.version = (alert.version || 1) + 1;
     await alert.save();
     const updatedAlert = await this.getAlertById(id);
 
@@ -299,6 +309,8 @@ class AlertService {
       createdBy: data.createdBy || null,
       lastTriggeredAt: now,
       nextTriggerAt: null,
+      recipientUserIds: data.recipientUserIds || [],
+      timezoneId: data.timezoneId || 'UTC',
     });
 
     await alert.save();
@@ -324,9 +336,7 @@ class AlertService {
     }
 
     const user = await User.findById(userId);
-    if (!user) {
-      throw ApiError.notFound('User not found');
-    }
+    await this.assertUserCanActOnAlert(alert, user);
 
     const now = new Date();
 
@@ -336,6 +346,36 @@ class AlertService {
       {
         $set: {
           status: 'ACKNOWLEDGED',
+          acknowledgedAt: now,
+        },
+        $setOnInsert: {
+          alertId,
+          userId,
+          organizationId: alert.organizationId,
+          deliveredAt: now,
+        },
+      },
+      { new: true, upsert: true }
+    ).populate('userId', 'name email role');
+
+    return delivery;
+  }
+
+  async dismissAlert(alertId, userId) {
+    const alert = await Alert.findById(alertId);
+    if (!alert) {
+      throw ApiError.notFound('Alert not found');
+    }
+
+    const user = await User.findById(userId);
+    await this.assertUserCanActOnAlert(alert, user);
+
+    const now = new Date();
+    const delivery = await AlertDelivery.findOneAndUpdate(
+      { alertId, userId },
+      {
+        $set: {
+          status: 'DISMISSED',
           acknowledgedAt: now,
         },
         $setOnInsert: {
@@ -409,6 +449,34 @@ class AlertService {
       .populate('groupId', 'name isActive')
       .populate('createdBy', 'name email role')
       .sort({ nextTriggerAt: 1 });
+  }
+
+  /**
+   * Ensures the user belongs to the alert org/group and is an allowed recipient.
+   * Prevents cross-user ACK/dismiss via forged userId in request body.
+   */
+  async assertUserCanActOnAlert(alert, user) {
+    if (!user) {
+      throw ApiError.notFound('User not found');
+    }
+    if (user.organizationId.toString() !== alert.organizationId.toString()) {
+      throw ApiError.forbidden('User does not belong to alert organization');
+    }
+
+    const group = await Group.findById(alert.groupId);
+    if (!group || !group.isActive) {
+      throw ApiError.badRequest('Alert target group is not available');
+    }
+
+    const memberIds = new Set(group.members.map((m) => m.toString()));
+    if (!memberIds.has(user._id.toString())) {
+      throw ApiError.forbidden('User is not a member of the alert group');
+    }
+
+    const targets = (alert.recipientUserIds || []).map((id) => id.toString());
+    if (targets.length > 0 && !targets.includes(user._id.toString())) {
+      throw ApiError.forbidden('User is not in the alert recipient list');
+    }
   }
 }
 

@@ -107,3 +107,11 @@ val MIGRATION_2_3 = object : Migration(2, 3) {
         db.execSQL("ALTER TABLE `events` ADD COLUMN `ringingStartedAt` INTEGER")
     }
 }
+
+val MIGRATION_3_4 = object : Migration(3, 4) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("ALTER TABLE `alerts` ADD COLUMN `timezoneId` TEXT NOT NULL DEFAULT 'UTC'")
+        db.execSQL("ALTER TABLE `alerts` ADD COLUMN `recipientUserIdsJson` TEXT NOT NULL DEFAULT '[]'")
+        db.execSQL("ALTER TABLE `alerts` ADD COLUMN `occurrenceCount` INTEGER NOT NULL DEFAULT 0")
+    }
+}

@@ -82,6 +82,18 @@ To remain 100% compliant with Android platform rules without fake hacks or batte
 
 ---
 
+## 📦 Delivery vs Execution (do not conflate)
+
+| Term | Meaning |
+|------|---------|
+| **Delivery** | Backend data reached device storage (sync/socket/push ingest into Room) |
+| **Execution** | AlarmManager fired and/or `AlarmEngine` started audio + full-screen UI |
+| **ACK** | User explicitly acknowledged/dismissed; synced to backend via queue |
+
+HTTP “delivered” or sync success **does not** mean the alarm rang. Only `RINGING` → user ACK proves execution.
+
+---
+
 ## ⚖️ Architectural Verdict & Recommendations
 
 1. **Keep Zero-Firebase Architecture**:

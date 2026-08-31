@@ -123,7 +123,7 @@ class MandatoryReceiveActivity : ComponentActivity() {
                             if (event != null) {
                                 ackManager.markDismissed(eventId)
                             } else {
-                                alarmEngine.stop(eventId, AlarmStopReason.DISMISSED)
+                                ackManager.markAlertDismissed(eventId)
                             }
                             finishAndRemoveTask()
                         }

@@ -1,0 +1,452 @@
+{
+  "app/build.gradle.kts": {
+    "mtime": 1788175389.292706,
+    "ast_hash": "69cb4e66b9c77fb6f52f53ef56915061",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/AlertApplication.kt": {
+    "mtime": 1788180448.007208,
+    "ast_hash": "1d97ceb863fc3392eb5740e4f980cadb",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/MainActivity.kt": {
+    "mtime": 1788171272.514338,
+    "ast_hash": "30adac528ad6f6ff3f53dae2485ef8f9",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/ack/AckManager.kt": {
+    "mtime": 1788180954.3309987,
+    "ast_hash": "e72d2353a3e2c9647169424db5367b46",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmAudioController.kt": {
+    "mtime": 1788178011.456013,
+    "ast_hash": "766e1218bd328fb12a9fcfeae547773f",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmEligibilityChecker.kt": {
+    "mtime": 1788180854.8640504,
+    "ast_hash": "aae0d9758406b94c6b03b8ec96c7faf9",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmEngine.kt": {
+    "mtime": 1788181024.592551,
+    "ast_hash": "3fc03fdcb3c3ef2f2f2c32bf030b7833",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmModels.kt": {
+    "mtime": 1788180854.8050501,
+    "ast_hash": "631cde4835934bb1870bbfbedd05587d",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmRingingService.kt": {
+    "mtime": 1788178033.1152766,
+    "ast_hash": "096fc37b1e1bc8107acc8027a4f84c23",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/alarm/AlarmVibrationController.kt": {
+    "mtime": 1788178016.0540767,
+    "ast_hash": "3e7b2e11736f341fc5b703aa19db9177",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/AppDatabase.kt": {
+    "mtime": 1788180976.9938076,
+    "ast_hash": "c0edbaf0488e0c634660d2900bfae30b",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/Converters.kt": {
+    "mtime": 1788177985.7695615,
+    "ast_hash": "ee74929ac09fc9dee3991b942ca2aa55",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/DatabaseMigrations.kt": {
+    "mtime": 1788180975.5602224,
+    "ast_hash": "4dedfed05df2b782b72384a91b0632b8",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/dao/Daos.kt": {
+    "mtime": 1788181002.192461,
+    "ast_hash": "569cc6340ebd2b033d954bfb5ebdcbde",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/dao/EventDaos.kt": {
+    "mtime": 1788177991.2794657,
+    "ast_hash": "505fd380e5549a964a0c89f811988cc7",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/entity/Entities.kt": {
+    "mtime": 1788180992.190637,
+    "ast_hash": "73329dfef236acfb59a4bda652544b56",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/database/entity/EventEntities.kt": {
+    "mtime": 1788177978.3646963,
+    "ast_hash": "2687feaffd7dec910f79fdddb18bf3fe",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/device/DeviceRegistrationManager.kt": {
+    "mtime": 1788180448.0059843,
+    "ast_hash": "26f6b9b63c9922554d8174a1dda86521",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/di/AppModule.kt": {
+    "mtime": 1788180448.007208,
+    "ast_hash": "296d19106c61733d0b4be1733085430b",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/network/ApiClient.kt": {
+    "mtime": 1788171011.6953905,
+    "ast_hash": "719906949c3b1be6d0b0d97dffe49246",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/network/ApiService.kt": {
+    "mtime": 1788180833.2312002,
+    "ast_hash": "633fb0628d2072aa1a8136c521ce19e3",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/network/dto/Dtos.kt": {
+    "mtime": 1788180993.7832675,
+    "ast_hash": "e917fa76af64000d0e90a33d1a350d49",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/notifications/NotificationHelper.kt": {
+    "mtime": 1788171051.8894498,
+    "ast_hash": "1daa0d5d22753eddd5fc572f88188ae8",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/preferences/UserPreferences.kt": {
+    "mtime": 1788175020.7427135,
+    "ast_hash": "11e534f59a06cd31b9b3b48d94d29c05",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/presentation/ImmediateEventStore.kt": {
+    "mtime": 1788180836.657423,
+    "ast_hash": "38faa8ef4413e4e9d9cad9dc95184512",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/presentation/PresentationEngine.kt": {
+    "mtime": 1788182192.9779978,
+    "ast_hash": "9fd3a82a32f673fb1524533a3badb2d7",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/AlarmSyncCoordinator.kt": {
+    "mtime": 1788181238.7979517,
+    "ast_hash": "058a9753eb280631d96129ce21edec6c",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/AlertAlarmIdGenerator.kt": {
+    "mtime": 1788171027.6344175,
+    "ast_hash": "427e54daf14f38f2fe141d7e4793a59f",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/AlertReconciliationService.kt": {
+    "mtime": 1788182771.401695,
+    "ast_hash": "74ee81a9d0ac3565277a1a7a584590e7",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/AlertScheduler.kt": {
+    "mtime": 1788182763.4426963,
+    "ast_hash": "25036c1a2a74a5a4de3dc37c0ec372ed",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/EventAlarmScheduler.kt": {
+    "mtime": 1788178110.9981387,
+    "ast_hash": "230aaa0117ecd0f106414b76af849eb8",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/RecurrenceHelper.kt": {
+    "mtime": 1788171044.1514406,
+    "ast_hash": "6b120ea1079fe4a419a6bd6ad25c7685",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/TimezoneHelper.kt": {
+    "mtime": 1788171034.2034273,
+    "ast_hash": "e26ef6ffc40c0ef275aa263254779a68",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/socket/SocketManager.kt": {
+    "mtime": 1788180880.9123216,
+    "ast_hash": "b9870fbed3f9a97714630c0488fe27bc",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/sync/SyncManager.kt": {
+    "mtime": 1788181264.7683632,
+    "ast_hash": "78075087cf9290534660ac76c2de5dee",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/data/repository/Repositories.kt": {
+    "mtime": 1788171096.7764838,
+    "ast_hash": "00ae90b9ccfb4f8d144f4c6382bfbf6d",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/domain/model/AlarmType.kt": {
+    "mtime": 1788177974.2547739,
+    "ast_hash": "c097a3ecaa1461b3332766e20ebcef56",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/domain/model/Enums.kt": {
+    "mtime": 1788175091.5492551,
+    "ast_hash": "5c8959e7e36bf5665caaf9ea6b5c33ea",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/domain/model/Models.kt": {
+    "mtime": 1788180978.112163,
+    "ast_hash": "00fee7004d9201b2f31a1f30cdeb6d8f",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/receiver/EventReceivers.kt": {
+    "mtime": 1788178076.5091553,
+    "ast_hash": "41dfdab297dc5049071da9cac55b04c4",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/receiver/PushAlarmReceiver.kt": {
+    "mtime": 1788180965.526585,
+    "ast_hash": "554fed0592975dcbe42b93825f5edb17",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/receiver/Receivers.kt": {
+    "mtime": 1788182813.207523,
+    "ast_hash": "4e186a4a06d75f11655e17481bc4c65e",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/components/Components.kt": {
+    "mtime": 1788179259.9120958,
+    "ast_hash": "27260e9fe2a1b84d52bfce1ff75d138e",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/components/NavBars.kt": {
+    "mtime": 1788179409.5972984,
+    "ast_hash": "86c094263c834915b84059854ccec89e",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/alerts/AlertsScreens.kt": {
+    "mtime": 1788179513.358477,
+    "ast_hash": "d19caed9c6fd549ced25039a43fbd0eb",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/dashboard/DashboardScreen.kt": {
+    "mtime": 1788179484.4846756,
+    "ast_hash": "7f227a5f68479fda9dae1672e00d9edb",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/diagnostics/DiagnosticsScreen.kt": {
+    "mtime": 1788175069.8452637,
+    "ast_hash": "2fca4074d62ecf46b9128f0d983fffe4",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/groups/GroupsScreens.kt": {
+    "mtime": 1788179548.1581266,
+    "ast_hash": "3d94f448e4a2120825bb413d05995bbd",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/history/HistoryScreen.kt": {
+    "mtime": 1788179588.9380553,
+    "ast_hash": "3efeb71c37d6ed23beb1d8c6c17b4160",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/receive/MandatoryReceiveActivity.kt": {
+    "mtime": 1788180934.7484033,
+    "ast_hash": "4f829dcaf646094d14e7488dfeb3f252",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/schedule/ScheduleScreen.kt": {
+    "mtime": 1788179613.6539454,
+    "ast_hash": "dcb470a4800cd3c37d211760806bd4ad",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/settings/SettingsScreen.kt": {
+    "mtime": 1788179569.3781517,
+    "ast_hash": "6b91bd3b291263daaafd5aee14fdd38b",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/setup/SetupScreen.kt": {
+    "mtime": 1788171187.5504591,
+    "ast_hash": "2001070af3ab8031a88a20afdbdced67",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/splash/SplashScreen.kt": {
+    "mtime": 1788171173.9934702,
+    "ast_hash": "6086d89648952378cf3fcb11485855f7",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/feature/users/UsersScreens.kt": {
+    "mtime": 1788179559.1672053,
+    "ast_hash": "2a77f770c852b7b155d738e95a9e4cf9",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/navigation/NavGraph.kt": {
+    "mtime": 1788179613.1719475,
+    "ast_hash": "77f3f9786102dfd831b169c8f04e605f",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/navigation/Screen.kt": {
+    "mtime": 1788179416.8132312,
+    "ast_hash": "572b51e170485e2e6583f949480360f1",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/neo/NeoComponents.kt": {
+    "mtime": 1788179412.7115114,
+    "ast_hash": "72749d9dea446b2a962b5c5501f02205",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/neo/NeoElevation.kt": {
+    "mtime": 1788179258.8811111,
+    "ast_hash": "d0608bddab00945e5580952e5138cfe3",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/neo/NeoTokens.kt": {
+    "mtime": 1788179047.741332,
+    "ast_hash": "741938be2404483dbc4f70bff51b99be",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/theme/Color.kt": {
+    "mtime": 1788171124.429489,
+    "ast_hash": "170e786c5cc31844c736e2d087fa6987",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/theme/Theme.kt": {
+    "mtime": 1788179102.7710025,
+    "ast_hash": "905cd51674e5355d304705cbfddede67",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/ui/theme/Type.kt": {
+    "mtime": 1788171130.2924886,
+    "ast_hash": "286e932a9ad7214b22e572b425bcdc06",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/AlarmEligibilityLogicTest.kt": {
+    "mtime": 1788178174.3502293,
+    "ast_hash": "674cd847a49c58ccd256119a7c3d5ccb",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/AlertAlarmIdGeneratorTest.kt": {
+    "mtime": 1788171279.5843241,
+    "ast_hash": "c3fdf79f400a986100086f02d9be1aed",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/AlertReconciliationServiceTest.kt": {
+    "mtime": 1788171294.3142936,
+    "ast_hash": "12f248d32590a19f55a0cd553683c08b",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/EventAlarmSchedulerTest.kt": {
+    "mtime": 1788175077.2226205,
+    "ast_hash": "839ab3a8a40b673462ae384c4e2094af",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/EventLifecycleStateTest.kt": {
+    "mtime": 1788178167.435912,
+    "ast_hash": "d0719b9210dfb61d3c15443f74a1d30e",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/RecurrenceHelperTest.kt": {
+    "mtime": 1788171286.7563095,
+    "ast_hash": "28c73d799f48a08b5628a12982b397fb",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/TimezoneHelperTest.kt": {
+    "mtime": 1788171300.50328,
+    "ast_hash": "6ea1ca8a3e3054ac762bff917b672f28",
+    "semantic_hash": ""
+  },
+  "build.gradle.kts": {
+    "mtime": 1788170868.400686,
+    "ast_hash": "1d0ff2da0cad0e6a4aee1d5db7419cb3",
+    "semantic_hash": ""
+  },
+  "gradlew": {
+    "mtime": 1788171310.0092583,
+    "ast_hash": "7f1cd7eb3f75a1dc85cd37753972a6e2",
+    "semantic_hash": ""
+  },
+  "scripts/emulator-runner.sh": {
+    "mtime": 1788177363.5704849,
+    "ast_hash": "b3581b9ac57f4ab3924e14aa0496f842",
+    "semantic_hash": ""
+  },
+  "settings.gradle.kts": {
+    "mtime": 1788170859.3539932,
+    "ast_hash": "9f8cfad6f61dd7d22f05953baddb25ba",
+    "semantic_hash": ""
+  },
+  "ALARM_SYSTEM.md": {
+    "mtime": 1788182981.0655403,
+    "ast_hash": "43d2ba532b0954e00c0030f13e66a18b",
+    "semantic_hash": ""
+  },
+  "ANDROID_PERMISSION_MATRIX.md": {
+    "mtime": 1788172064.079615,
+    "ast_hash": "1c331e075e612821100a9d726550adab",
+    "semantic_hash": ""
+  },
+  "ARCHITECTURE_FINAL.md": {
+    "mtime": 1788182316.0310688,
+    "ast_hash": "5d7755a156fdf2ba6db2a600536fdf94",
+    "semantic_hash": ""
+  },
+  "AUDIT_REPORT.md": {
+    "mtime": 1788182378.4412148,
+    "ast_hash": "36197f0c4d025d2b33aed6435f137732",
+    "semantic_hash": ""
+  },
+  "BACKGROUND_TEST_MATRIX.md": {
+    "mtime": 1788172081.908501,
+    "ast_hash": "1c5b17382991475d14a297ff8ab8923d",
+    "semantic_hash": ""
+  },
+  "CROSS_CHECK_REPORT.md": {
+    "mtime": 1788172530.806445,
+    "ast_hash": "15258e4db943e492ad4dfd2c47aaba2e",
+    "semantic_hash": ""
+  },
+  "DELIVERY_ANALYSIS.md": {
+    "mtime": 1788182321.8427129,
+    "ast_hash": "602394a8ab0d2349b9ce06cbdbcd520b",
+    "semantic_hash": ""
+  },
+  "DEVICE_VALIDATION_GATE.md": {
+    "mtime": 1788182301.4200945,
+    "ast_hash": "0d8d1bedd4205d8f2a7021f7859b937e",
+    "semantic_hash": ""
+  },
+  "EVENT_STATE_MACHINE.md": {
+    "mtime": 1788182297.744203,
+    "ast_hash": "3964dd264c81b869b15dcbdc381430da",
+    "semantic_hash": ""
+  },
+  "FINAL_PRODUCTION_VERIFICATION.md": {
+    "mtime": 1788182968.4049995,
+    "ast_hash": "0a34ba9e330ca68939ab9158e3ea805f",
+    "semantic_hash": ""
+  },
+  "FINAL_VERIFICATION_REPORT.md": {
+    "mtime": 1788172933.7675245,
+    "ast_hash": "a1db3ab4acbbc8d1459d2862097a1ee9",
+    "semantic_hash": ""
+  },
+  "PHYSICAL_DEVICE_RESULTS.md": {
+    "mtime": 1788172311.7949734,
+    "ast_hash": "88d0a7831da8eef2e32c541467ae91f8",
+    "semantic_hash": ""
+  },
+  "README.md": {
+    "mtime": 1788182314.0947697,
+    "ast_hash": "81c02a05b95ba27a36df2e5fdf616d18",
+    "semantic_hash": ""
+  },
+  "app/src/main/res/raw/alert_sound.mp3": {
+    "mtime": 1788170944.1779516,
+    "ast_hash": "a414901432737f8c372da7a8a02f419a",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/example/organizationalert/core/scheduling/ScheduleTimeCalculator.kt": {
+    "mtime": 1788182743.2055302,
+    "ast_hash": "411ffb7324e5d447f2b1e789bf7bca39",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/example/organizationalert/ScheduleTimeCalculatorTest.kt": {
+    "mtime": 1788182891.4016917,
+    "ast_hash": "dacc41279306576b9d7f63ab1731ed71",
+    "semantic_hash": ""
+  }
+}

@@ -4,31 +4,36 @@
 
 ---
 
-## 🔄 1. Event Lifecycle State Machine (Local Display)
+## 🔄 1. Event Lifecycle State Machine (Local Execution)
 
-The **Event Lifecycle State** tracks what is happening locally on the device with the event presentation and user interaction:
+The **Event Lifecycle State** tracks local execution on the device (not network delivery):
 
 ```mermaid
 stateDiagram-v2
     [*] --> SCHEDULED: Persisted in Room DB
-    SCHEDULED --> TRIGGERED: AlarmManager Fires
-    TRIGGERED --> PRESENTED: Notification / Full-Screen Displayed
-    TRIGGERED --> PRESENTATION_BLOCKED: Notification Permission Denied
-    PRESENTED --> RECEIVED: User Taps RECEIVE (✓)
-    SCHEDULED --> CANCELLED: Cancelled by Backend
-    SCHEDULED --> EXPIRED: expiresAt Reached Before Trigger
-    PRESENTED --> EXPIRED: expiresAt Reached Before User Interaction
+    SCHEDULED --> TRIGGERED: AlarmManager fires
+    TRIGGERED --> RINGING: AlarmEngine claims session
+    RINGING --> PRESENTED: Full-screen / alarm UI shown
+    TRIGGERED --> PRESENTATION_BLOCKED: Ineligible or permission denied
+    PRESENTED --> RECEIVED: User ACKNOWLEDGE
+    PRESENTED --> DISMISSED: User DISMISS
+    SCHEDULED --> CANCELLED: Cancelled by backend
+    SCHEDULED --> EXPIRED: expiresAt before trigger
+    RINGING --> EXPIRED: expiresAt during ring
     RECEIVED --> [*]
+    DISMISSED --> [*]
 ```
 
 ### Valid Event Lifecycle States:
-* `SCHEDULED`: Event has a future `scheduledAt` and exact alarm registered in `AlarmManager`.
-* `TRIGGERED`: Alarm time has arrived; `EventAlarmReceiver` woke up the device.
-* `PRESENTED`: UI has been shown to the user (either `MandatoryReceiveActivity` or Heads-Up notification).
-* `PRESENTATION_BLOCKED`: Alarm triggered, but system notification permissions are disabled.
-* `RECEIVED`: User pressed the **RECEIVE (✓)** button.
-* `EXPIRED`: Event reached `expiresAt` before user interaction.
-* `CANCELLED`: Event revoked by organization administrator.
+* `SCHEDULED` — future `scheduledAt`; AlarmManager registered.
+* `TRIGGERED` — receiver woke; about to ring.
+* `RINGING` — `AlarmEngine` claimed session; audio/FGS active.
+* `PRESENTED` — UI displayed (legacy; may overlap RINGING).
+* `PRESENTATION_BLOCKED` — suppressed (ineligible, expired, permissions).
+* `RECEIVED` / `DISMISSED` — user terminal actions.
+* `EXPIRED` / `CANCELLED` — system/admin terminal states.
+
+**Alarm ≠ notification.** Critical path is ring + full-screen UI, not notification-shade-only.
 
 ---
 
@@ -56,11 +61,21 @@ stateDiagram-v2
 
 ---
 
-## 🎯 Key Design Rule: Complete State Orthogonality
+## 🎯 Key Design Rule: Three Orthogonal Dimensions
 
-A critical reliability invariant is that an event can be:
+Do not conflate:
+
+| Dimension | Examples | Stored as |
+|-----------|----------|-----------|
+| **Delivery (sync)** | Event reached Room | `syncedAt`, server sync |
+| **Execution** | SCHEDULED → RINGING | `EventStatus` |
+| **ACK transport** | PENDING → CONFIRMED | `AckStatus` + `ack_queue` |
+
+Normal offline ACK:
+
 ```text
 EventStatus = RECEIVED
 AckStatus   = PENDING
 ```
-This is the normal, expected state when a user receives a critical alert while completely offline (e.g. in a basement or airplane mode). The local UI completes immediately and never blocks on network availability.
+
+Backend must not treat HTTP sync alone as “alarm rang” — only explicit ACK/receive endpoints after user action.

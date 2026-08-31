@@ -46,6 +46,12 @@ router.post(
   validateBody(validateAcknowledge),
   alertController.acknowledgeAlert
 );
+router.post(
+  '/:id/dismiss',
+  validateObjectIdParam('id'),
+  validateBody(validateAcknowledge),
+  alertController.dismissAlert
+);
 router.get(
   '/:id/deliveries',
   validateObjectIdParam('id'),

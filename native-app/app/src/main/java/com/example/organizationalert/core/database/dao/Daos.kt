@@ -114,6 +114,9 @@ interface AlertDao {
     @Query("UPDATE alerts SET status = :status, lastTriggeredAt = :lastTriggered, nextTriggerAt = :nextTrigger WHERE id = :id")
     suspend fun updateExecution(id: String, status: String, lastTriggered: Instant?, nextTrigger: Instant?)
 
+    @Query("UPDATE alerts SET occurrenceCount = occurrenceCount + 1 WHERE id = :id")
+    suspend fun incrementOccurrenceCount(id: String)
+
     @Query("DELETE FROM alerts WHERE id = :id")
     suspend fun deleteById(id: String)
 

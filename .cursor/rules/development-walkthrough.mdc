@@ -1,0 +1,54 @@
+---
+description: Keep DEVELOPMENT_WALKTHROUGH.md updated whenever anything in the project changes
+alwaysApply: true
+---
+
+# Development walkthrough — mandatory maintenance
+
+Canonical doc: **`DEVELOPMENT_WALKTHROUGH.md`** at the **repo root** (`/home/sct/dnd/`).
+
+Also update **`native-app/FINAL_PRODUCTION_VERIFICATION.md`** when reliability guarantees, test evidence, or production-readiness classification changes.
+
+This is the **overall walkthrough of what we developed** — not a feature list only. It covers architecture, flows, screens, APIs, config, tests, limitations, and how the system is operated.
+
+## When to update
+
+Update `DEVELOPMENT_WALKTHROUGH.md` in the **same task** as any change to:
+
+- `backend/` — routes, models, services, sockets, scheduler, validators, env, tests
+- `native-app/` — UI, alarm/sync/ack code, Room schema, receivers, workers, manifest, Gradle
+- Root scripts, deployment, or cross-cutting docs that affect behavior
+
+**Do not** finish a coding task without updating the walkthrough when behavior, structure, or ops changed.
+
+## What to update (checklist)
+
+1. **Last updated** date at the top
+2. **Change log** — one row: date, area, summary (append; do not delete history)
+3. Relevant section(s): architecture, flows, API table, screens, config, tests, limitations, checklist
+4. **Known limitations** if a gap was fixed or a new constraint was introduced
+5. **Related documentation** links if a new `*.md` was added
+
+## What counts as a change
+
+| Change type | Update in walkthrough |
+|-------------|----------------------|
+| New/changed API or socket event | Backend + API sections, change log |
+| New screen or route | UI & navigation, change log |
+| Alarm/sync/ACK/scheduling logic | Alarm, sync, ACK sections + flows |
+| DB migration / new field | Room + backend model sections |
+| New env var | Security & configuration |
+| Bug fix with behavioral impact | Limitations and/or change log |
+| New test suite or validation gate | Tests & validation |
+| UI/design system | UI section + checklist |
+
+## Style
+
+- Plain language walkthrough: **what it does**, **how it flows**, **where the code lives**
+- Keep tables and diagrams when they aid navigation
+- No duplicate long prose — link to focused docs (`ALARM_SYSTEM.md`, etc.) for deep dives
+- Walkthrough stays **accurate to the repo**, not aspirational
+
+## If unsure
+
+When in doubt, append a **Change log** entry and update the smallest section that describes the new behavior. An outdated walkthrough is worse than a verbose one.

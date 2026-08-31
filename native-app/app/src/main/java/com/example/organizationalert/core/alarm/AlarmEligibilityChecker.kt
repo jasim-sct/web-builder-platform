@@ -39,6 +39,12 @@ class AlarmEligibilityChecker(
             }
         }
 
+        val recipients = trigger.recipientUserIds
+        if (!recipients.isNullOrEmpty() && !recipients.contains(currentUserId)) {
+            Log.d(TAG, "[ELIGIBILITY] User $currentUserId not in targeted recipients — suppressing ${trigger.sessionId}")
+            return false
+        }
+
         return true
     }
 

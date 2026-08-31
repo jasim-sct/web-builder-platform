@@ -9,6 +9,7 @@ import android.util.Log
 import com.example.organizationalert.domain.model.Alert
 import com.example.organizationalert.domain.model.AlertStatus
 import com.example.organizationalert.receiver.AlertBroadcastReceiver
+import java.time.Duration
 import java.time.Instant
 
 class AlertScheduler(private val context: Context) {
@@ -18,7 +19,7 @@ class AlertScheduler(private val context: Context) {
 
     /**
      * Schedules a local AlarmManager alarm for the given alert.
-     * Uses deterministic request codes and exact alarm delivery while idle.
+     * Computes trigger from canonical [Alert.scheduledAt] / recurrence vs device clock.
      */
     fun scheduleAlert(alert: Alert): Boolean {
         if (!alert.isEnabled || alert.status != AlertStatus.SCHEDULED) {
@@ -26,11 +27,15 @@ class AlertScheduler(private val context: Context) {
             return false
         }
 
-        val triggerInstant = alert.nextTriggerAt ?: alert.scheduledAt
-        val now = Instant.now()
+        val now = ScheduleTimeCalculator.now()
+        val triggerInstant = ScheduleTimeCalculator.resolveNextTriggerInstant(alert, now)
+            ?: run {
+                Log.d(TAG, "[ALARM] No future trigger for alert ${alert.id} (past or completed)")
+                return false
+            }
 
-        if (triggerInstant.isBefore(now)) {
-            Log.d(TAG, "[ALARM] Past alert timestamp ($triggerInstant vs now $now), skipping alarm for: ${alert.id}")
+        if (!triggerInstant.isAfter(now)) {
+            Log.d(TAG, "[ALARM] Non-positive delay for ${alert.id}, skipping")
             return false
         }
 
@@ -39,8 +44,9 @@ class AlertScheduler(private val context: Context) {
             return false
         }
 
+        val delay = Duration.between(now, triggerInstant)
         val requestCode = AlertAlarmIdGenerator.generateRequestCode(alert.id)
-        val intent = createAlertIntent(alert)
+        val intent = createAlertIntent(alert, triggerInstant)
         val pendingIntent = PendingIntent.getBroadcast(
             context,
             requestCode,
@@ -51,7 +57,6 @@ class AlertScheduler(private val context: Context) {
         val triggerMillis = triggerInstant.toEpochMilli()
 
         try {
-            // Check exact alarm permission on Android 12+ (API 31+)
             val canExact = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 alarmManager.canScheduleExactAlarms()
             } else {
@@ -73,7 +78,7 @@ class AlertScheduler(private val context: Context) {
                     )
                 }
             } else {
-                // Fallback to inexact allow while idle
+                Log.w(TAG, "[EXACT_ALARM_RESTRICTED] Using inexact fallback for ${alert.id}")
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     alarmManager.setAndAllowWhileIdle(
                         AlarmManager.RTC_WAKEUP,
@@ -91,7 +96,8 @@ class AlertScheduler(private val context: Context) {
 
             Log.d(
                 TAG,
-                "[ALARM] Scheduled alarm: alertId=${alert.id}, requestCode=$requestCode at ${TimezoneHelper.formatUserFriendly(triggerInstant)}"
+                "[ALARM] Scheduled alertId=${alert.id} at ${TimezoneHelper.formatUserFriendly(triggerInstant)} " +
+                    "(delay=${delay.toMinutes()}m, version=${alert.version})"
             )
             return true
         } catch (e: SecurityException) {
@@ -103,9 +109,6 @@ class AlertScheduler(private val context: Context) {
         }
     }
 
-    /**
-     * Cancels an existing scheduled alarm by deterministic requestCode.
-     */
     fun cancelAlert(alertId: String): Boolean {
         if (alarmManager == null || alertId.isBlank()) return false
 
@@ -131,7 +134,7 @@ class AlertScheduler(private val context: Context) {
         }
     }
 
-    private fun createAlertIntent(alert: Alert): Intent {
+    private fun createAlertIntent(alert: Alert, triggerInstant: Instant): Intent {
         return Intent(context, AlertBroadcastReceiver::class.java).apply {
             action = AlertBroadcastReceiver.ACTION_TRIGGER_ALERT
             putExtra(AlertBroadcastReceiver.EXTRA_ALERT_ID, alert.id)
@@ -141,6 +144,8 @@ class AlertScheduler(private val context: Context) {
             putExtra(AlertBroadcastReceiver.EXTRA_REPEAT_TYPE, alert.repeatType.name)
             putExtra(AlertBroadcastReceiver.EXTRA_GROUP_NAME, alert.groupName)
             putExtra(AlertBroadcastReceiver.EXTRA_SCHEDULED_AT, alert.scheduledAt.toEpochMilli())
+            putExtra(AlertBroadcastReceiver.EXTRA_TRIGGER_AT, triggerInstant.toEpochMilli())
+            putExtra(AlertBroadcastReceiver.EXTRA_ALERT_VERSION, alert.version)
         }
     }
 

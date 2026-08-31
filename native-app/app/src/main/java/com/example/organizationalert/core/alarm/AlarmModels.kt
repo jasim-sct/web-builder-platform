@@ -19,7 +19,9 @@ data class AlarmTrigger(
     val broadcasterId: String? = null,
     val broadcasterName: String? = null,
     val vibrationEnabled: Boolean = true,
-    val requiresAcknowledge: Boolean = true
+    val requiresAcknowledge: Boolean = true,
+    /** When non-empty, only these user IDs should ring (targeted immediate). */
+    val recipientUserIds: List<String>? = null
 )
 
 enum class AlarmStopReason {

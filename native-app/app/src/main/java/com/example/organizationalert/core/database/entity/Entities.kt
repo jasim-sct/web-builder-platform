@@ -155,6 +155,9 @@ data class AlertEntity(
     val lastTriggeredAt: Instant?,
     val nextTriggerAt: Instant?,
     val version: Int,
+    val timezoneId: String = "UTC",
+    val recipientUserIdsJson: String = "[]",
+    val occurrenceCount: Int = 0,
     val createdAt: Instant,
     val updatedAt: Instant
 ) {
@@ -175,6 +178,9 @@ data class AlertEntity(
         lastTriggeredAt = lastTriggeredAt,
         nextTriggerAt = nextTriggerAt,
         version = version,
+        timezoneId = timezoneId,
+        recipientUserIds = parseRecipientIds(recipientUserIdsJson),
+        occurrenceCount = occurrenceCount,
         createdAt = createdAt,
         updatedAt = updatedAt
     )
@@ -197,9 +203,24 @@ data class AlertEntity(
             lastTriggeredAt = alert.lastTriggeredAt,
             nextTriggerAt = alert.nextTriggerAt,
             version = alert.version,
+            timezoneId = alert.timezoneId,
+            recipientUserIdsJson = toRecipientIdsJson(alert.recipientUserIds),
+            occurrenceCount = alert.occurrenceCount,
             createdAt = alert.createdAt,
             updatedAt = alert.updatedAt
         )
+
+        private fun parseRecipientIds(json: String): List<String> {
+            return try {
+                val arr = org.json.JSONArray(json)
+                (0 until arr.length()).mapNotNull { i -> arr.optString(i).takeIf { it.isNotBlank() } }
+            } catch (_: Exception) {
+                emptyList()
+            }
+        }
+
+        private fun toRecipientIdsJson(ids: List<String>): String =
+            org.json.JSONArray(ids).toString()
     }
 }
 

@@ -7,5 +7,6 @@ router.get('/sync', eventController.syncEvents);
 router.post('/', eventController.createEvent);
 router.get('/:id', eventController.getEventById);
 router.post('/:id/receive', eventController.receiveEvent);
+router.post('/:id/dismiss', eventController.dismissEvent);
 
 module.exports = router;

@@ -75,6 +75,22 @@ const alertSchema = new mongoose.Schema(
       default: null,
       index: true,
     },
+    recipientUserIds: {
+      type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+      default: [],
+    },
+    timezoneId: {
+      type: String,
+      default: 'UTC',
+    },
+    version: {
+      type: Number,
+      default: 1,
+    },
+    occurrenceCount: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: true,
