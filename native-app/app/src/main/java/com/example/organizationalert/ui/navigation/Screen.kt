@@ -26,6 +26,8 @@ sealed class Screen(val route: String) {
         fun createRoute(userId: String? = null) = if (userId != null) "users_create_edit?userId=$userId" else "users_create_edit"
     }
     object Settings : Screen("settings")
+    object Schedule : Screen("schedules")
+    object History : Screen("history")
     object Diagnostics : Screen("diagnostics")
 }
 

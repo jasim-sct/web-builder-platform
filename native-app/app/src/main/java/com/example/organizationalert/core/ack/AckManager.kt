@@ -20,8 +20,10 @@ import com.example.organizationalert.core.database.entity.AckStatus
 import com.example.organizationalert.core.database.entity.EventStatus
 import com.example.organizationalert.core.database.entity.QueueStatus
 import com.example.organizationalert.core.network.ApiClient
+import com.example.organizationalert.core.network.dto.AcknowledgeRequest
 import com.example.organizationalert.core.network.dto.ReceiveEventRequest
 import com.example.organizationalert.core.preferences.UserPreferences
+import com.example.organizationalert.core.socket.SocketManager
 import com.example.organizationalert.core.scheduling.TimezoneHelper
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -32,7 +34,8 @@ import java.util.concurrent.TimeUnit
 class AckManager(
     private val context: Context,
     private val database: AppDatabase,
-    private val preferences: UserPreferences
+    private val preferences: UserPreferences,
+    private val socketManager: SocketManager? = null
 ) {
 
     /**
@@ -157,6 +160,52 @@ class AckManager(
         }
     }
 
+    /**
+     * Alert-based session ACK (sessionId = alertId, no EventEntity in Room).
+     * Stops alarm, persists local delivery state when possible, emits socket + REST ACK.
+     * Idempotent: skips network when delivery is already acknowledged locally.
+     */
+    suspend fun markAlertAcknowledged(alertId: String): Boolean = withContext(Dispatchers.IO) {
+        val userId = preferences.getUserId()
+        if (userId.isNullOrBlank()) {
+            Log.w(TAG, "[ALERT_ACK] User ID missing for alertId=$alertId")
+            return@withContext false
+        }
+
+        val now = Instant.now()
+        Log.d(TAG, "[ALERT_ACK] User tapped ACKNOWLEDGE for alertId=$alertId at $now")
+
+        try {
+            NotificationManagerCompat.from(context).cancel(alertId.hashCode())
+            AlarmEngine.getInstance(context, database, preferences)
+                .stop(alertId, AlarmStopReason.ACKNOWLEDGED)
+
+            val alreadyAcknowledged = database.alertDeliveryDao()
+                .getAcknowledgedAt(alertId, userId)
+            if (alreadyAcknowledged != null) {
+                Log.d(TAG, "[ALERT_ACK] Alert already acknowledged (idempotent): $alertId")
+                return@withContext true
+            }
+
+            database.alertDeliveryDao().markAcknowledged(alertId, userId, now)
+
+            socketManager?.acknowledgeAlert(alertId, userId)
+
+            val api = ApiClient.getService(preferences.getServerUrl())
+            val response = api.acknowledgeAlert(alertId, AcknowledgeRequest(userId))
+            if (response.isSuccessful) {
+                Log.d(TAG, "[ALERT_ACK] Server confirmed ACK for alertId=$alertId")
+                true
+            } else {
+                Log.w(TAG, "[ALERT_ACK] Server returned HTTP ${response.code()} for alertId=$alertId")
+                false
+            }
+        } catch (e: Exception) {
+            Log.e(TAG, "[ALERT_ACK] Error acknowledging alert", e)
+            false
+        }
+    }
+
     companion object {
         private const val TAG = "AckManager"
         const val WORK_NAME_ACK = "resilient_ack_work"
@@ -181,9 +230,19 @@ class AckManager(
         @Volatile
         private var INSTANCE: AckManager? = null
 
-        fun getInstance(context: Context, database: AppDatabase, preferences: UserPreferences): AckManager {
+        fun getInstance(
+            context: Context,
+            database: AppDatabase,
+            preferences: UserPreferences,
+            socketManager: SocketManager? = null
+        ): AckManager {
             return INSTANCE ?: synchronized(this) {
-                val instance = AckManager(context.applicationContext, database, preferences)
+                val instance = AckManager(
+                    context.applicationContext,
+                    database,
+                    preferences,
+                    socketManager
+                )
                 INSTANCE = instance
                 instance
             }

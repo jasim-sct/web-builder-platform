@@ -277,6 +277,26 @@ data class EventDto(
             else -> userId?.toString()
         }
     }
+
+    fun getCreatedByIdString(): String? {
+        return when (createdBy) {
+            is String -> createdBy
+            is Map<*, *> -> (createdBy["_id"] ?: createdBy["id"])?.toString()
+            else -> createdBy?.toString()
+        }
+    }
+
+    fun getCreatorNameString(): String? {
+        return if (createdBy is Map<*, *>) createdBy["name"]?.toString() else null
+    }
+
+    fun payloadToString(): String {
+        return when (payload) {
+            null -> "{}"
+            is String -> payload
+            else -> com.google.gson.Gson().toJson(payload)
+        }
+    }
 }
 
 data class SyncEventsResponseDto(

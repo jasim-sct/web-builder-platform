@@ -2,6 +2,7 @@ package com.example.organizationalert
 
 import android.app.Application
 import android.util.Log
+import com.example.organizationalert.core.device.DeviceRegistrationManager
 import com.example.organizationalert.core.notifications.NotificationHelper
 import com.example.organizationalert.core.preferences.UserPreferences
 import com.example.organizationalert.core.socket.SocketManager
@@ -27,6 +28,9 @@ class AlertApplication : Application() {
     @Inject
     lateinit var syncManager: SyncManager
 
+    @Inject
+    lateinit var deviceRegistrationManager: DeviceRegistrationManager
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG, "Initializing Organization Alert Application...")
@@ -38,6 +42,11 @@ class AlertApplication : Application() {
         if (userPreferences.isConfigured()) {
             socketManager.connect()
             CoroutineScope(Dispatchers.IO).launch {
+                try {
+                    deviceRegistrationManager.registerIfNeeded()
+                } catch (e: Exception) {
+                    Log.w(TAG, "Device registration failed during app startup (non-fatal)", e)
+                }
                 try {
                     syncManager.performFullSync()
                 } catch (e: Exception) {

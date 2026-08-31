@@ -10,6 +10,7 @@ const config = {
   port: parseInt(process.env.PORT || (process.env.NODE_ENV === 'test' ? '5001' : '5000'), 10),
   mongodbUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/organization-alert-system',
   schedulerIntervalMs: parseInt(process.env.SCHEDULER_INTERVAL_MS || '1000', 10),
+  apiKey: process.env.API_KEY || null,
   isTest: process.env.NODE_ENV === 'test',
   isDev: process.env.NODE_ENV === 'development',
   isProd: process.env.NODE_ENV === 'production',

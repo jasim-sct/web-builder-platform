@@ -1,11 +1,18 @@
 package com.example.organizationalert.ui.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.Dashboard
+import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.History
+import androidx.compose.material.icons.filled.Notifications
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -20,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.organizationalert.ui.navigation.Screen
 import com.example.organizationalert.ui.neo.LocalNeoColors
-import com.example.organizationalert.ui.neo.neoInset
+import com.example.organizationalert.ui.neo.NeoShadows
 import com.example.organizationalert.ui.neo.neoRaised
 
 data class NavItem(
@@ -30,13 +37,25 @@ data class NavItem(
     val isAdminOnly: Boolean = false
 )
 
-val NAV_ITEMS = listOf(
-    NavItem("Dashboard", Screen.Dashboard.route, androidx.compose.material.icons.Icons.Default.Dashboard),
-    NavItem("Alerts", Screen.AlertsList.route, androidx.compose.material.icons.Icons.Default.Notifications),
-    NavItem("Groups", Screen.GroupsList.route, androidx.compose.material.icons.Icons.Default.Group),
-    NavItem("Customers", Screen.UsersList.route, androidx.compose.material.icons.Icons.Default.People, isAdminOnly = true),
-    NavItem("Settings", Screen.Settings.route, androidx.compose.material.icons.Icons.Default.Settings)
+val SIDEBAR_NAV_ITEMS = listOf(
+    NavItem("Dashboard", Screen.Dashboard.route, Icons.Default.Dashboard),
+    NavItem("Alerts", Screen.AlertsList.route, Icons.Default.Notifications),
+    NavItem("Schedules", Screen.Schedule.route, Icons.Default.CalendarMonth),
+    NavItem("Groups", Screen.GroupsList.route, Icons.Default.Group),
+    NavItem("Customers", Screen.UsersList.route, Icons.Default.People, isAdminOnly = true),
+    NavItem("History", Screen.History.route, Icons.Default.History),
+    NavItem("Settings", Screen.Settings.route, Icons.Default.Settings)
 )
+
+val BOTTOM_NAV_ITEMS = listOf(
+    NavItem("Home", Screen.Dashboard.route, Icons.Default.Dashboard),
+    NavItem("Alerts", Screen.AlertsList.route, Icons.Default.Notifications),
+    NavItem("Groups", Screen.GroupsList.route, Icons.Default.Group),
+    NavItem("Settings", Screen.Settings.route, Icons.Default.Settings)
+)
+
+/** @deprecated Use SIDEBAR_NAV_ITEMS */
+val NAV_ITEMS = SIDEBAR_NAV_ITEMS
 
 @Composable
 fun AppBottomBar(
@@ -45,13 +64,13 @@ fun AppBottomBar(
     onNavigate: (String) -> Unit
 ) {
     val neo = LocalNeoColors.current
-    val items = NAV_ITEMS.filter { !it.isAdminOnly || isAdmin }
+    val items = BOTTOM_NAV_ITEMS
 
     NavigationBar(
         containerColor = neo.background,
         tonalElevation = 0.dp,
         modifier = Modifier
-            .neoRaised(cornerRadius = 0.dp, spec = com.example.organizationalert.ui.neo.NeoShadows.soft)
+            .neoRaised(cornerRadius = 0.dp, spec = NeoShadows.soft)
             .height(72.dp)
     ) {
         items.forEach { item ->
@@ -63,11 +82,15 @@ fun AppBottomBar(
                     Icon(
                         item.icon,
                         contentDescription = item.title,
-                        modifier = if (selected) Modifier
-                            .clip(RoundedCornerShape(10.dp))
-                            .background(neo.surfacePressed)
-                            .padding(6.dp)
-                            .size(22.dp) else Modifier.size(22.dp)
+                        modifier = if (selected) {
+                            Modifier
+                                .clip(RoundedCornerShape(10.dp))
+                                .background(neo.surfacePressed)
+                                .padding(6.dp)
+                                .size(22.dp)
+                        } else {
+                            Modifier.size(22.dp)
+                        }
                     )
                 },
                 label = {

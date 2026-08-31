@@ -138,6 +138,9 @@ interface AlertDeliveryDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrUpdateAll(deliveries: List<AlertDeliveryEntity>)
 
+    @Query("SELECT acknowledgedAt FROM alert_deliveries WHERE alertId = :alertId AND userId = :userId LIMIT 1")
+    suspend fun getAcknowledgedAt(alertId: String, userId: String): Instant?
+
     @Query("UPDATE alert_deliveries SET status = 'ACKNOWLEDGED', acknowledgedAt = :acknowledgedAt WHERE alertId = :alertId AND userId = :userId")
     suspend fun markAcknowledged(alertId: String, userId: String, acknowledgedAt: Instant)
 

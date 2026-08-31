@@ -2,6 +2,14 @@ const User = require('../models/User');
 const Group = require('../models/Group');
 const AlertDelivery = require('../models/AlertDelivery');
 const { getOrganizationRoom, getGroupRoom, getUserRoom } = require('./rooms');
+const { isAuthRequired, validateApiKey } = require('../utils/apiKeyAuth');
+
+const getSocketApiKey = (socket, payload = {}) => {
+  const headerKey = socket.handshake.headers?.['x-api-key'];
+  const authKey = socket.handshake.auth?.apiKey;
+  const payloadKey = payload.apiKey;
+  return authKey || headerKey || payloadKey || null;
+};
 
 const registerSocketHandlers = (io, socket) => {
   // Store session metadata on socket
@@ -18,6 +26,13 @@ const registerSocketHandlers = (io, socket) => {
     try {
       const data = typeof payload === 'string' ? JSON.parse(payload) : (payload || {});
       const { userId } = data;
+
+      if (isAuthRequired() && !validateApiKey(getSocketApiKey(socket, data))) {
+        const errRes = { success: false, message: 'Invalid or missing API key' };
+        if (typeof callback === 'function') callback(errRes);
+        socket.emit('error', errRes);
+        return;
+      }
 
       if (!userId) {
         const errRes = { success: false, message: 'userId is required for identification' };

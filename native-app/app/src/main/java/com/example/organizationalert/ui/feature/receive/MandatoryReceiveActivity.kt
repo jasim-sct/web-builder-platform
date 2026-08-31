@@ -72,6 +72,9 @@ class MandatoryReceiveActivity : ComponentActivity() {
     @Inject
     lateinit var preferences: UserPreferences
 
+    @Inject
+    lateinit var ackManager: AckManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         configureLockScreenDisplay()
@@ -103,13 +106,11 @@ class MandatoryReceiveActivity : ComponentActivity() {
                     onAcknowledge = {
                         scope.launch {
                             val database = AppDatabase.getInstance(applicationContext)
-                            val ackManager = AckManager.getInstance(applicationContext, database, preferences)
-                            val alarmEngine = AlarmEngine.getInstance(applicationContext, database, preferences)
                             val event = database.eventDao().getEventByEventIdDirect(eventId)
                             if (event != null) {
                                 ackManager.markReceived(eventId)
                             } else {
-                                alarmEngine.stop(eventId, AlarmStopReason.ACKNOWLEDGED)
+                                ackManager.markAlertAcknowledged(eventId)
                             }
                             finishAndRemoveTask()
                         }
@@ -117,7 +118,6 @@ class MandatoryReceiveActivity : ComponentActivity() {
                     onDismiss = {
                         scope.launch {
                             val database = AppDatabase.getInstance(applicationContext)
-                            val ackManager = AckManager.getInstance(applicationContext, database, preferences)
                             val alarmEngine = AlarmEngine.getInstance(applicationContext, database, preferences)
                             val event = database.eventDao().getEventByEventIdDirect(eventId)
                             if (event != null) {

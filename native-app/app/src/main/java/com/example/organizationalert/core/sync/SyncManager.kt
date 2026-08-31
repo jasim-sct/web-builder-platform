@@ -2,16 +2,21 @@ package com.example.organizationalert.core.sync
 
 import android.util.Log
 import com.example.organizationalert.core.database.AppDatabase
+import com.example.organizationalert.core.device.DeviceRegistrationManager
 import com.example.organizationalert.core.database.entity.AlertDeliveryEntity
 import com.example.organizationalert.core.database.entity.AlertEntity
+import com.example.organizationalert.core.database.entity.EventEntity
+import com.example.organizationalert.core.database.entity.EventStatus
 import com.example.organizationalert.core.database.entity.GroupEntity
 import com.example.organizationalert.core.database.entity.OrganizationEntity
 import com.example.organizationalert.core.database.entity.UserEntity
 import com.example.organizationalert.core.network.ApiClient
+import com.example.organizationalert.core.network.dto.EventDto
 import com.example.organizationalert.core.network.dto.SyncResponseDto
 import com.example.organizationalert.core.preferences.UserPreferences
 import com.example.organizationalert.core.scheduling.AlertReconciliationService
 import com.example.organizationalert.core.scheduling.AlertScheduler
+import com.example.organizationalert.core.scheduling.EventAlarmScheduler
 import com.example.organizationalert.core.scheduling.TimezoneHelper
 import com.example.organizationalert.domain.model.Alert
 import com.example.organizationalert.domain.model.AlertStatus
@@ -37,7 +42,9 @@ class SyncManager(
     private val database: AppDatabase,
     private val preferences: UserPreferences,
     private val scheduler: AlertScheduler,
-    private val reconciliationService: AlertReconciliationService
+    private val reconciliationService: AlertReconciliationService,
+    private val deviceRegistrationManager: DeviceRegistrationManager,
+    private val eventAlarmScheduler: EventAlarmScheduler
 ) {
 
     private val _syncState = MutableStateFlow<SyncState>(SyncState.Idle)
@@ -181,12 +188,68 @@ class SyncManager(
                 incomingServerAlerts = serverDomainAlerts
             )
 
+            // 6. Sync Events & reconcile event alarms
+            val deviceId = preferences.getOrCreateDeviceId()
+            val eventsResponse = api.syncEvents(
+                userId = userId,
+                organizationId = orgId,
+                deviceId = deviceId
+            )
+
+            var eventCount = 0
+            var eventScheduledCount = 0
+            var eventCancelledCount = 0
+
+            if (eventsResponse.isSuccessful && eventsResponse.body()?.data != null) {
+                val syncInstant = Instant.now()
+                val eventEntities = eventsResponse.body()!!.data!!.events.map {
+                    it.toEntity(syncInstant, orgId ?: "")
+                }
+                eventCount = eventEntities.size
+
+                if (eventEntities.isNotEmpty()) {
+                    database.eventDao().insertOrUpdateAll(eventEntities)
+                }
+
+                eventEntities
+                    .filter { it.status == EventStatus.CANCELLED }
+                    .forEach { event ->
+                        if (eventAlarmScheduler.cancelEvent(event.eventId)) {
+                            eventCancelledCount++
+                        }
+                    }
+
+                val eventReconcileResult = eventAlarmScheduler.reconcileScheduledEvents(database)
+                eventScheduledCount = eventReconcileResult.scheduledCount
+                eventCancelledCount += eventReconcileResult.cancelledCount
+
+                Log.d(
+                    TAG,
+                    "[SYNC] Events: $eventCount synced, $eventScheduledCount scheduled, $eventCancelledCount cancelled"
+                )
+            } else {
+                val eventError = eventsResponse.body()?.message
+                    ?: "Event sync failed with HTTP ${eventsResponse.code()}"
+                Log.w(TAG, "[SYNC] $eventError")
+            }
+
             val now = Instant.now()
             preferences.setLastSyncTime(now.toEpochMilli())
 
-            val successMsg = "Synchronized: ${alertEntities.size} alerts (${reconcileResult.scheduledCount} scheduled, ${reconcileResult.cancelledCount} cancelled)"
+            val successMsg = buildString {
+                append("Synchronized: ${alertEntities.size} alerts (${reconcileResult.scheduledCount} scheduled, ${reconcileResult.cancelledCount} cancelled)")
+                if (eventCount > 0 || eventsResponse.isSuccessful) {
+                    append(", $eventCount events ($eventScheduledCount scheduled, $eventCancelledCount cancelled)")
+                }
+            }
             Log.d(TAG, "[SYNC] $successMsg")
             _syncState.value = SyncState.Success(successMsg, now)
+
+            try {
+                deviceRegistrationManager.registerIfNeeded()
+            } catch (e: Exception) {
+                Log.w(TAG, "[SYNC] Device registration failed (non-fatal)", e)
+            }
 
             Result.success(syncData)
         } catch (e: Exception) {
@@ -206,13 +269,49 @@ class SyncManager(
             database: AppDatabase,
             preferences: UserPreferences,
             scheduler: AlertScheduler,
-            reconciliationService: AlertReconciliationService
+            reconciliationService: AlertReconciliationService,
+            deviceRegistrationManager: DeviceRegistrationManager,
+            eventAlarmScheduler: EventAlarmScheduler
         ): SyncManager {
             return INSTANCE ?: synchronized(this) {
-                val instance = SyncManager(database, preferences, scheduler, reconciliationService)
+                val instance = SyncManager(
+                    database,
+                    preferences,
+                    scheduler,
+                    reconciliationService,
+                    deviceRegistrationManager,
+                    eventAlarmScheduler
+                )
                 INSTANCE = instance
                 instance
             }
+        }
+
+        private fun EventDto.toEntity(syncInstant: Instant, orgIdFallback: String): EventEntity {
+            val scheduledInstant = TimezoneHelper.parseIsoToInstant(scheduledAt) ?: syncInstant
+            return EventEntity(
+                id = eventId,
+                eventId = eventId,
+                userId = getUserIdString(),
+                organizationId = getOrgIdString().ifBlank { orgIdFallback },
+                groupId = getGroupIdString(),
+                groupName = getGroupNameString(),
+                type = type,
+                broadcasterId = getCreatedByIdString(),
+                broadcasterName = getCreatorNameString(),
+                title = title,
+                message = message,
+                payload = payloadToString(),
+                priority = Priority.fromString(priority),
+                requiresReceive = requiresReceive,
+                status = EventStatus.fromString(status),
+                createdAt = TimezoneHelper.parseIsoToInstant(createdAt) ?: syncInstant,
+                syncedAt = syncInstant,
+                scheduledAt = scheduledInstant,
+                scheduledAtUtc = scheduledInstant,
+                expiresAt = TimezoneHelper.parseIsoToInstant(expiresAt),
+                serverVersion = version
+            )
         }
     }
 }

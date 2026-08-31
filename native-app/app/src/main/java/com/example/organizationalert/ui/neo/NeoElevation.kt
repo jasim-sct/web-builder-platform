@@ -83,11 +83,13 @@ fun Modifier.neoInset(
         }
 }
 
-fun Modifier.neoFloating(cornerRadius: Dp = 20.dp): Modifier = neoRaised(
-    cornerRadius = cornerRadius,
-    spec = NeoShadows.floating,
-    fillColor = LocalNeoColors.current.surfaceFloating
-)
+fun Modifier.neoFloating(cornerRadius: Dp = 20.dp): Modifier = composed {
+    neoRaised(
+        cornerRadius = cornerRadius,
+        spec = NeoShadows.floating,
+        fillColor = LocalNeoColors.current.surfaceFloating
+    )
+}
 
 @Composable
 fun neoBackgroundColor(): Color = LocalNeoColors.current.background

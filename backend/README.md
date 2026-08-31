@@ -69,7 +69,14 @@ PORT=5000
 MONGODB_URI=mongodb://localhost:27017/organization-alert-system
 NODE_ENV=development
 SCHEDULER_INTERVAL_MS=1000
+API_KEY=your-secret-api-key
 ```
+
+### API Authentication
+
+When `API_KEY` is set, all `/api/*` routes require the `X-API-Key` header matching that value. `/api/health` is always public. If `API_KEY` is unset (typical for local dev/tests), auth is disabled.
+
+Socket clients must pass the same key via handshake `auth.apiKey`, the `X-API-Key` header, or `apiKey` in the `identify` payload when `API_KEY` is configured.
 
 ---
 
@@ -197,7 +204,9 @@ The test suite covers:
 Connect client to Socket.IO and send the `identify` event:
 
 ```javascript
-const socket = io("http://localhost:5000");
+const socket = io("http://localhost:5000", {
+  auth: { apiKey: process.env.API_KEY }, // when API_KEY is configured
+});
 
 // Identify on connection
 socket.emit("identify", { userId: "<USER_ID>" }, (response) => {

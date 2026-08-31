@@ -97,7 +97,11 @@ import com.example.organizationalert.ui.theme.Slate400
 import com.example.organizationalert.ui.theme.Slate600
 import com.example.organizationalert.ui.theme.Slate700
 import com.example.organizationalert.ui.theme.Slate800
-import com.example.organizationalert.ui.theme.Slate900
+import com.example.organizationalert.ui.neo.LocalNeoColors
+import com.example.organizationalert.ui.neo.NeoFab
+import com.example.organizationalert.ui.neo.NeoFilterChip
+import com.example.organizationalert.ui.neo.NeoScreenBackground
+import com.example.organizationalert.ui.neo.NeoDetailScaffold
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -272,7 +276,6 @@ class AlertsViewModel @Inject constructor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AlertsListScreen(
     viewModel: AlertsViewModel,
@@ -281,54 +284,19 @@ fun AlertsListScreen(
 ) {
     val uiState by viewModel.listUiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Alerts & Reminders",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToCreateAlert,
-                containerColor = Blue500,
-                contentColor = Color.White
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Create Alert")
-            }
-        },
-        containerColor = Slate900
-    ) { padding ->
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(padding)
-        ) {
-            // Filter chips horizontal scroll
+    Box(Modifier.fillMaxSize()) {
+        Column(Modifier.fillMaxSize()) {
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(AlertFilter.entries.toTypedArray()) { filter ->
-                    val selected = uiState.selectedFilter == filter
-                    FilterChip(
-                        selected = selected,
-                        onClick = { viewModel.setFilter(filter) },
-                        label = { Text(filter.name.replace("_", " ")) },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Blue500,
-                            selectedLabelColor = Color.White,
-                            containerColor = Slate800,
-                            labelColor = Slate400
-                        )
+                    NeoFilterChip(
+                        label = filter.name.replace("_", " ").lowercase().replaceFirstChar { it.uppercase() },
+                        selected = uiState.selectedFilter == filter,
+                        onClick = { viewModel.setFilter(filter) }
                     )
                 }
             }
@@ -337,26 +305,32 @@ fun AlertsListScreen(
                 EmptyStateView(
                     title = "No alerts found",
                     subtitle = "No alerts match the selected filter criteria",
-                    modifier = Modifier.padding(top = 40.dp)
+                    modifier = Modifier.padding(top = 40.dp, start = 20.dp, end = 20.dp)
                 )
             } else {
                 LazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
-                        .padding(horizontal = 16.dp),
+                        .padding(horizontal = 20.dp),
                     verticalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
-                    item { Spacer(modifier = Modifier.height(4.dp)) }
                     items(uiState.filteredAlerts) { alert ->
                         AlertCard(
                             alert = alert,
                             onClick = { onNavigateToAlertDetails(alert.id) }
                         )
                     }
-                    item { Spacer(modifier = Modifier.height(72.dp)) }
+                    item { Spacer(modifier = Modifier.height(88.dp)) }
                 }
             }
         }
+        NeoFab(
+            onClick = onNavigateToCreateAlert,
+            contentDescription = "Create Alert",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(20.dp)
+        )
     }
 }
 
@@ -373,29 +347,19 @@ fun AlertDetailsScreen(
     var isAcknowledging by remember { mutableStateOf(false) }
     var isTriggering by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Alert Details", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onNavigateToEdit(alertId) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Blue400)
-                    }
-                    IconButton(onClick = {
-                        viewModel.deleteAlert(alertId) { onNavigateBack() }
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Red500)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
+    NeoDetailScaffold(
+        title = "Alert Details",
+        onNavigateBack = onNavigateBack,
+        actions = {
+            IconButton(onClick = { onNavigateToEdit(alertId) }) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = LocalNeoColors.current.primary)
+            }
+            IconButton(onClick = {
+                viewModel.deleteAlert(alertId) { onNavigateBack() }
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = LocalNeoColors.current.danger)
+            }
+        }
     ) { padding ->
         val alert = alertState
         if (alert == null) {
@@ -594,25 +558,9 @@ fun CreateEditAlertScreen(
         selectedGroup = activeGroups.first()
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = if (alertId != null) "Edit Alert" else "Create Alert",
-                        fontWeight = FontWeight.Bold,
-                        color = Color.White
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
+    NeoDetailScaffold(
+        title = if (alertId != null) "Edit Alert" else "Create Alert",
+        onNavigateBack = onNavigateBack
     ) { padding ->
         Column(
             modifier = Modifier

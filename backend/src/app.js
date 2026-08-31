@@ -8,6 +8,7 @@ const config = require('./config/env');
 const { ApiResponse } = require('./utils/apiResponse');
 const notFoundHandler = require('./middleware/notFound.middleware');
 const errorHandler = require('./middleware/error.middleware');
+const apiKeyAuth = require('./middleware/auth.middleware');
 
 const organizationRoutes = require('./routes/organization.routes');
 const userRoutes = require('./routes/user.routes');
@@ -49,6 +50,14 @@ app.get('/api/health', (req, res) => {
     },
     'Backend is healthy'
   );
+});
+
+// API key auth for /api/* except /api/health (skipped when API_KEY is unset)
+app.use('/api', (req, res, next) => {
+  if (req.path === '/health') {
+    return next();
+  }
+  return apiKeyAuth(req, res, next);
 });
 
 // Mount API routes

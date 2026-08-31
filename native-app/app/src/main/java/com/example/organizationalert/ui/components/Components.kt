@@ -153,7 +153,7 @@ fun ConnectionStatusBadge(state: SocketConnectionState) {
     }
 
     Surface(
-        color = Slate800,
+        color = LocalNeoColors.current.surfaceRaised,
         shape = RoundedCornerShape(16.dp)
     ) {
         Row(

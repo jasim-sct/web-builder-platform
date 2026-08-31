@@ -2,6 +2,7 @@ package com.example.organizationalert.core.di
 
 import android.content.Context
 import com.example.organizationalert.core.database.AppDatabase
+import com.example.organizationalert.core.device.DeviceRegistrationManager
 import com.example.organizationalert.core.notifications.NotificationHelper
 import com.example.organizationalert.core.preferences.UserPreferences
 import com.example.organizationalert.core.scheduling.AlertReconciliationService
@@ -57,13 +58,31 @@ object AppModule {
 
     @Provides
     @Singleton
+    fun provideDeviceRegistrationManager(
+        @ApplicationContext context: Context,
+        preferences: UserPreferences
+    ): DeviceRegistrationManager {
+        return DeviceRegistrationManager.getInstance(context, preferences)
+    }
+
+    @Provides
+    @Singleton
     fun provideSyncManager(
         database: AppDatabase,
         preferences: UserPreferences,
         scheduler: AlertScheduler,
-        reconciliationService: AlertReconciliationService
+        reconciliationService: AlertReconciliationService,
+        deviceRegistrationManager: DeviceRegistrationManager,
+        eventAlarmScheduler: com.example.organizationalert.core.scheduling.EventAlarmScheduler
     ): SyncManager {
-        return SyncManager.getInstance(database, preferences, scheduler, reconciliationService)
+        return SyncManager.getInstance(
+            database,
+            preferences,
+            scheduler,
+            reconciliationService,
+            deviceRegistrationManager,
+            eventAlarmScheduler
+        )
     }
 
     @Provides
@@ -129,9 +148,15 @@ object AppModule {
     fun provideAckManager(
         @ApplicationContext context: Context,
         database: AppDatabase,
-        preferences: UserPreferences
+        preferences: UserPreferences,
+        socketManager: SocketManager
     ): com.example.organizationalert.core.ack.AckManager {
-        return com.example.organizationalert.core.ack.AckManager.getInstance(context, database, preferences)
+        return com.example.organizationalert.core.ack.AckManager.getInstance(
+            context,
+            database,
+            preferences,
+            socketManager
+        )
     }
 }
 

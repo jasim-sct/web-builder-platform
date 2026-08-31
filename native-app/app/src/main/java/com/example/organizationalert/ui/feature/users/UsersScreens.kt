@@ -80,7 +80,9 @@ import com.example.organizationalert.ui.theme.Red500
 import com.example.organizationalert.ui.theme.Slate400
 import com.example.organizationalert.ui.theme.Slate700
 import com.example.organizationalert.ui.theme.Slate800
-import com.example.organizationalert.ui.theme.Slate900
+import com.example.organizationalert.ui.neo.LocalNeoColors
+import com.example.organizationalert.ui.neo.NeoDetailScaffold
+import com.example.organizationalert.ui.neo.NeoFab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -130,7 +132,6 @@ class UsersViewModel @Inject constructor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UsersListScreen(
     viewModel: UsersViewModel,
@@ -139,50 +140,38 @@ fun UsersListScreen(
 ) {
     val users by viewModel.users.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Users & Participants", fontWeight = FontWeight.Bold, color = Color.White) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToCreateUser,
-                containerColor = Blue500,
-                contentColor = Color.White
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Create User")
-            }
-        },
-        containerColor = Slate900
-    ) { padding ->
+    Box(Modifier.fillMaxSize()) {
         if (users.isEmpty()) {
             EmptyStateView(
-                title = "No users found",
+                title = "No customers found",
                 subtitle = "Add participants to assign them to groups and alerts",
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
+                    .padding(20.dp)
             )
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                item { Spacer(modifier = Modifier.height(4.dp)) }
                 items(users) { user ->
                     UserCard(
                         user = user,
                         onClick = { onNavigateToUserDetails(user.id) }
                     )
                 }
-                item { Spacer(modifier = Modifier.height(72.dp)) }
+                item { Spacer(modifier = Modifier.height(88.dp)) }
             }
         }
+        NeoFab(
+            onClick = onNavigateToCreateUser,
+            contentDescription = "Create Customer",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(20.dp)
+        )
     }
 }
 
@@ -197,29 +186,19 @@ fun UserDetailsScreen(
     val userState by viewModel.getUserById(userId).collectAsState(initial = null)
     val userGroups by viewModel.getUserGroups(userId).collectAsState(initial = emptyList())
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("User Details", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onNavigateToEdit(userId) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Blue400)
-                    }
-                    IconButton(onClick = {
-                        viewModel.deleteUser(userId) { onNavigateBack() }
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Red500)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
+    NeoDetailScaffold(
+        title = "Customer Details",
+        onNavigateBack = onNavigateBack,
+        actions = {
+            IconButton(onClick = { onNavigateToEdit(userId) }) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = LocalNeoColors.current.primary)
+            }
+            IconButton(onClick = {
+                viewModel.deleteUser(userId) { onNavigateBack() }
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = LocalNeoColors.current.danger)
+            }
+        }
     ) { padding ->
         val user = userState
         if (user == null) {
@@ -334,19 +313,9 @@ fun CreateEditUserScreen(
         null
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(if (userId != null) "Edit User" else "Create User", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
+    NeoDetailScaffold(
+        title = if (userId != null) "Edit Customer" else "Create Customer",
+        onNavigateBack = onNavigateBack
     ) { padding ->
         Column(
             modifier = Modifier

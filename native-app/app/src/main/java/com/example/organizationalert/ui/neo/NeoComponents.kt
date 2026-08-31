@@ -25,6 +25,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.CalendarMonth
+import androidx.compose.material.icons.filled.History
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material.icons.filled.Search
@@ -34,8 +37,10 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -55,7 +60,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.example.organizationalert.ui.components.NAV_ITEMS
+import com.example.organizationalert.ui.components.SIDEBAR_NAV_ITEMS
 import com.example.organizationalert.ui.navigation.Screen
 import kotlinx.coroutines.launch
 
@@ -281,6 +286,86 @@ fun NeoCard(
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun NeoDetailScaffold(
+    title: String,
+    subtitle: String? = null,
+    onNavigateBack: () -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
+    floatingActionButton: @Composable () -> Unit = {},
+    content: @Composable (PaddingValues) -> Unit
+) {
+    val neo = LocalNeoColors.current
+    Scaffold(
+        containerColor = neo.background,
+        topBar = {
+            NeoPageHeader(title = title, subtitle = subtitle, onBack = onNavigateBack, actions = actions)
+        },
+        floatingActionButton = floatingActionButton,
+        content = content
+    )
+}
+
+@Composable
+fun NeoFilterChip(
+    label: String,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val neo = LocalNeoColors.current
+    Box(
+        modifier = modifier
+            .then(
+                if (selected) Modifier.neoInset(cornerRadius = 20.dp)
+                else Modifier.neoRaised(cornerRadius = 20.dp, spec = NeoShadows.soft)
+            )
+            .clickable(onClick = onClick)
+            .padding(horizontal = 14.dp, vertical = 8.dp)
+    ) {
+        Text(
+            text = label,
+            color = if (selected) neo.primary else neo.textSecondary,
+            fontWeight = if (selected) FontWeight.SemiBold else FontWeight.Normal,
+            fontSize = 13.sp
+        )
+    }
+}
+
+@Composable
+fun NeoFab(
+    onClick: () -> Unit,
+    contentDescription: String,
+    icon: ImageVector = Icons.Default.Add,
+    modifier: Modifier = Modifier
+) {
+    val neo = LocalNeoColors.current
+    Box(
+        modifier = modifier
+            .size(56.dp)
+            .neoRaised(cornerRadius = 16.dp, spec = NeoShadows.medium, fillColor = neo.primary)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Icon(icon, contentDescription = contentDescription, tint = Color.White, modifier = Modifier.size(24.dp))
+    }
+}
+
+@Composable
+fun NeoSettingsCard(
+    modifier: Modifier = Modifier,
+    content: @Composable ColumnScope.() -> Unit
+) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .neoRaised(cornerRadius = 18.dp)
+            .padding(18.dp),
+        content = content
+    )
+}
+
 @Composable
 fun NeoEmptyState(
     title: String,
@@ -380,7 +465,7 @@ fun NeoSidebar(
     modifier: Modifier = Modifier
 ) {
     val neo = LocalNeoColors.current
-    val items = NAV_ITEMS.filter { !it.isAdminOnly || isAdmin }
+    val items = SIDEBAR_NAV_ITEMS.filter { !it.isAdminOnly || isAdmin }
 
     Column(
         modifier = modifier
@@ -396,6 +481,7 @@ fun NeoSidebar(
             val selected = currentRoute == item.route
             val label = when (item.route) {
                 Screen.UsersList.route -> "Customers"
+                Screen.Schedule.route -> "Schedules"
                 else -> item.title
             }
             Row(

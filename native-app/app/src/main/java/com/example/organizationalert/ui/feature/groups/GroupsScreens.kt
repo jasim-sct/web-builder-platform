@@ -80,7 +80,9 @@ import com.example.organizationalert.ui.theme.Red500
 import com.example.organizationalert.ui.theme.Slate400
 import com.example.organizationalert.ui.theme.Slate700
 import com.example.organizationalert.ui.theme.Slate800
-import com.example.organizationalert.ui.theme.Slate900
+import com.example.organizationalert.ui.neo.LocalNeoColors
+import com.example.organizationalert.ui.neo.NeoDetailScaffold
+import com.example.organizationalert.ui.neo.NeoFab
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -143,7 +145,6 @@ class GroupsViewModel @Inject constructor(
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GroupsListScreen(
     viewModel: GroupsViewModel,
@@ -152,50 +153,38 @@ fun GroupsListScreen(
 ) {
     val groups by viewModel.groups.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Groups", fontWeight = FontWeight.Bold, color = Color.White) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = onNavigateToCreateGroup,
-                containerColor = Blue500,
-                contentColor = Color.White
-            ) {
-                Icon(Icons.Default.Add, contentDescription = "Create Group")
-            }
-        },
-        containerColor = Slate900
-    ) { padding ->
+    Box(Modifier.fillMaxSize()) {
         if (groups.isEmpty()) {
             EmptyStateView(
                 title = "No groups available",
                 subtitle = "Create a group to organize users and target alerts",
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
+                    .padding(20.dp)
             )
         } else {
             LazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(padding)
-                    .padding(horizontal = 16.dp),
+                    .padding(horizontal = 20.dp, vertical = 12.dp),
                 verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
-                item { Spacer(modifier = Modifier.height(4.dp)) }
                 items(groups) { group ->
                     GroupCard(
                         group = group,
                         onClick = { onNavigateToGroupDetails(group.id) }
                     )
                 }
-                item { Spacer(modifier = Modifier.height(72.dp)) }
+                item { Spacer(modifier = Modifier.height(88.dp)) }
             }
         }
+        NeoFab(
+            onClick = onNavigateToCreateGroup,
+            contentDescription = "Create Group",
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(20.dp)
+        )
     }
 }
 
@@ -215,38 +204,22 @@ fun GroupDetailsScreen(
 
     var showAddMemberDialog by remember { mutableStateOf(false) }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Group Details", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { onNavigateToEdit(groupId) }) {
-                        Icon(Icons.Default.Edit, contentDescription = "Edit", tint = Blue400)
-                    }
-                    IconButton(onClick = {
-                        viewModel.deleteGroup(groupId) { onNavigateBack() }
-                    }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete", tint = Red500)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { showAddMemberDialog = true },
-                containerColor = Blue500,
-                contentColor = Color.White
-            ) {
-                Icon(Icons.Default.PersonAdd, contentDescription = "Add Participant")
+    NeoDetailScaffold(
+        title = "Group Details",
+        onNavigateBack = onNavigateBack,
+        actions = {
+            IconButton(onClick = { onNavigateToEdit(groupId) }) {
+                Icon(Icons.Default.Edit, contentDescription = "Edit", tint = LocalNeoColors.current.primary)
+            }
+            IconButton(onClick = {
+                viewModel.deleteGroup(groupId) { onNavigateBack() }
+            }) {
+                Icon(Icons.Default.Delete, contentDescription = "Delete", tint = LocalNeoColors.current.danger)
             }
         },
-        containerColor = Slate900
+        floatingActionButton = {
+            NeoFab(onClick = { showAddMemberDialog = true }, contentDescription = "Add Participant", icon = Icons.Default.PersonAdd)
+        }
     ) { padding ->
         val group = groupState
         if (group == null) {
@@ -466,19 +439,9 @@ fun CreateEditGroupScreen(
         null
     }
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text(if (groupId != null) "Edit Group" else "Create Group", fontWeight = FontWeight.Bold, color = Color.White) },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
+    NeoDetailScaffold(
+        title = if (groupId != null) "Edit Group" else "Create Group",
+        onNavigateBack = onNavigateBack
     ) { padding ->
         Column(
             modifier = Modifier

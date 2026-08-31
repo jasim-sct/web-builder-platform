@@ -47,6 +47,7 @@ import com.example.organizationalert.core.sync.SyncManager
 import com.example.organizationalert.core.sync.SyncState
 import com.example.organizationalert.data.repository.AlertRepository
 import com.example.organizationalert.data.repository.GroupRepository
+import com.example.organizationalert.data.repository.UserRepository
 import com.example.organizationalert.domain.model.Alert
 import com.example.organizationalert.domain.model.AlertStatus
 import com.example.organizationalert.domain.model.Group
@@ -92,6 +93,7 @@ data class DashboardUiState(
 class DashboardViewModel @Inject constructor(
     private val alertRepository: AlertRepository,
     private val groupRepository: GroupRepository,
+    private val userRepository: UserRepository,
     private val preferences: UserPreferences,
     private val socketManager: SocketManager,
     private val syncManager: SyncManager
@@ -100,9 +102,10 @@ class DashboardViewModel @Inject constructor(
     val uiState: StateFlow<DashboardUiState> = combine(
         alertRepository.allAlerts,
         groupRepository.activeGroups,
+        userRepository.allUsers,
         socketManager.connectionState,
         syncManager.syncState
-    ) { alerts, groups, socketState, syncState ->
+    ) { alerts, groups, users, socketState, syncState ->
         val now = Instant.now()
         val today = LocalDate.now()
         val zone = ZoneId.systemDefault()
@@ -129,7 +132,7 @@ class DashboardViewModel @Inject constructor(
             organizationName = preferences.getOrganizationName(),
             totalAlerts = alerts.size,
             activeAlerts = alerts.count { it.isEnabled && it.status == AlertStatus.SCHEDULED },
-            totalCustomers = 0,
+            totalCustomers = users.size,
             nextAlert = nextUpcoming,
             todayAlerts = todayList,
             upcomingAlerts = upcomingList,
@@ -165,21 +168,18 @@ fun DashboardScreen(
     onNavigateToCreateAlert: () -> Unit,
     onNavigateToAlertsList: () -> Unit,
     onNavigateToGroupDetails: (String) -> Unit,
-    onNavigateToGroupsList: () -> Unit
+    onNavigateToGroupsList: () -> Unit,
+    onNavigateToUsersList: () -> Unit = {}
 ) {
     val uiState by viewModel.uiState.collectAsState()
+    val neo = LocalNeoColors.current
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Slate900)
-    ) {
+    NeoScreenBackground {
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(horizontal = 20.dp)
         ) {
-            // Header: Greeting & Status
             item {
                 Spacer(modifier = Modifier.height(16.dp))
                 Row(
@@ -191,42 +191,72 @@ fun DashboardScreen(
                         Text(
                             text = "Good day, ${uiState.userName}",
                             style = MaterialTheme.typography.headlineMedium,
-                            color = MaterialTheme.colorScheme.onSurface,
+                            color = neo.textPrimary,
                             fontWeight = FontWeight.Bold
                         )
                         Text(
                             text = uiState.organizationName,
                             style = MaterialTheme.typography.bodyMedium,
-                            color = Slate400
+                            color = neo.textMuted
                         )
                     }
-
-                    IconButton(
-                        onClick = { viewModel.refresh() },
-                        enabled = !uiState.isSyncing
-                    ) {
+                    IconButton(onClick = { viewModel.refresh() }, enabled = !uiState.isSyncing) {
                         if (uiState.isSyncing) {
-                            CircularProgressIndicator(
-                                color = Blue500,
-                                modifier = Modifier.size(22.dp),
-                                strokeWidth = 2.dp
-                            )
+                            CircularProgressIndicator(color = neo.primary, modifier = Modifier.size(22.dp), strokeWidth = 2.dp)
                         } else {
-                            Icon(
-                                imageVector = Icons.Default.Refresh,
-                                contentDescription = "Sync",
-                                tint = Slate400
-                            )
+                            Icon(Icons.Default.Refresh, contentDescription = "Sync", tint = neo.textMuted)
                         }
                     }
                 }
-
                 Spacer(modifier = Modifier.height(12.dp))
                 ConnectionStatusBadge(state = uiState.socketState)
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // Spotlight: Next Alert Card
+            item {
+                LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                    item {
+                        NeoMetricTile(
+                            title = "Active Alerts",
+                            value = uiState.activeAlerts.toString(),
+                            subtitle = "${uiState.todayAlerts.size} due today",
+                            onClick = onNavigateToAlertsList,
+                            modifier = Modifier.width(168.dp)
+                        )
+                    }
+                    item {
+                        NeoMetricTile(
+                            title = "Total Alerts",
+                            value = uiState.totalAlerts.toString(),
+                            subtitle = "${uiState.upcomingAlerts.size} upcoming",
+                            onClick = onNavigateToAlertsList,
+                            modifier = Modifier.width(168.dp)
+                        )
+                    }
+                    item {
+                        NeoMetricTile(
+                            title = "Groups",
+                            value = uiState.activeGroups.size.toString(),
+                            subtitle = "Tap to manage",
+                            onClick = onNavigateToGroupsList,
+                            modifier = Modifier.width(168.dp)
+                        )
+                    }
+                    if (uiState.userRole == UserRole.ADMIN) {
+                        item {
+                            NeoMetricTile(
+                                title = "Customers",
+                                value = uiState.totalCustomers.toString().ifBlank { "—" }.let { if (it == "0") "—" else it },
+                                subtitle = "View directory",
+                                onClick = onNavigateToUsersList,
+                                modifier = Modifier.width(168.dp)
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(20.dp))
+            }
+
             item {
                 NextAlertCard(
                     alert = uiState.nextAlert,
@@ -235,62 +265,26 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(20.dp))
             }
 
-            // Quick Action Buttons
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp)
-                ) {
-                    Button(
+                Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    NeoPrimaryButton(
+                        text = "New Alert",
                         onClick = onNavigateToCreateAlert,
-                        colors = ButtonDefaults.buttonColors(containerColor = Blue500),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                    ) {
-                        Icon(Icons.Default.AddAlert, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("New Alert", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    }
-
-                    Button(
+                        leadingIcon = Icons.Default.AddAlert,
+                        modifier = Modifier.weight(1f)
+                    )
+                    NeoPrimaryButton(
+                        text = "Broadcast",
                         onClick = onNavigateToCreateAlert,
-                        colors = ButtonDefaults.buttonColors(containerColor = Red500),
-                        shape = RoundedCornerShape(10.dp),
-                        modifier = Modifier
-                            .weight(1f)
-                            .height(44.dp)
-                    ) {
-                        Icon(Icons.Default.Campaign, contentDescription = null, modifier = Modifier.size(16.dp))
-                        Spacer(modifier = Modifier.width(6.dp))
-                        Text("Broadcast", fontSize = 13.sp, fontWeight = FontWeight.Bold)
-                    }
+                        leadingIcon = Icons.Default.Campaign,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
                 Spacer(modifier = Modifier.height(24.dp))
             }
 
-            // Section: Today's Alerts
             item {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Today's Alerts (${uiState.todayAlerts.size})",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "View All",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Blue500,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable(onClick = onNavigateToAlertsList)
-                    )
-                }
+                SectionHeader(title = "Today's Alerts (${uiState.todayAlerts.size})", action = "View All", onAction = onNavigateToAlertsList)
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
@@ -298,66 +292,60 @@ fun DashboardScreen(
                 item {
                     EmptyStateView(
                         title = "No alerts due today",
-                        subtitle = "Check upcoming scheduled alerts below",
+                        subtitle = "Create your first alert to start automating team communication.",
+                        actionLabel = "+ Create Alert",
+                        onAction = onNavigateToCreateAlert,
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                 }
             } else {
                 items(uiState.todayAlerts.take(4)) { alert ->
-                    AlertCard(
-                        alert = alert,
-                        onClick = { onNavigateToAlertDetails(alert.id) }
-                    )
+                    AlertCard(alert = alert, onClick = { onNavigateToAlertDetails(alert.id) })
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 
-            // Section: Active Groups
             item {
                 Spacer(modifier = Modifier.height(16.dp))
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "Active Groups (${uiState.activeGroups.size})",
-                        style = MaterialTheme.typography.titleMedium,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        fontWeight = FontWeight.Bold
-                    )
-                    Text(
-                        text = "Manage",
-                        style = MaterialTheme.typography.labelSmall,
-                        color = Blue500,
-                        fontWeight = FontWeight.Bold,
-                        modifier = Modifier.clickable(onClick = onNavigateToGroupsList)
-                    )
-                }
+                SectionHeader(title = "Active Groups (${uiState.activeGroups.size})", action = "Manage", onAction = onNavigateToGroupsList)
                 Spacer(modifier = Modifier.height(10.dp))
             }
 
             if (uiState.activeGroups.isEmpty()) {
                 item {
                     EmptyStateView(
-                        title = "No groups available",
-                        subtitle = "Create groups to target alerts",
+                        title = "No groups yet",
+                        subtitle = "Create groups to target alerts to the right people.",
                         modifier = Modifier.padding(vertical = 12.dp)
                     )
                 }
             } else {
                 items(uiState.activeGroups.take(3)) { group ->
-                    GroupCard(
-                        group = group,
-                        onClick = { onNavigateToGroupDetails(group.id) }
-                    )
+                    GroupCard(group = group, onClick = { onNavigateToGroupDetails(group.id) })
                     Spacer(modifier = Modifier.height(10.dp))
                 }
             }
 
-            item {
-                Spacer(modifier = Modifier.height(28.dp))
-            }
+            item { Spacer(modifier = Modifier.height(28.dp)) }
         }
+    }
+}
+
+@Composable
+private fun SectionHeader(title: String, action: String, onAction: () -> Unit) {
+    val neo = LocalNeoColors.current
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Text(title, style = MaterialTheme.typography.titleMedium, color = neo.textPrimary, fontWeight = FontWeight.Bold)
+        Text(
+            action,
+            style = MaterialTheme.typography.labelSmall,
+            color = neo.primary,
+            fontWeight = FontWeight.Bold,
+            modifier = Modifier.clickable(onClick = onAction)
+        )
     }
 }

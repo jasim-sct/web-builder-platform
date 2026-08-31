@@ -1,9 +1,8 @@
 package com.example.organizationalert.ui.navigation
 
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -31,6 +30,10 @@ import com.example.organizationalert.ui.feature.groups.CreateEditGroupScreen
 import com.example.organizationalert.ui.feature.groups.GroupDetailsScreen
 import com.example.organizationalert.ui.feature.groups.GroupsListScreen
 import com.example.organizationalert.ui.feature.groups.GroupsViewModel
+import com.example.organizationalert.ui.feature.history.HistoryScreen
+import com.example.organizationalert.ui.feature.history.HistoryViewModel
+import com.example.organizationalert.ui.feature.schedule.ScheduleScreen
+import com.example.organizationalert.ui.feature.schedule.ScheduleViewModel
 import com.example.organizationalert.ui.feature.settings.SettingsScreen
 import com.example.organizationalert.ui.feature.settings.SettingsViewModel
 import com.example.organizationalert.ui.feature.setup.SetupScreen
@@ -41,7 +44,8 @@ import com.example.organizationalert.ui.feature.users.CreateEditUserScreen
 import com.example.organizationalert.ui.feature.users.UserDetailsScreen
 import com.example.organizationalert.ui.feature.users.UsersListScreen
 import com.example.organizationalert.ui.feature.users.UsersViewModel
-import com.example.organizationalert.ui.theme.Slate900
+import com.example.organizationalert.ui.neo.NeoAppShell
+import com.example.organizationalert.ui.neo.neoBackgroundColor
 
 @Composable
 fun AppNavigation(
@@ -58,60 +62,101 @@ fun AppNavigation(
     val isTopLevelScreen = currentRoute in listOf(
         Screen.Dashboard.route,
         Screen.AlertsList.route,
+        Screen.Schedule.route,
         Screen.GroupsList.route,
         Screen.UsersList.route,
+        Screen.History.route,
         Screen.Settings.route
     )
 
     val configuration = LocalConfiguration.current
     val isTablet = configuration.screenWidthDp >= 600
 
-    Scaffold(
-        bottomBar = {
-            if (isTopLevelScreen && !isTablet) {
-                AppBottomBar(
-                    currentRoute = currentRoute,
-                    isAdmin = isAdmin,
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(Screen.Dashboard.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
-        },
-        containerColor = Slate900
-    ) { padding ->
-        Row(modifier = Modifier.fillMaxSize()) {
-            if (isTopLevelScreen && isTablet) {
-                AppNavRail(
-                    currentRoute = currentRoute,
-                    isAdmin = isAdmin,
-                    onNavigate = { route ->
-                        navController.navigate(route) {
-                            popUpTo(Screen.Dashboard.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = true
-                        }
-                    }
-                )
-            }
+    val pageTitle = when (currentRoute) {
+        Screen.Dashboard.route -> "Dashboard"
+        Screen.AlertsList.route -> "Alerts"
+        Screen.Schedule.route -> "Schedules"
+        Screen.GroupsList.route -> "Groups"
+        Screen.UsersList.route -> "Customers"
+        Screen.History.route -> "History"
+        Screen.Settings.route -> "Settings"
+        else -> "Organization Alert"
+    }
 
-            val startDestination = if (!initialAlertId.isNullOrBlank()) {
-                Screen.AlertDetails.createRoute(initialAlertId)
-            } else {
-                Screen.Splash.route
+    if (isTopLevelScreen) {
+        NeoAppShell(
+            currentRoute = currentRoute,
+            isAdmin = isAdmin,
+            isTablet = isTablet,
+            organizationName = preferences.getOrganizationName(),
+            title = pageTitle,
+            onNavigate = { route ->
+                navController.navigate(route) {
+                    popUpTo(Screen.Dashboard.route) { saveState = true }
+                    launchSingleTop = true
+                    restoreState = true
+                }
+            },
+            onNotificationsClick = {
+                navController.navigate(Screen.AlertsList.route)
+            },
+            bottomBar = {
+                if (!isTablet) {
+                    AppBottomBar(
+                        currentRoute = currentRoute,
+                        isAdmin = isAdmin,
+                        onNavigate = { route ->
+                            navController.navigate(route) {
+                                popUpTo(Screen.Dashboard.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        }
+                    )
+                }
             }
-
-            NavHost(
+        ) { _ ->
+            AppNavHostContent(
                 navController = navController,
-                startDestination = startDestination,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(if (isTopLevelScreen && !isTablet) padding else androidx.compose.foundation.layout.PaddingValues(0.dp))
-            ) {
+                preferences = preferences,
+                isAdmin = isAdmin,
+                initialAlertId = initialAlertId
+            )
+        }
+    } else {
+        androidx.compose.foundation.layout.Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(neoBackgroundColor())
+        ) {
+            AppNavHostContent(
+                navController = navController,
+                preferences = preferences,
+                isAdmin = isAdmin,
+                initialAlertId = initialAlertId
+            )
+        }
+    }
+}
+
+@Composable
+private fun AppNavHostContent(
+    navController: NavHostController,
+    preferences: UserPreferences,
+    isAdmin: Boolean,
+    initialAlertId: String?
+) {
+    val startDestination = if (!initialAlertId.isNullOrBlank()) {
+        Screen.AlertDetails.createRoute(initialAlertId)
+    } else {
+        Screen.Splash.route
+    }
+
+    NavHost(
+        navController = navController,
+        startDestination = startDestination,
+        modifier = Modifier.fillMaxSize()
+    ) {
                 // Splash
                 composable(Screen.Splash.route) {
                     val viewModel: SplashViewModel = hiltViewModel()
@@ -152,7 +197,8 @@ fun AppNavigation(
                         onNavigateToCreateAlert = { navController.navigate(Screen.CreateEditAlert.createRoute()) },
                         onNavigateToAlertsList = { navController.navigate(Screen.AlertsList.route) },
                         onNavigateToGroupDetails = { id -> navController.navigate(Screen.GroupDetails.createRoute(id)) },
-                        onNavigateToGroupsList = { navController.navigate(Screen.GroupsList.route) }
+                        onNavigateToGroupsList = { navController.navigate(Screen.GroupsList.route) },
+                        onNavigateToUsersList = { navController.navigate(Screen.UsersList.route) }
                     )
                 }
 
@@ -287,6 +333,24 @@ fun AppNavigation(
                     )
                 }
 
+                // Schedule
+                composable(Screen.Schedule.route) {
+                    val viewModel: ScheduleViewModel = hiltViewModel()
+                    ScheduleScreen(
+                        viewModel = viewModel,
+                        onNavigateToAlertDetails = { id -> navController.navigate(Screen.AlertDetails.createRoute(id)) }
+                    )
+                }
+
+                // History
+                composable(Screen.History.route) {
+                    val viewModel: HistoryViewModel = hiltViewModel()
+                    HistoryScreen(
+                        viewModel = viewModel,
+                        onNavigateToAlert = { id -> navController.navigate(Screen.AlertDetails.createRoute(id)) }
+                    )
+                }
+
                 // Settings
                 composable(Screen.Settings.route) {
                     val viewModel: SettingsViewModel = hiltViewModel()
@@ -311,7 +375,5 @@ fun AppNavigation(
                         onNavigateBack = { navController.popBackStack() }
                     )
                 }
-            }
-        }
     }
 }

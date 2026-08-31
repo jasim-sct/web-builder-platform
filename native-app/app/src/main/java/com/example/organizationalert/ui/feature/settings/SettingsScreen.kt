@@ -64,7 +64,10 @@ import com.example.organizationalert.ui.theme.Red500
 import com.example.organizationalert.ui.theme.Slate400
 import com.example.organizationalert.ui.theme.Slate700
 import com.example.organizationalert.ui.theme.Slate800
-import com.example.organizationalert.ui.theme.Slate900
+import com.example.organizationalert.ui.neo.LocalNeoColors
+import com.example.organizationalert.ui.neo.NeoPrimaryButton
+import com.example.organizationalert.ui.neo.NeoScreenBackground
+import com.example.organizationalert.ui.neo.NeoSettingsCard
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -153,46 +156,24 @@ fun SettingsScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
-    Scaffold(
-        topBar = {
-            TopAppBar(
-                title = { Text("Settings & Preferences", fontWeight = FontWeight.Bold, color = Color.White) },
-                colors = TopAppBarDefaults.topAppBarColors(containerColor = Slate900)
-            )
-        },
-        containerColor = Slate900
-    ) { padding ->
+    val neo = LocalNeoColors.current
+
+    NeoScreenBackground {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(padding)
                 .padding(horizontal = 20.dp)
                 .verticalScroll(rememberScrollState())
         ) {
             Spacer(modifier = Modifier.height(12.dp))
 
-            // Device Diagnostics Navigation Button
-            Button(
+            NeoPrimaryButton(
+                text = "Device Diagnostics",
                 onClick = onNavigateToDiagnostics,
-                shape = RoundedCornerShape(12.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Slate800),
-                modifier = Modifier.fillMaxWidth().height(52.dp)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.Dns, contentDescription = null, tint = Blue500, modifier = Modifier.size(20.dp))
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text("Device & Background Diagnostics", color = Color.White, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
-                    }
-                    Icon(androidx.compose.material.icons.Icons.Default.Info, contentDescription = null, tint = Slate400, modifier = Modifier.size(18.dp))
-                }
-            }
+                modifier = Modifier.fillMaxWidth()
+            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             // User & Organization Profile Card
             Text("USER & ORGANIZATION PROFILE", style = MaterialTheme.typography.labelSmall, color = Slate400, fontWeight = FontWeight.Bold)
