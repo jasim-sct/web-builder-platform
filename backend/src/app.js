@@ -13,6 +13,9 @@ const organizationRoutes = require('./routes/organization.routes');
 const userRoutes = require('./routes/user.routes');
 const groupRoutes = require('./routes/group.routes');
 const alertRoutes = require('./routes/alert.routes');
+const syncRoutes = require('./routes/sync.routes');
+const deviceRoutes = require('./routes/device.routes');
+const eventRoutes = require('./routes/event.routes');
 
 const app = express();
 
@@ -53,6 +56,9 @@ app.use('/api/organizations', organizationRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/groups', groupRoutes);
 app.use('/api/alerts', alertRoutes);
+app.use('/api/sync', syncRoutes);
+app.use('/api/devices', deviceRoutes);
+app.use('/api/events', eventRoutes);
 
 // Catch 404 and forward to error handler
 app.use(notFoundHandler);

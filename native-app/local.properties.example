@@ -1,0 +1,5 @@
+# Location of the Android SDK.
+# If building via command-line, configure your Android SDK location here, for example:
+# sdk.dir=/home/sct/Android/Sdk
+# or on macOS:
+# sdk.dir=/Users/<username>/Library/Android/sdk

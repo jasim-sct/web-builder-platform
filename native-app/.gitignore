@@ -1,0 +1,30 @@
+# Built application files
+*.apk
+*.aar
+*.ap_
+*.aab
+*.dex
+*.class
+
+# Gradle files
+.gradle/
+build/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Log files
+*.log
+
+# IntelliJ / Android Studio
+*.iml
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Android
+native-app/app/build/
+native-app/build/
+native-app/.gradle/

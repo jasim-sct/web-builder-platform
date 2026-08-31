@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">Organization Alert &amp; Reminder</string>
+    <string name="channel_normal_name">Normal Alerts</string>
+    <string name="channel_normal_desc">Standard priority organizational notifications</string>
+    <string name="channel_important_name">Important Alerts</string>
+    <string name="channel_important_desc">High priority organizational alerts and scheduled reminders</string>
+    <string name="channel_urgent_name">Urgent Alerts</string>
+    <string name="channel_urgent_desc">Immediate critical broadcasts and urgent alarms</string>
+    <string name="channel_alarm_ringing_name">Active Alarm</string>
+    <string name="channel_alarm_ringing_desc">Technical channel for active alarm ringing service</string>
+    <string name="alarm_notification_title">Alarm ringing</string>
+    <string name="alarm_notification_text">Organization alarm is active</string>
+    <string name="alarm_dismiss">Dismiss</string>
+</resources>
